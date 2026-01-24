@@ -1,0 +1,136 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db, submissions, type SubmissionFile } from '@/db';
+
+interface SkillFrontmatter {
+  name?: string;
+  description?: string;
+  version?: string;
+}
+
+const generateSlug = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
+const parseFrontmatter = (content: string): SkillFrontmatter => {
+  console.log('[SUBMIT] Parsing SKILL.md frontmatter');
+  const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---/;
+  const match = content.match(frontmatterRegex);
+
+  if (!match) {
+    console.log('[SUBMIT] No frontmatter found in SKILL.md');
+    return {};
+  }
+
+  const frontmatter: SkillFrontmatter = {};
+  const lines = match[1].split('\n');
+
+  for (const line of lines) {
+    const colonIndex = line.indexOf(':');
+    if (colonIndex === -1) continue;
+
+    const key = line.slice(0, colonIndex).trim().toLowerCase();
+    let value = line.slice(colonIndex + 1).trim();
+
+    // Remove surrounding quotes if present
+    if ((value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+
+    if (key === 'name') frontmatter.name = value;
+    if (key === 'description') frontmatter.description = value;
+    if (key === 'version') frontmatter.version = value;
+  }
+
+  console.log('[SUBMIT] Parsed frontmatter:', frontmatter);
+  return frontmatter;
+};
+
+export async function POST(request: NextRequest) {
+  console.log('[SUBMIT] Received submission request');
+
+  try {
+    const formData = await request.formData();
+    const files: SubmissionFile[] = [];
+    let skillMdContent: string | null = null;
+
+    // Process all uploaded files
+    const entries = Array.from(formData.entries());
+    console.log(`[SUBMIT] Processing ${entries.length} form entries`);
+
+    for (const [key, value] of entries) {
+      if (value instanceof File) {
+        console.log(`[SUBMIT] Processing file: ${value.name} (${value.size} bytes)`);
+        const content = await value.text();
+
+        files.push({
+          name: value.name,
+          content,
+          size: value.size,
+        });
+
+        if (value.name.toLowerCase() === 'skill.md') {
+          skillMdContent = content;
+        }
+      }
+    }
+
+    // Validate SKILL.md is present
+    if (!skillMdContent) {
+      console.log('[SUBMIT] Error: SKILL.md not found in submission');
+      return NextResponse.json(
+        { error: 'SKILL.md file is required' },
+        { status: 400 }
+      );
+    }
+
+    if (files.length === 0) {
+      console.log('[SUBMIT] Error: No files in submission');
+      return NextResponse.json(
+        { error: 'At least one file is required' },
+        { status: 400 }
+      );
+    }
+
+    // Parse frontmatter from SKILL.md
+    const frontmatter = parseFrontmatter(skillMdContent);
+
+    const name = frontmatter.name || 'Unnamed Skill';
+    const slug = generateSlug(name);
+    const version = frontmatter.version || '1.0.0';
+    const description = frontmatter.description || null;
+
+    console.log(`[SUBMIT] Creating submission: name="${name}", slug="${slug}", version="${version}"`);
+
+    // Insert into database
+    const [submission] = await db
+      .insert(submissions)
+      .values({
+        slug,
+        name,
+        version,
+        description,
+        files,
+        status: 'pending',
+      })
+      .returning();
+
+    console.log(`[SUBMIT] Submission created with id: ${submission.id}`);
+
+    return NextResponse.json({
+      success: true,
+      id: submission.id,
+      message: 'Submission received and pending review',
+    });
+
+  } catch (error) {
+    console.error('[SUBMIT] Error processing submission:', error);
+    return NextResponse.json(
+      { error: 'Failed to process submission' },
+      { status: 500 }
+    );
+  }
+}
