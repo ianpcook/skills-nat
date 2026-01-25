@@ -29,6 +29,14 @@ export async function GET(
 
     console.log(`[ADMIN SUBMISSION] Authenticated user: ${session.user.email}`);
 
+    if (!db) {
+      console.error('[ADMIN SUBMISSION] Database not initialized');
+      return NextResponse.json(
+        { error: 'Database not available' },
+        { status: 503 }
+      );
+    }
+
     // Fetch submission
     const [submission] = await db
       .select()
@@ -79,6 +87,14 @@ export async function PATCH(
     }
 
     console.log(`[ADMIN SUBMISSION] Authenticated user: ${session.user.email}`);
+
+    if (!db) {
+      console.error('[ADMIN SUBMISSION] Database not initialized');
+      return NextResponse.json(
+        { error: 'Database not available' },
+        { status: 503 }
+      );
+    }
 
     const body = await request.json();
     const { status, reviewerNotes } = body as {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sprocket } from "@/components/sprocket";
 import { Check, Copy } from "lucide-react";
@@ -46,17 +47,19 @@ export function HeroSection() {
           <div className="max-w-xl lg:max-w-lg">
             <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row">
               <Button
+                asChild
                 size="lg"
                 className="w-full bg-foreground px-8 text-background hover:bg-foreground/90 sm:w-auto"
               >
-                Browse Skills
+                <Link href="/skills">Browse Skills</Link>
               </Button>
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className="w-full border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background sm:w-auto"
               >
-                Submit Your Skill
+                <Link href="/submit">Submit Your Skill</Link>
               </Button>
             </div>
             <div className="border border-foreground/20 bg-foreground/5">

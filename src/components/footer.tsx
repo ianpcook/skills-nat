@@ -10,22 +10,22 @@ export function Footer() {
           </span>
         </div>
         <nav className="flex items-center gap-6">
-          {/* TODO: /about page doesn't exist yet */}
           <Link
-            href="/about"
+            href="/skills"
             className="text-sm text-foreground/60 hover:text-foreground hover:underline"
           >
-            About
+            Browse Skills
           </Link>
-          {/* TODO: /docs page doesn't exist yet */}
           <Link
-            href="/docs"
+            href="https://github.com/skillshq/ai-at-skills#readme"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-foreground/60 hover:text-foreground hover:underline"
           >
             Documentation
           </Link>
           <Link
-            href="https://github.com"
+            href="https://github.com/skillshq/ai-at-skills"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-foreground/60 hover:text-foreground hover:underline"

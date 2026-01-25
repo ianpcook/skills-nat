@@ -29,21 +29,25 @@ export async function GET(request: NextRequest) {
 
     console.log(`[ADMIN SUBMISSIONS] Status filter: ${statusFilter || 'all'}`);
 
-    // Build query
-    let query = db
-      .select()
-      .from(submissions)
-      .orderBy(desc(submissions.submittedAt));
-
-    if (statusFilter && ['pending', 'approved', 'rejected'].includes(statusFilter)) {
-      query = db
-        .select()
-        .from(submissions)
-        .where(eq(submissions.status, statusFilter))
-        .orderBy(desc(submissions.submittedAt));
+    if (!db) {
+      console.error('[ADMIN SUBMISSIONS] Database not initialized');
+      return NextResponse.json(
+        { error: 'Database not available' },
+        { status: 503 }
+      );
     }
 
-    const results = await query;
+    // Build query with optional status filter
+    const baseQuery = db
+      .select()
+      .from(submissions);
+
+    const results = statusFilter && ['pending', 'approved', 'rejected'].includes(statusFilter)
+      ? await baseQuery
+          .where(eq(submissions.status, statusFilter))
+          .orderBy(desc(submissions.submittedAt))
+      : await baseQuery
+          .orderBy(desc(submissions.submittedAt));
     console.log(`[ADMIN SUBMISSIONS] Found ${results.length} submissions`);
 
     return NextResponse.json({

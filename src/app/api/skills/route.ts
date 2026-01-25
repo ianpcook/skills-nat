@@ -69,24 +69,17 @@ export async function GET(request: NextRequest) {
     const total = Number(countResult[0]?.count || 0);
 
     // Fetch skills with pagination
-    let query = db
+    const whereClause = conditions.length > 1
+      ? sql`${conditions.reduce((a, b) => sql`${a} AND ${b}`)}`
+      : conditions[0];
+
+    const results = await db
       .select()
       .from(skills)
+      .where(whereClause)
       .orderBy(desc(skills.stars), desc(skills.approvedAt))
       .limit(limit)
       .offset(offset);
-
-    if (conditions.length > 0) {
-      query = db
-        .select()
-        .from(skills)
-        .where(conditions.length > 1 ? sql`${conditions.reduce((a, b) => sql`${a} AND ${b}`)}` : conditions[0])
-        .orderBy(desc(skills.stars), desc(skills.approvedAt))
-        .limit(limit)
-        .offset(offset);
-    }
-
-    const results = await query;
 
     console.log(`[SKILLS API] Found ${results.length} skills (total: ${total})`);
 

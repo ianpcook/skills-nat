@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 
@@ -14,18 +15,26 @@ export function CTASection() {
         </p>
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button
+            asChild
             size="lg"
             className="w-full bg-foreground px-8 text-background hover:bg-foreground/90 sm:w-auto"
           >
-            Submit Your Skill
+            <Link href="/submit">Submit Your Skill</Link>
           </Button>
           <Button
+            asChild
             variant="outline"
             size="lg"
             className="w-full border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background sm:w-auto"
           >
-            <Github className="mr-2 h-4 w-4" />
-            Star on GitHub
+            <Link
+              href="https://github.com/skillshq/ai-at-skills"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Github className="mr-2 h-4 w-4" />
+              Star on GitHub
+            </Link>
           </Button>
         </div>
       </div>

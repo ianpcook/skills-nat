@@ -23,25 +23,23 @@ export function Header() {
             >
               Home
             </Link>
-            {/* TODO: /search page doesn't exist yet - currently using /skills for browsing */}
             <Link
-              href="/search"
+              href="/skills"
               className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
             >
-              Search
+              Browse
             </Link>
-            {/* TODO: /faves page doesn't exist yet - needs user favorites functionality */}
             <Link
-              href="/faves"
+              href="/submit"
               className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
             >
-              Faves
+              Submit
             </Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">
           <Link
-            href="https://github.com"
+            href="https://github.com/skillshq/ai-at-skills"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground hover:opacity-70"
@@ -49,9 +47,10 @@ export function Header() {
             <Github className="h-5 w-5" />
             <span className="sr-only">GitHub</span>
           </Link>
-          {/* TODO: /docs page doesn't exist yet */}
           <Link
-            href="/docs"
+            href="https://github.com/skillshq/ai-at-skills#readme"
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
           >
             Docs
