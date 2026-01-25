@@ -1,37 +1,41 @@
 import Link from "next/link";
 
-export default function Footer() {
+export function Footer() {
   return (
     <footer className="border-t border-foreground/10 px-6 py-8">
-      <div className="container mx-auto flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="bg-foreground px-2 py-1">
-          <span className="font-serif text-sm font-bold text-background">
-            AI@Skills
-          </span>
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="logo-box">
+          <span>AI@Skills</span>
         </div>
         <nav className="flex items-center gap-6">
           <Link
-            href="/about"
-            className="text-sm text-foreground/60 hover:text-foreground hover:underline"
+            href="/skills"
+            className="text-sm text-foreground/60 transition-colors hover:text-foreground hover:underline"
           >
-            About
+            Browse Skills
           </Link>
           <Link
-            href="/docs"
-            className="text-sm text-foreground/60 hover:text-foreground hover:underline"
+            href="/submit"
+            className="text-sm text-foreground/60 transition-colors hover:text-foreground hover:underline"
           >
-            Documentation
+            Submit
           </Link>
           <Link
-            href="https://github.com"
+            href="https://github.com/ai-at-skills"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-foreground/60 hover:text-foreground hover:underline"
+            className="text-sm text-foreground/60 transition-colors hover:text-foreground hover:underline"
           >
             GitHub
           </Link>
         </nav>
+        <p className="text-xs text-foreground/40">
+          © {new Date().getFullYear()} AI@Skills. Open source.
+        </p>
       </div>
     </footer>
   );
 }
+
+// Also export as default for compatibility
+export default Footer;

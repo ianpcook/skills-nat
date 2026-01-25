@@ -3,7 +3,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Loader2, LogOut, FileText } from 'lucide-react';
 import { signOut, useSession } from '@/lib/auth-client';
+import { Button } from '@/components/ui/button';
 
 export default function AdminSubmissionsLayout({
   children,
@@ -28,8 +30,8 @@ export default function AdminSubmissionsLayout({
 
   if (isPending) {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary)]"></div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-foreground" />
       </div>
     );
   }
@@ -39,39 +41,40 @@ export default function AdminSubmissionsLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="min-h-screen bg-background">
       {/* Admin Header */}
-      <header className="border-b border-[var(--border)] bg-[var(--card)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <header className="border-b border-foreground/20 bg-card">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
-              <Link
-                href="/"
-                className="text-xl font-bold text-[var(--foreground)] hover:text-[var(--primary)] transition-colors"
-              >
-                AI@Skills
+              <Link href="/" className="logo-box">
+                <span>AI@Skills</span>
               </Link>
-              <span className="text-[var(--text-muted)]">/</span>
-              <span className="text-[var(--primary)] font-medium">Admin</span>
+              <span className="text-foreground/40">/</span>
+              <span className="font-medium text-foreground">Admin</span>
             </div>
 
             <nav className="flex items-center gap-6">
               <Link
                 href="/admin/submissions"
-                className="text-[var(--foreground)] hover:text-[var(--primary)] transition-colors"
+                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
               >
+                <FileText className="h-4 w-4" />
                 Submissions
               </Link>
               <div className="flex items-center gap-4">
-                <span className="text-sm text-[var(--text-muted)]">
+                <span className="text-sm text-foreground/50">
                   {session.user.email}
                 </span>
-                <button
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleSignOut}
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
+                  className="btn-outline gap-2"
                 >
+                  <LogOut className="h-4 w-4" />
                   Sign Out
-                </button>
+                </Button>
               </div>
             </nav>
           </div>
@@ -79,7 +82,7 @@ export default function AdminSubmissionsLayout({
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>

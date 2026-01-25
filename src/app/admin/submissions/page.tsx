@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Loader2, ArrowRight, FileText, Inbox } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type { Submission, SubmissionStatus } from '@/db/schema';
 
 type StatusFilter = SubmissionStatus | 'all';
 
-const statusColors: Record<SubmissionStatus, { bg: string; text: string }> = {
-  pending: { bg: 'bg-yellow-500/10', text: 'text-yellow-400' },
-  approved: { bg: 'bg-green-500/10', text: 'text-green-400' },
-  rejected: { bg: 'bg-red-500/10', text: 'text-red-400' },
+const statusStyles: Record<SubmissionStatus, string> = {
+  pending: 'border-yellow-600 bg-yellow-500/10 text-yellow-700',
+  approved: 'border-green-600 bg-green-500/10 text-green-700',
+  rejected: 'border-red-600 bg-red-500/10 text-red-700',
 };
 
 export default function AdminSubmissionsPage() {
@@ -64,60 +67,61 @@ export default function AdminSubmissionsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">Submissions</h1>
+      {/* Header */}
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="section-title">Submissions</h1>
 
         {/* Status Filter */}
         <div className="flex items-center gap-2">
           {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
-            <button
+            <Button
               key={status}
+              variant={statusFilter === status ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setStatusFilter(status)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === status
-                  ? 'bg-[var(--primary)] text-[var(--background)]'
-                  : 'bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--card-hover)]'
-              }`}
+              className={statusFilter === status ? 'btn-primary' : 'btn-outline'}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
+      {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary)]"></div>
+          <Loader2 className="h-8 w-8 animate-spin text-foreground" />
         </div>
       ) : error ? (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400">
+        <div className="border border-destructive/20 bg-destructive/10 p-4 text-destructive">
           {error}
         </div>
       ) : submissions.length === 0 ? (
-        <div className="text-center py-12 text-[var(--text-muted)]">
-          No submissions found
+        <div className="py-12 text-center">
+          <Inbox className="mx-auto mb-4 h-12 w-12 text-foreground/30" />
+          <p className="text-foreground/50">No submissions found</p>
         </div>
       ) : (
-        <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] overflow-hidden">
+        <div className="overflow-hidden border border-foreground/20 bg-card">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[var(--border)]">
-                <th className="text-left px-6 py-4 text-sm font-medium text-[var(--text-muted)]">
+              <tr className="border-b border-foreground/10">
+                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
                   Name
                 </th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-[var(--text-muted)]">
+                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
                   Version
                 </th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-[var(--text-muted)]">
+                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
                   Status
                 </th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-[var(--text-muted)]">
+                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
                   Submitted
                 </th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-[var(--text-muted)]">
+                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
                   Files
                 </th>
-                <th className="text-right px-6 py-4 text-sm font-medium text-[var(--text-muted)]">
+                <th className="px-6 py-4 text-right text-sm font-medium text-foreground/60">
                   Actions
                 </th>
               </tr>
@@ -126,40 +130,40 @@ export default function AdminSubmissionsPage() {
               {submissions.map((submission) => (
                 <tr
                   key={submission.id}
-                  className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--card-hover)] transition-colors"
+                  className="border-b border-foreground/10 transition-colors last:border-b-0 hover:bg-background/50"
                 >
                   <td className="px-6 py-4">
-                    <div className="font-medium text-[var(--foreground)]">
+                    <div className="font-medium text-card-foreground">
                       {submission.name}
                     </div>
-                    <div className="text-sm text-[var(--text-muted)]">
+                    <div className="text-sm text-foreground/50">
                       {submission.slug}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-[var(--text-secondary)]">
+                  <td className="px-6 py-4 text-foreground/70">
                     {submission.version}
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                        statusColors[submission.status].bg
-                      } ${statusColors[submission.status].text}`}
-                    >
+                    <Badge className={statusStyles[submission.status]}>
                       {submission.status}
-                    </span>
+                    </Badge>
                   </td>
-                  <td className="px-6 py-4 text-sm text-[var(--text-muted)]">
+                  <td className="px-6 py-4 text-sm text-foreground/50">
                     {formatDate(submission.submittedAt)}
                   </td>
-                  <td className="px-6 py-4 text-[var(--text-secondary)]">
-                    {submission.files?.length || 0} file{(submission.files?.length || 0) !== 1 ? 's' : ''}
+                  <td className="px-6 py-4 text-foreground/70">
+                    <span className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      {submission.files?.length || 0}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Link
                       href={`/admin/submissions/${submission.id}`}
-                      className="text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:underline"
                     >
-                      View &rarr;
+                      View
+                      <ArrowRight className="h-4 w-4" />
                     </Link>
                   </td>
                 </tr>

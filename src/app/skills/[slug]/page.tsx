@@ -1,267 +1,280 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import skillsData from '@/data/skills.json';
-import { Skill } from '@/types';
-import AgentBadge from '@/components/AgentBadge';
+import { ArrowLeft, Star, Copy, Download, FileText, Code, Clock } from 'lucide-react';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/Footer';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { getAgentName, getAgentColor } from '@/lib/constants';
+import type { Skill, SubmissionFile } from '@/db/schema';
 
-interface SkillPageProps {
-  params: Promise<{
-    slug: string;
-  }>;
+interface SkillDetailPageProps {
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return (skillsData.skills as Skill[]).map((skill) => ({
-    slug: skill.slug,
-  }));
+async function getSkill(slug: string): Promise<Skill | null> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+  try {
+    const res = await fetch(`${baseUrl}/api/skills/${slug}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      if (res.status === 404) {
+        return null;
+      }
+      throw new Error('Failed to fetch skill');
+    }
+
+    const data = await res.json();
+    return data.skill;
+  } catch (error) {
+    console.error('Error fetching skill:', error);
+    return null;
+  }
 }
 
-export async function generateMetadata({ params }: SkillPageProps) {
+function FileIcon({ filename }: { filename: string }) {
+  const ext = filename.split('.').pop()?.toLowerCase();
+  if (['md', 'txt'].includes(ext || '')) {
+    return <FileText className="h-4 w-4" />;
+  }
+  return <Code className="h-4 w-4" />;
+}
+
+function CopyButton({ content, label }: { content: string; label: string }) {
+  return (
+    <button
+      onClick={() => navigator.clipboard.writeText(content)}
+      className="flex items-center gap-1 text-xs text-foreground/60 transition-colors hover:text-foreground"
+      title={`Copy ${label}`}
+    >
+      <Copy className="h-3 w-3" />
+      Copy
+    </button>
+  );
+}
+
+export default async function SkillDetailPage({ params }: SkillDetailPageProps) {
   const { slug } = await params;
-  const skill = (skillsData.skills as Skill[]).find((s) => s.slug === slug);
-  if (!skill) return { title: 'Skill Not Found' };
-
-  return {
-    title: `${skill.name} - AI@Skills`,
-    description: skill.description,
-  };
-}
-
-export default async function SkillPage({ params }: SkillPageProps) {
-  const { slug } = await params;
-  const skill = (skillsData.skills as Skill[]).find((s) => s.slug === slug);
+  const skill = await getSkill(slug);
 
   if (!skill) {
     notFound();
   }
 
-  const relatedSkills = (skillsData.skills as Skill[])
-    .filter((s) => s.category === skill.category && s.id !== skill.id)
-    .slice(0, 3);
+  const agentDisplayInfo = skill.agents.map((agentId) => ({
+    id: agentId,
+    name: getAgentName(agentId),
+    color: getAgentColor(agentId),
+  }));
+
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <nav className="mb-8">
-          <ol className="flex items-center gap-2 text-sm">
-            <li>
-              <Link href="/skills" className="text-[#bfbfbf] hover:text-[#f5f0e6] transition-colors">
-                Skills
-              </Link>
-            </li>
-            <li className="text-[#807c73]">/</li>
-            <li className="text-[#f5f0e6]">{skill.name}</li>
-          </ol>
-        </nav>
+    <div className="min-h-screen bg-background text-foreground">
+      <Header />
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Header */}
-            <div className="bg-[#1d1e1f] border border-[#2a2520] rounded-2xl p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">{skill.name}</h1>
-                  <p className="text-[#bfbfbf]">
-                    by{' '}
-                    <a
-                      href={skill.authorUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#ffbc20] hover:text-[#ffd980] transition-colors"
-                    >
-                      {skill.author}
-                    </a>
-                  </p>
+      <main className="section">
+        <div className="section-inner">
+          {/* Back Link */}
+          <Link
+            href="/skills"
+            className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Skills
+          </Link>
+
+          {/* Skill Header */}
+          <div className="mb-10 border-b border-foreground/10 pb-10">
+            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+              <div className="flex-1">
+                <h1 className="section-title-lg mb-2">{skill.name}</h1>
+                <p className="mb-4 text-foreground/70">
+                  by <span className="font-medium text-foreground">{skill.author || 'Unknown'}</span>
+                </p>
+                <p className="body-text max-w-2xl">
+                  {skill.description || 'No description available'}
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 text-foreground/70">
+                    <Star className="h-5 w-5 fill-current" />
+                    <span className="font-medium">{skill.stars}</span>
+                  </div>
+                  <Badge variant="outline" className="border-foreground/20 text-foreground">
+                    {skill.version}
+                  </Badge>
                 </div>
-                {skill.featured && (
-                  <span className="px-3 py-1 bg-gradient-to-r from-[#ffbc20] to-[#ffd980] rounded-full text-sm font-medium text-[#1a160d]">
-                    Featured
-                  </span>
-                )}
-              </div>
 
-              <p className="text-[#e4e4e7] text-lg leading-relaxed mb-6">
-                {skill.description}
-              </p>
-
-              {/* Install Command */}
-              <div className="bg-[#1a160d] border border-[#2a2520] rounded-xl p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-[#807c73]">Install</span>
-                  <button className="text-xs text-[#ffbc20] hover:text-[#ffd980] transition-colors">
-                    Copy
-                  </button>
+                {/* Install Command */}
+                <div className="terminal mt-2">
+                  <div className="terminal-header">
+                    <span className="terminal-dot bg-red-500" />
+                    <span className="terminal-dot bg-yellow-500" />
+                    <span className="terminal-dot bg-green-500" />
+                  </div>
+                  <div className="terminal-content flex items-center justify-between gap-4">
+                    <code className="text-sm">
+                      npx skills add {skill.author || 'community'}/{skill.slug}
+                    </code>
+                    <CopyButton
+                      content={`npx skills add ${skill.author || 'community'}/${skill.slug}`}
+                      label="install command"
+                    />
+                  </div>
                 </div>
-                <code className="text-sm text-[#ffd980] font-mono">
-                  npx skills add {skill.author}/{skill.slug}
-                </code>
               </div>
             </div>
+          </div>
 
-            {/* Supported Agents */}
-            <div className="bg-[#1d1e1f] border border-[#2a2520] rounded-2xl p-8">
-              <h2 className="text-xl font-semibold mb-4">Supported Agents</h2>
-              <div className="flex flex-wrap gap-3">
-                {skill.agents.map((agentId) => (
-                  <AgentBadge key={agentId} agentId={agentId} size="md" />
-                ))}
-              </div>
-            </div>
+          <div className="grid gap-10 lg:grid-cols-3">
+            {/* Main Content - Files */}
+            <div className="lg:col-span-2">
+              <h2 className="section-title mb-6">Files</h2>
 
-            {/* Tags */}
-            <div className="bg-[#1d1e1f] border border-[#2a2520] rounded-2xl p-8">
-              <h2 className="text-xl font-semibold mb-4">Tags</h2>
-              <div className="flex flex-wrap gap-2">
-                {skill.tags.map((tag) => (
-                  <Link
-                    key={tag}
-                    href={`/skills?q=${encodeURIComponent(tag)}`}
-                    className="px-3 py-1.5 bg-[#2a2520] hover:bg-[#3a3530] rounded-lg text-sm text-[#bfbfbf] transition-colors"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Related Skills */}
-            {relatedSkills.length > 0 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Related Skills</h2>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  {relatedSkills.map((related) => (
-                    <Link
-                      key={related.id}
-                      href={`/skills/${related.slug}`}
-                      className="bg-[#1d1e1f] border border-[#2a2520] rounded-xl p-4 hover:border-[#ffbc20]/50 transition-colors"
+              {skill.files && skill.files.length > 0 ? (
+                <div className="space-y-4">
+                  {skill.files.map((file: SubmissionFile) => (
+                    <div
+                      key={file.name}
+                      className="border border-foreground/20 bg-card"
                     >
-                      <h3 className="font-medium mb-1">{related.name}</h3>
-                      <p className="text-sm text-[#807c73] line-clamp-2">
-                        {related.shortDescription}
-                      </p>
-                    </Link>
+                      <div className="flex items-center justify-between border-b border-foreground/10 px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <FileIcon filename={file.name} />
+                          <span className="font-mono text-sm font-medium text-card-foreground">
+                            {file.name}
+                          </span>
+                          {file.name.toLowerCase() === 'skill.md' && (
+                            <Badge className="border-foreground bg-foreground text-background">
+                              Main
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="text-xs text-foreground/50">
+                            {file.size < 1024
+                              ? `${file.size} B`
+                              : `${(file.size / 1024).toFixed(1)} KB`}
+                          </span>
+                          <CopyButton content={file.content} label={file.name} />
+                        </div>
+                      </div>
+                      <div className="max-h-96 overflow-auto bg-foreground/5 p-4">
+                        <pre className="whitespace-pre-wrap font-mono text-sm text-card-foreground">
+                          {file.content}
+                        </pre>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="border border-foreground/20 bg-card p-8 text-center">
+                  <FileText className="mx-auto mb-4 h-12 w-12 text-foreground/30" />
+                  <p className="text-foreground/60">No files available</p>
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar - Details */}
+            <div className="space-y-6">
+              {/* Agents */}
+              <div className="border border-foreground/20 bg-card p-6">
+                <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
+                  Compatible Agents
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {agentDisplayInfo.map((agent) => (
+                    <Badge
+                      key={agent.id}
+                      variant="outline"
+                      className="border-foreground/20 bg-background text-foreground"
+                      style={{ borderLeftColor: agent.color, borderLeftWidth: 3 }}
+                    >
+                      {agent.name}
+                    </Badge>
                   ))}
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Actions */}
-            <div className="bg-[#1d1e1f] border border-[#2a2520] rounded-2xl p-6">
-              <a
-                href={skill.repoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-[#ffbc20] to-[#ffd980] hover:from-[#ffd980] hover:to-[#ffecbf] rounded-lg font-medium text-[#1a160d] transition-all glow-hover mb-3"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    fillRule="evenodd"
-                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                View on GitHub
-              </a>
-              <a
-                href={`${skill.repoUrl}/issues`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#2a2520] hover:bg-[#3a3530] rounded-lg font-medium transition-colors"
-              >
-                Report Issue
-              </a>
-            </div>
-
-            {/* Stats */}
-            <div className="bg-[#1d1e1f] border border-[#2a2520] rounded-2xl p-6">
-              <h3 className="text-sm text-[#807c73] uppercase tracking-wider mb-4">Stats</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#bfbfbf]">Downloads</span>
-                  <span className="font-medium">{skill.downloads.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#bfbfbf]">Stars</span>
-                  <span className="flex items-center gap-1 font-medium">
-                    <svg className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                    {skill.stars}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#bfbfbf]">Version</span>
-                  <span className="font-mono text-sm bg-[#2a2520] px-2 py-0.5 rounded">
-                    v{skill.version}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Info */}
-            <div className="bg-[#1d1e1f] border border-[#2a2520] rounded-2xl p-6">
-              <h3 className="text-sm text-[#807c73] uppercase tracking-wider mb-4">Info</h3>
-              <div className="space-y-4 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#bfbfbf]">Category</span>
-                  <Link
-                    href={`/skills?category=${skill.category.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="text-[#ffbc20] hover:text-[#ffd980] transition-colors"
-                  >
-                    {skill.category}
-                  </Link>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#bfbfbf]">Created</span>
-                  <span className="text-[#f5f0e6]">
-                    {new Date(skill.createdAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#bfbfbf]">Updated</span>
-                  <span className="text-[#f5f0e6]">
-                    {new Date(skill.updatedAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Author */}
-            <div className="bg-[#1d1e1f] border border-[#2a2520] rounded-2xl p-6">
-              <h3 className="text-sm text-[#807c73] uppercase tracking-wider mb-4">Author</h3>
-              <a
-                href={skill.authorUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 group"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-[#ffbc20] to-[#ffd980] rounded-full flex items-center justify-center text-[#1a160d] font-medium">
-                  {skill.author[0].toUpperCase()}
-                </div>
-                <div>
-                  <div className="font-medium group-hover:text-[#ffbc20] transition-colors">
-                    {skill.author}
+              {/* Details */}
+              <div className="border border-foreground/20 bg-card p-6">
+                <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
+                  Details
+                </h3>
+                <dl className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <dt className="text-foreground/60">Category</dt>
+                    <dd className="font-medium text-card-foreground">
+                      {skill.category || 'Uncategorized'}
+                    </dd>
                   </div>
-                  <div className="text-sm text-[#807c73]">View profile</div>
+                  <div className="flex justify-between">
+                    <dt className="text-foreground/60">Version</dt>
+                    <dd className="font-medium text-card-foreground">{skill.version}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-foreground/60">Stars</dt>
+                    <dd className="font-medium text-card-foreground">{skill.stars}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-foreground/60">Added</dt>
+                    <dd className="font-medium text-card-foreground">
+                      {formatDate(skill.approvedAt)}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-foreground/60">Updated</dt>
+                    <dd className="font-medium text-card-foreground">
+                      {formatDate(skill.updatedAt)}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              {/* Actions */}
+              <div className="border border-foreground/20 bg-card p-6">
+                <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
+                  Actions
+                </h3>
+                <div className="space-y-3">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 border-foreground/20"
+                    onClick={() => {
+                      // Download all files as a zip (future feature)
+                    }}
+                  >
+                    <Download className="h-4 w-4" />
+                    Download Files
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 border-foreground/20"
+                  >
+                    <Star className="h-4 w-4" />
+                    Star This Skill
+                  </Button>
                 </div>
-              </a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

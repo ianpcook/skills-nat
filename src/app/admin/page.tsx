@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { signIn, useSession } from '@/lib/auth-client';
+import { Button } from '@/components/ui/button';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -50,8 +53,8 @@ export default function AdminLoginPage() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary)]"></div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-foreground" />
       </div>
     );
   }
@@ -61,22 +64,27 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">Admin Login</h1>
-          <p className="text-[var(--text-muted)]">Sign in to review skill submissions</p>
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <div className="logo-box mx-auto mb-6 inline-block">
+            <span>AI@Skills</span>
+          </div>
+          <h1 className="section-title mb-2">Admin Login</h1>
+          <p className="text-foreground/70">Sign in to review skill submissions</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-[var(--card)] rounded-xl p-6 border border-[var(--border)]">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="border border-foreground/20 bg-card p-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+            <div className="mb-4 border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
 
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-card-foreground">
               Email
             </label>
             <input
@@ -85,13 +93,13 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] transition-colors"
+              className="w-full border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder-foreground/40 transition-colors focus:border-foreground focus:outline-none"
               placeholder="admin@example.com"
             />
           </div>
 
           <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label htmlFor="password" className="mb-2 block text-sm font-medium text-card-foreground">
               Password
             </label>
             <input
@@ -100,31 +108,36 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] transition-colors"
+              className="w-full border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder-foreground/40 transition-colors focus:border-foreground focus:outline-none"
               placeholder="Enter your password"
             />
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-[var(--primary)] text-[var(--background)] font-medium rounded-lg hover:bg-[var(--primary-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-3"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-current"></span>
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Signing in...
               </span>
             ) : (
               'Sign In'
             )}
-          </button>
+          </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-[var(--text-muted)]">
-          <a href="/" className="text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors">
-            &larr; Back to home
-          </a>
+        {/* Back Link */}
+        <p className="mt-6 text-center">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
         </p>
       </div>
     </div>
