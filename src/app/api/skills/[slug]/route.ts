@@ -6,6 +6,15 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
+  // Handle case where database is not available
+  if (!db) {
+    console.warn('[API] Database not available');
+    return NextResponse.json(
+      { error: 'Skill not found' },
+      { status: 404 }
+    );
+  }
+
   try {
     const { slug } = await params;
 

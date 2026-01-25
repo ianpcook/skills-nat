@@ -8,6 +8,21 @@ const MAX_PAGE_SIZE = 100;
 export async function GET(request: NextRequest) {
   console.log('[SKILLS API] Fetching approved skills');
 
+  // Handle case where database is not available
+  if (!db) {
+    console.warn('[SKILLS API] Database not available - returning empty result');
+    return NextResponse.json({
+      skills: [],
+      pagination: {
+        page: 1,
+        limit: DEFAULT_PAGE_SIZE,
+        total: 0,
+        totalPages: 0,
+        hasMore: false,
+      },
+    });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
 

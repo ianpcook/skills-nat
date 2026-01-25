@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, submissions, type SubmissionFile } from '@/db';
+import { db } from '@/db';
+import { submissions, type SubmissionFile } from '@/db/schema';
 
 interface SkillFrontmatter {
   name?: string;
@@ -51,6 +52,15 @@ const parseFrontmatter = (content: string): SkillFrontmatter => {
 
 export async function POST(request: NextRequest) {
   console.log('[SUBMIT] Received submission request');
+
+  // Handle case where database is not available
+  if (!db) {
+    console.warn('[SUBMIT] Database not available');
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503 }
+    );
+  }
 
   try {
     const formData = await request.formData();

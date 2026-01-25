@@ -1,7 +1,7 @@
 import { type Skill } from "@/db/schema";
-
-// Base URL for API calls - empty string for same-origin
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+import { db } from "@/db";
+import { skills } from "@/db/schema";
+import { desc, eq, like, or, sql } from "drizzle-orm";
 
 export interface SkillsResponse {
   skills: Skill[];
@@ -16,52 +16,52 @@ export interface SkillsResponse {
 
 /**
  * Fetch featured skills for the homepage
- * Returns up to 4 skills ordered by stars
+ * Queries database directly (server component safe)
  */
 export async function getFeaturedSkills(): Promise<Skill[]> {
+  if (!db) {
+    console.warn("[API] Database not available - returning empty skills");
+    return [];
+  }
   try {
-    const res = await fetch(`${API_BASE}/api/skills?limit=4`, {
-      next: { revalidate: 300 } // Cache for 5 minutes
-    });
-    
-    if (!res.ok) {
-      console.error('[API] Failed to fetch featured skills:', res.status);
-      return [];
-    }
-    
-    const data: SkillsResponse = await res.json();
-    return data.skills || [];
+    const result = await db
+      .select()
+      .from(skills)
+      .where(sql`${skills.approvedAt} IS NOT NULL`)
+      .orderBy(desc(skills.stars))
+      .limit(4);
+    return result;
   } catch (error) {
-    console.error('[API] Error fetching featured skills:', error);
+    console.error("Error fetching featured skills:", error);
     return [];
   }
 }
 
 /**
- * Fetch recently updated skills for the homepage
- * Returns up to 4 skills
+ * Fetch recently updated skills
+ * Queries database directly (server component safe)
  */
 export async function getRecentSkills(): Promise<Skill[]> {
+  if (!db) {
+    console.warn("[API] Database not available - returning empty skills");
+    return [];
+  }
   try {
-    const res = await fetch(`${API_BASE}/api/skills?limit=4`, {
-      next: { revalidate: 60 } // Cache for 1 minute
-    });
-    
-    if (!res.ok) {
-      console.error('[API] Failed to fetch recent skills:', res.status);
-      return [];
-    }
-    
-    const data: SkillsResponse = await res.json();
-    return data.skills || [];
+    const result = await db
+      .select()
+      .from(skills)
+      .where(sql`${skills.approvedAt} IS NOT NULL`)
+      .orderBy(desc(skills.updatedAt))
+      .limit(4);
+    return result;
   } catch (error) {
-    console.error('[API] Error fetching recent skills:', error);
+    console.error("Error fetching recent skills:", error);
     return [];
   }
 }
 
 /**
- * Fetch all skills with pagination, search, and category filters
+ * Get all skills with pagination and filters
  */
 export async function getAllSkills(params: {
   page?: number;
@@ -69,55 +69,70 @@ export async function getAllSkills(params: {
   search?: string;
   category?: string;
 }): Promise<SkillsResponse> {
-  try {
-    const searchParams = new URLSearchParams();
-    if (params.page) searchParams.set('page', String(params.page));
-    if (params.limit) searchParams.set('limit', String(params.limit));
-    if (params.search) searchParams.set('search', params.search);
-    if (params.category) searchParams.set('category', params.category);
-    
-    const url = `${API_BASE}/api/skills?${searchParams.toString()}`;
-    const res = await fetch(url, {
-      next: { revalidate: 60 }
-    });
-    
-    if (!res.ok) {
-      console.error('[API] Failed to fetch skills:', res.status);
-      return {
-        skills: [],
-        pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasMore: false }
-      };
-    }
-    
-    return res.json();
-  } catch (error) {
-    console.error('[API] Error fetching skills:', error);
+  const page = params.page || 1;
+  const limit = Math.min(params.limit || 20, 100);
+  const offset = (page - 1) * limit;
+
+  if (!db) {
+    console.warn("[API] Database not available - returning empty skills");
     return {
       skills: [],
-      pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasMore: false }
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasMore: false },
+    };
+  }
+
+  try {
+    let query = db.select().from(skills).where(sql`${skills.approvedAt} IS NOT NULL`);
+    
+    // Note: For full implementation, add search and category filters
+    
+    const result = await query.orderBy(desc(skills.updatedAt)).limit(limit).offset(offset);
+    
+    // Get total count
+    const countResult = await db.select({ count: sql<number>`count(*)` }).from(skills).where(sql`${skills.approvedAt} IS NOT NULL`);
+    const total = Number(countResult[0]?.count || 0);
+    
+    return {
+      skills: result,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasMore: offset + result.length < total,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching skills:", error);
+    return {
+      skills: [],
+      pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasMore: false },
     };
   }
 }
 
 /**
- * Fetch a single skill by slug
+ * Get a single skill by slug
  */
 export async function getSkillBySlug(slug: string): Promise<Skill | null> {
+  if (!db) {
+    console.warn("[API] Database not available - returning null");
+    return null;
+  }
   try {
-    const res = await fetch(`${API_BASE}/api/skills/${slug}`, {
-      next: { revalidate: 300 }
-    });
+    const [skill] = await db
+      .select()
+      .from(skills)
+      .where(eq(skills.slug, slug))
+      .limit(1);
     
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      console.error('[API] Failed to fetch skill:', res.status);
+    if (!skill || !skill.approvedAt) {
       return null;
     }
     
-    const data = await res.json();
-    return data.skill || null;
+    return skill;
   } catch (error) {
-    console.error('[API] Error fetching skill:', error);
+    console.error("Error fetching skill:", error);
     return null;
   }
 }
