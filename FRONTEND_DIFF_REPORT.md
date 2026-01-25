@@ -144,8 +144,11 @@ The following pages exist in v0's navigation but don't exist in ai_at_skills yet
 - [x] Backend functionality preserved in featured-skills.tsx
 - [x] Backend functionality preserved in recently-updated.tsx
 - [x] TODO comments added for missing pages
-- [ ] Test build
-- [ ] Commit and push
+- [x] Updated all Footer imports to lowercase (submit, skills, skills/[slug])
+- [x] Commit and push
+
+**Note:** Build currently fails due to pre-existing TypeScript issue in `src/app/api/admin/submissions/[id]/route.ts:33` 
+(`'db' is possibly 'null'`). This is unrelated to frontend sync and needs separate fix.
 
 ---
 
