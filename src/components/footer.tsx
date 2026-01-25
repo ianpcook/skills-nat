@@ -17,9 +17,7 @@ export function Footer() {
             Browse Skills
           </Link>
           <Link
-            href="https://github.com/skillshq/ai-at-skills#readme"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/docs"
             className="text-sm text-foreground/60 hover:text-foreground hover:underline"
           >
             Documentation

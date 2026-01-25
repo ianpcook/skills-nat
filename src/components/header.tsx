@@ -48,9 +48,7 @@ export function Header() {
             <span className="sr-only">GitHub</span>
           </Link>
           <Link
-            href="https://github.com/skillshq/ai-at-skills#readme"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/docs"
             className="bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
           >
             Docs
