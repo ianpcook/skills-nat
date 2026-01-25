@@ -3,6 +3,7 @@ import { db, submissions, skills, type SubmissionStatus } from '@/db';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
+import { indexSkill } from '@/lib/skill-indexer';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -152,7 +153,7 @@ export async function PATCH(
       if (existingSkill) {
         // Update existing skill
         console.log(`[ADMIN SUBMISSION] Updating existing skill: ${existingSkill.id}`);
-        await db
+        const [updatedSkill] = await db
           .update(skills)
           .set({
             name: existingSubmission.name,
@@ -163,7 +164,16 @@ export async function PATCH(
             approvedAt: new Date(),
             updatedAt: new Date(),
           })
-          .where(eq(skills.id, existingSkill.id));
+          .where(eq(skills.id, existingSkill.id))
+          .returning();
+
+        // Index for vector search
+        try {
+          await indexSkill(updatedSkill);
+        } catch (indexError) {
+          console.error('[ADMIN SUBMISSION] Failed to index skill:', indexError);
+          // Don't fail the approval if indexing fails
+        }
       } else {
         // Create new skill
         const [newSkill] = await db
@@ -180,6 +190,14 @@ export async function PATCH(
           .returning();
 
         console.log(`[ADMIN SUBMISSION] Created skill: ${newSkill.id}`);
+
+        // Index for vector search
+        try {
+          await indexSkill(newSkill);
+        } catch (indexError) {
+          console.error('[ADMIN SUBMISSION] Failed to index skill:', indexError);
+          // Don't fail the approval if indexing fails
+        }
       }
     }
 

@@ -21,6 +21,18 @@ function getAuth() {
       enabled: true,
       requireEmailVerification: false,
     },
+    socialProviders: {
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID || '',
+        clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+        // Map GitHub profile to our user fields
+        mapProfileToUser: (profile) => ({
+          name: profile.name || profile.login,
+          email: profile.email,
+          image: profile.avatar_url,
+        }),
+      },
+    },
     session: {
       expiresIn: 60 * 60 * 24 * 7, // 7 days
       updateAge: 60 * 60 * 24, // 1 day
