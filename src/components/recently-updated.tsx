@@ -1,47 +1,14 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { SkillCard, type Skill } from "@/components/skill-card";
+import { SkillCard, toDisplaySkill } from "@/components/skill-card";
+import { getRecentSkills } from "@/lib/api";
 
-const recentSkills: Skill[] = [
-  {
-    name: "Notion Workspace",
-    author: "notionhq",
-    description: "Manage Notion pages and databases",
-    stars: 412,
-    agents: ["Claude Code", "Cursor", "Codex"],
-    category: "Productivity",
-    version: "v1.8.0",
-  },
-  {
-    name: "AWS Cloud Manager",
-    author: "cloudops",
-    description: "Manage AWS cloud resources",
-    stars: 256,
-    agents: ["Claude Code", "Codex", "Antigravity"],
-    category: "Developer Tools",
-    version: "v1.2.0",
-  },
-  {
-    name: "Gmail & Email",
-    author: "mailcraft",
-    description: "Send, read, and organize emails",
-    stars: 678,
-    agents: ["Claude Code", "Cursor", "Clawdbot"],
-    category: "Communication",
-    version: "v3.0.1",
-  },
-  {
-    name: "Jira Project Manager",
-    author: "agileflow",
-    description: "Manage Jira issues and sprints",
-    stars: 289,
-    agents: ["Claude Code", "Cursor", "Codex"],
-    category: "Developer Tools",
-    version: "v2.0.0",
-  },
-];
+export async function RecentlyUpdated() {
+  const skills = await getRecentSkills();
+  
+  // Transform backend skills to frontend format
+  const displaySkills = skills.map(toDisplaySkill);
 
-export function RecentlyUpdated() {
   return (
     <section className="px-6 py-20 md:py-28">
       <div className="mx-auto max-w-6xl">
@@ -62,11 +29,26 @@ export function RecentlyUpdated() {
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {recentSkills.map((skill) => (
-            <SkillCard key={skill.name} skill={skill} />
-          ))}
-        </div>
+        
+        {displaySkills.length > 0 ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {displaySkills.map((skill) => (
+              <SkillCard key={skill.id || skill.name} skill={skill} />
+            ))}
+          </div>
+        ) : (
+          <div className="py-12 text-center">
+            <p className="text-foreground/60">No skills yet. The community is just getting started!</p>
+            <Link
+              href="/submit"
+              className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-foreground hover:underline"
+            >
+              Be the first to submit
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
+        
         <Link
           href="/skills"
           className="mt-8 flex items-center justify-center gap-1 text-sm font-medium text-foreground hover:underline md:hidden"

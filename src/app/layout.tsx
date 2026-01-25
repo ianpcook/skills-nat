@@ -1,43 +1,55 @@
-import type { Metadata } from "next";
-import { Instrument_Serif, Instrument_Sans } from "next/font/google";
-import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import React from "react"
+import type { Metadata } from 'next'
+import { Inter, Instrument_Serif, Geist_Mono } from 'next/font/google'
+import './globals.css'
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+const inter = Inter({ 
   subsets: ["latin"],
-  weight: "400",
+  variable: "--font-inter",
 });
-
-const instrumentSans = Instrument_Sans({
-  variable: "--font-instrument-sans",
+const instrumentSerif = Instrument_Serif({ 
+  subsets: ["latin"], 
+  weight: "400",
+  variable: "--font-instrument-serif",
+});
+const geistMono = Geist_Mono({ 
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
-  title: "AI@Skills - The Marketplace for AI Agent Skills",
-  description: "Discover and share skills for AI agents like Claude Code, Cursor, Codex, and more. Extend your AI assistant with community-built capabilities.",
-  keywords: ["AI skills", "Claude Code", "Cursor", "Codex", "AI agents", "skills marketplace"],
-};
+  title: 'AI@Skills - Skills for your AI agents, n\'at',
+  description: 'Discover, share, and install skills for Claude Code, Cursor, Codex, and more. Extend your AI assistant with powerful integrations built by the Pittsburgh community.',
+  keywords: ["AI skills", "Claude Code", "Cursor", "Codex", "AI agents", "skills marketplace", "Pittsburgh"],
+  icons: {
+    icon: [
+      {
+        url: '/icon-light-32x32.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark-32x32.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: '/apple-icon.png',
+  },
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${instrumentSerif.variable} ${instrumentSans.variable} antialiased min-h-screen flex flex-col`}
-      >
-        <Navigation />
-        <main className="flex-1 pt-16">
-          {children}
-        </main>
-        <Footer />
+    <html lang="en">
+      <body className={`${inter.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}>
+        {children}
       </body>
     </html>
-  );
+  )
 }

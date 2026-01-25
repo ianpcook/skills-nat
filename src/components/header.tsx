@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 
 export function Header() {
@@ -19,27 +18,27 @@ export function Header() {
           <nav className="hidden items-center gap-6 md:flex">
             <Link
               href="/"
-              className="text-sm font-medium text-foreground underline underline-offset-4"
+              className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
             >
               Home
             </Link>
             <Link
-              href="/search"
+              href="/skills"
               className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
             >
-              Search
+              Browse
             </Link>
             <Link
-              href="/faves"
+              href="/submit"
               className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
             >
-              Faves
+              Submit
             </Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">
           <Link
-            href="https://github.com"
+            href="https://github.com/ai-at-skills"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground hover:opacity-70"
@@ -48,10 +47,10 @@ export function Header() {
             <span className="sr-only">GitHub</span>
           </Link>
           <Link
-            href="/docs"
+            href="/submit"
             className="bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
           >
-            Docs
+            Submit Skill
           </Link>
         </div>
       </div>
