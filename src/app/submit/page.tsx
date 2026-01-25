@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight } from 'lucide-react';
 import { Header } from '@/components/header';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 

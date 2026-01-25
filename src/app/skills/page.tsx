@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { Search, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Header } from '@/components/header';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/footer';
 import { SkillCard, toDisplaySkill } from '@/components/skill-card';
 import { AGENTS, CATEGORIES } from '@/lib/constants';
 

@@ -5,7 +5,7 @@ import { WhatAreSkills } from "@/components/what-are-skills";
 import { FeaturedSkills } from "@/components/featured-skills";
 import { RecentlyUpdated } from "@/components/recently-updated";
 import { CTASection } from "@/components/cta-section";
-import Footer from "@/components/Footer";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   return (

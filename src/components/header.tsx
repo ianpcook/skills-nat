@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 
 export function Header() {
@@ -18,27 +19,29 @@ export function Header() {
           <nav className="hidden items-center gap-6 md:flex">
             <Link
               href="/"
-              className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
+              className="text-sm font-medium text-foreground underline underline-offset-4"
             >
               Home
             </Link>
+            {/* TODO: /search page doesn't exist yet - currently using /skills for browsing */}
             <Link
-              href="/skills"
+              href="/search"
               className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
             >
-              Browse
+              Search
             </Link>
+            {/* TODO: /faves page doesn't exist yet - needs user favorites functionality */}
             <Link
-              href="/submit"
+              href="/faves"
               className="text-sm font-medium text-foreground hover:underline hover:underline-offset-4"
             >
-              Submit
+              Faves
             </Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">
           <Link
-            href="https://github.com/ai-at-skills"
+            href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground hover:opacity-70"
@@ -46,11 +49,12 @@ export function Header() {
             <Github className="h-5 w-5" />
             <span className="sr-only">GitHub</span>
           </Link>
+          {/* TODO: /docs page doesn't exist yet */}
           <Link
-            href="/submit"
+            href="/docs"
             className="bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90"
           >
-            Submit Skill
+            Docs
           </Link>
         </div>
       </div>

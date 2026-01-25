@@ -1,6 +1,7 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Inter, Instrument_Serif, Geist_Mono } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 const inter = Inter({ 
@@ -20,6 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'AI@Skills - Skills for your AI agents, n\'at',
   description: 'Discover, share, and install skills for Claude Code, Cursor, Codex, and more. Extend your AI assistant with powerful integrations built by the Pittsburgh community.',
+  generator: 'v0.app',
   keywords: ["AI skills", "Claude Code", "Cursor", "Codex", "AI agents", "skills marketplace", "Pittsburgh"],
   icons: {
     icon: [
@@ -49,6 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}>
         {children}
+        <Analytics />
       </body>
     </html>
   )

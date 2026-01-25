@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Star, Copy, Download, FileText, Code, Clock } from 'lucide-react';
 import { Header } from '@/components/header';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getAgentName, getAgentColor } from '@/lib/constants';
