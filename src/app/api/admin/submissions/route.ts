@@ -3,6 +3,7 @@ import { db, submissions, type SubmissionStatus } from '@/db';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { desc, eq } from 'drizzle-orm';
+import { isAdminEmail } from '@/lib/admin';
 
 export async function GET(request: NextRequest) {
   console.log('[ADMIN SUBMISSIONS] Fetching submissions list');
@@ -21,7 +22,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log(`[ADMIN SUBMISSIONS] Authenticated user: ${session.user.email}`);
+    if (!isAdminEmail(session.user.email)) {
+      console.log(`[ADMIN SUBMISSIONS] Forbidden - not an admin: ${session.user.email}`);
+      return NextResponse.json(
+        { error: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
+    console.log(`[ADMIN SUBMISSIONS] Authenticated admin: ${session.user.email}`);
 
     // Get status filter from query params
     const { searchParams } = new URL(request.url);

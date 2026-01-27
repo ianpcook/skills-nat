@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '@/db';
+import * as authSchema from '@/db/auth-schema';
 
 let authInstance: ReturnType<typeof betterAuth> | null = null;
 
@@ -12,25 +13,32 @@ function getAuth() {
   }
 
   console.log('[AUTH] Initializing better-auth');
+  console.log('[AUTH] GOOGLE_CLIENT_ID present:', !!process.env.GOOGLE_CLIENT_ID);
+  console.log('[AUTH] GOOGLE_CLIENT_SECRET present:', !!process.env.GOOGLE_CLIENT_SECRET);
+
+  console.log('[AUTH] Configuring Google OAuth provider');
+  console.log('[AUTH] Client ID length:', process.env.GOOGLE_CLIENT_ID?.length);
+  console.log('[AUTH] Client Secret length:', process.env.GOOGLE_CLIENT_SECRET?.length);
+
+  const baseURL = process.env.BETTER_AUTH_URL || 'http://localhost:3000';
+  console.log('[AUTH] Base URL:', baseURL);
 
   authInstance = betterAuth({
+    baseURL,
+    basePath: '/api/auth',
     database: drizzleAdapter(db, {
       provider: 'pg',
+      schema: authSchema,
+      usePlural: true,
     }),
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
     },
     socialProviders: {
-      github: {
-        clientId: process.env.GITHUB_CLIENT_ID || '',
-        clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-        // Map GitHub profile to our user fields
-        mapProfileToUser: (profile) => ({
-          name: profile.name || profile.login,
-          email: profile.email,
-          image: profile.avatar_url,
-        }),
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       },
     },
     session: {
@@ -41,13 +49,16 @@ function getAuth() {
         maxAge: 60 * 5, // 5 minutes
       },
     },
-    trustedOrigins: [
-      process.env.BETTER_AUTH_URL || 'http://localhost:3000',
-    ],
+    trustedOrigins: [baseURL],
   });
 
   console.log('[AUTH] better-auth initialized successfully');
   return authInstance;
+}
+
+// Export auth getter function for use with toNextJsHandler
+export function getAuthInstance() {
+  return getAuth();
 }
 
 // Export auth as a getter that initializes on first access

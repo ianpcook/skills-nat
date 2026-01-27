@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
 import { indexSkill } from '@/lib/skill-indexer';
+import { isAdminEmail } from '@/lib/admin';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -28,7 +29,15 @@ export async function GET(
       );
     }
 
-    console.log(`[ADMIN SUBMISSION] Authenticated user: ${session.user.email}`);
+    if (!isAdminEmail(session.user.email)) {
+      console.log(`[ADMIN SUBMISSION] Forbidden - not an admin: ${session.user.email}`);
+      return NextResponse.json(
+        { error: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
+    console.log(`[ADMIN SUBMISSION] Authenticated admin: ${session.user.email}`);
 
     if (!db) {
       console.error('[ADMIN SUBMISSION] Database not initialized');
@@ -87,7 +96,15 @@ export async function PATCH(
       );
     }
 
-    console.log(`[ADMIN SUBMISSION] Authenticated user: ${session.user.email}`);
+    if (!isAdminEmail(session.user.email)) {
+      console.log(`[ADMIN SUBMISSION] Forbidden - not an admin: ${session.user.email}`);
+      return NextResponse.json(
+        { error: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
+    console.log(`[ADMIN SUBMISSION] Authenticated admin: ${session.user.email}`);
 
     if (!db) {
       console.error('[ADMIN SUBMISSION] Database not initialized');

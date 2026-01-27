@@ -15,12 +15,12 @@ export function Sprocket({ imageSrc }: { imageSrc: string }) {
         {/* Image clipped to diamond shape */}
         <image
           href={imageSrc}
-          x="0"
+          x="-150"
           y="0"
-          width="600"
-          height="500"
+          width="900"
+          height="750"
           clipPath="url(#diamondClip)"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="xMaxYMax slice"
         />
         
         {/* Diamond outline */}

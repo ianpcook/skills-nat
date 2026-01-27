@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Github } from "lucide-react";
+import { Github, KeyRound } from "lucide-react";
 
 export function Header() {
   return (
@@ -38,6 +38,14 @@ export function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          <Link
+            href="/admin"
+            className="text-foreground hover:opacity-70"
+            title="Admin"
+          >
+            <KeyRound className="h-5 w-5" />
+            <span className="sr-only">Admin</span>
+          </Link>
           <Link
             href="https://github.com/skillshq/ai-at-skills"
             target="_blank"

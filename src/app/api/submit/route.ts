@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { submissions, type SubmissionFile } from '@/db/schema';
+import { submissions, admins, type SubmissionFile } from '@/db/schema';
+import { notifyAdminsOfSubmission } from '@/lib/email';
 
 interface SkillFrontmatter {
   name?: string;
@@ -129,6 +130,25 @@ export async function POST(request: NextRequest) {
       .returning();
 
     console.log(`[SUBMIT] Submission created with id: ${submission.id}`);
+
+    // Notify admins (don't await - fire and forget)
+    (async () => {
+      try {
+        const adminList = await db.select({ email: admins.email }).from(admins);
+        const adminEmails = adminList.map(a => a.email);
+        
+        if (adminEmails.length > 0) {
+          await notifyAdminsOfSubmission({
+            skillName: name,
+            skillSlug: slug,
+            submissionId: submission.id,
+            adminEmails,
+          });
+        }
+      } catch (err) {
+        console.error('[SUBMIT] Failed to notify admins:', err);
+      }
+    })();
 
     return NextResponse.json({
       success: true,
