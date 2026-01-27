@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ChevronRight, FileText, Loader2, Check, X } from 'lucide-react';
+import { ArrowLeft, ChevronRight, FileText, Loader2, Check, X, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Submission, SubmissionStatus, SubmissionFile } from '@/db/schema';
@@ -101,6 +101,45 @@ export default function AdminSubmissionDetailPage({
       setError(err instanceof Error ? err.message : 'Failed to update');
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const handleDelete = async () => {
+    if (!submission) return;
+
+    console.log(`[SUBMISSION DETAIL] Deleting submission and skill: ${submission.slug}`);
+    setDeleting(true);
+
+    try {
+      // Delete the skill from the marketplace (if approved)
+      if (submission.status === 'approved') {
+        const skillRes = await fetch(`/api/skills/${submission.slug}/delete`, {
+          method: 'DELETE',
+        });
+        if (!skillRes.ok) {
+          console.warn('Failed to delete skill, may not exist');
+        }
+      }
+
+      // Delete the submission
+      const response = await fetch(`/api/admin/submissions/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete submission');
+      }
+
+      console.log(`[SUBMISSION DETAIL] Deleted successfully`);
+      router.push('/admin/submissions');
+    } catch (err) {
+      console.error('[SUBMISSION DETAIL] Error deleting:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete');
+      setDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -339,6 +378,52 @@ export default function AdminSubmissionDetailPage({
               </p>
             </div>
           )}
+
+          {/* Delete Action */}
+          <div className="border border-destructive/20 bg-card p-6">
+            <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
+              Danger Zone
+            </h3>
+            {showDeleteConfirm ? (
+              <div className="space-y-3">
+                <p className="text-sm text-destructive">
+                  Delete &quot;{submission.name}&quot;?
+                  {submission.status === 'approved' && ' This will also remove it from the marketplace.'}
+                  {' '}This cannot be undone.
+                </p>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="flex-1 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      'Yes, Delete'
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={deleting}
+                    variant="outline"
+                    className="flex-1 border-foreground/20"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                onClick={() => setShowDeleteConfirm(true)}
+                variant="outline"
+                className="w-full border-destructive/50 text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Submission
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

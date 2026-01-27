@@ -233,3 +233,78 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: RouteParams
+) {
+  const { id } = await params;
+  console.log(`[ADMIN SUBMISSION] Deleting submission: ${id}`);
+
+  try {
+    // Verify authentication
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      console.log('[ADMIN SUBMISSION] Unauthorized - no session');
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    if (!isAdminEmail(session.user.email)) {
+      console.log(`[ADMIN SUBMISSION] Forbidden - not an admin: ${session.user.email}`);
+      return NextResponse.json(
+        { error: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
+    console.log(`[ADMIN SUBMISSION] Authenticated admin: ${session.user.email}`);
+
+    if (!db) {
+      console.error('[ADMIN SUBMISSION] Database not initialized');
+      return NextResponse.json(
+        { error: 'Database not available' },
+        { status: 503 }
+      );
+    }
+
+    // Fetch submission first to check if it exists
+    const [existingSubmission] = await db
+      .select()
+      .from(submissions)
+      .where(eq(submissions.id, id))
+      .limit(1);
+
+    if (!existingSubmission) {
+      console.log(`[ADMIN SUBMISSION] Submission not found: ${id}`);
+      return NextResponse.json(
+        { error: 'Submission not found' },
+        { status: 404 }
+      );
+    }
+
+    // Delete the submission
+    await db
+      .delete(submissions)
+      .where(eq(submissions.id, id));
+
+    console.log(`[ADMIN SUBMISSION] Submission deleted: ${existingSubmission.name}`);
+
+    return NextResponse.json({
+      success: true,
+      message: `Submission "${existingSubmission.name}" deleted`,
+    });
+
+  } catch (error) {
+    console.error('[ADMIN SUBMISSION] Error deleting submission:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete submission' },
+      { status: 500 }
+    );
+  }
+}
