@@ -33,7 +33,9 @@ export async function FeaturedSkills() {
         {displaySkills.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {displaySkills.map((skill) => (
-              <SkillCard key={skill.id || skill.name} skill={skill} featured />
+              <Link key={skill.id || skill.name} href={`/skills/${skill.slug}`}>
+                <SkillCard skill={skill} featured />
+              </Link>
             ))}
           </div>
         ) : (

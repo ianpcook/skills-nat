@@ -47,7 +47,7 @@ export function Header() {
             <span className="sr-only">Admin</span>
           </Link>
           <Link
-            href="https://github.com/skillshq/ai-at-skills"
+            href="https://github.com/ianpcook/ai_at_skills"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground hover:opacity-70"
