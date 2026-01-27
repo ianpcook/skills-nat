@@ -56,7 +56,7 @@ function getAuth() {
         create: {
           before: async (user) => {
             console.log('[AUTH] Creating user:', user.email);
-            return user;
+            return { data: user };
           },
           after: async (user) => {
             console.log('[AUTH] User created:', user.id, user.email);
@@ -67,7 +67,7 @@ function getAuth() {
         create: {
           before: async (session) => {
             console.log('[AUTH] Creating session for user:', session.userId);
-            return session;
+            return { data: session };
           },
           after: async (session) => {
             console.log('[AUTH] Session created:', session.id);
@@ -78,7 +78,7 @@ function getAuth() {
         create: {
           before: async (account) => {
             console.log('[AUTH] Creating account:', account.providerId, 'for user:', account.userId);
-            return account;
+            return { data: account };
           },
           after: async (account) => {
             console.log('[AUTH] Account created:', account.id, account.providerId);
