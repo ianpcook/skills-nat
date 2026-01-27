@@ -259,13 +259,10 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                     <Download className="h-4 w-4" />
                     Download Files
                   </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 border-foreground/20"
-                  >
-                    <Star className="h-4 w-4" />
-                    Star This Skill
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-foreground/70">Vote:</span>
+                    <VoteButton slug={skill.slug} initialStars={skill.stars} size="sm" />
+                  </div>
                   <DeleteSkillButton slug={skill.slug} skillName={skill.name} />
                 </div>
               </div>
