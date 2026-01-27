@@ -4,6 +4,10 @@ import { desc } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
+  if (!db) {
+    return NextResponse.json({ error: 'Database not initialized' }, { status: 500 });
+  }
+  
   try {
     const recentUsers = await db.select({
       id: users.id,
