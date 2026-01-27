@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Copy, Download, FileText, Code, Clock } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Code, Clock } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DeleteSkillButton } from '@/components/delete-skill-button';
 import { VoteButton } from '@/components/vote-button';
+import { CopyButton } from '@/components/copy-button';
 import { getAgentName, getAgentColor } from '@/lib/constants';
 import type { Skill, SubmissionFile } from '@/db/schema';
 
@@ -45,18 +46,6 @@ function FileIcon({ filename }: { filename: string }) {
   return <Code className="h-4 w-4" />;
 }
 
-function CopyButton({ content, label }: { content: string; label: string }) {
-  return (
-    <button
-      onClick={() => navigator.clipboard.writeText(content)}
-      className="flex items-center gap-1 text-xs text-foreground/60 transition-colors hover:text-foreground"
-      title={`Copy ${label}`}
-    >
-      <Copy className="h-3 w-3" />
-      Copy
-    </button>
-  );
-}
 
 export default async function SkillDetailPage({ params }: SkillDetailPageProps) {
   const { slug } = await params;
