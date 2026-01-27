@@ -5,6 +5,7 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DeleteSkillButton } from '@/components/delete-skill-button';
 import { getAgentName, getAgentColor } from '@/lib/constants';
 import type { Skill, SubmissionFile } from '@/db/schema';
 
@@ -267,6 +268,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                     <Star className="h-4 w-4" />
                     Star This Skill
                   </Button>
+                  <DeleteSkillButton slug={skill.slug} skillName={skill.name} />
                 </div>
               </div>
             </div>

@@ -58,6 +58,22 @@ function getAuth() {
     advanced: {
       // Force secure cookies in production (HTTPS)
       useSecureCookies: isProduction,
+      // Ensure cookies work with OAuth redirects (cross-site)
+      crossSubDomainCookies: {
+        enabled: false,  // We're on a single domain
+      },
+    },
+    // Explicit cookie config to ensure OAuth state cookies work
+    cookies: {
+      sessionToken: {
+        name: 'better-auth.session_token',
+        options: {
+          httpOnly: true,
+          sameSite: 'lax',
+          path: '/',
+          secure: isProduction,
+        },
+      },
     },
     trustedOrigins: [baseURL, 'https://ai-at-skills.vercel.app'],
     // Log OAuth events for debugging (after hooks only to avoid breaking changes)
