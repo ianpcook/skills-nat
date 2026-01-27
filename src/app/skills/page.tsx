@@ -6,6 +6,9 @@ import { Footer } from '@/components/footer';
 import { SkillCard, toDisplaySkill } from '@/components/skill-card';
 import { AGENTS, CATEGORIES } from '@/lib/constants';
 
+// Force dynamic rendering to always fetch fresh skills data
+export const dynamic = 'force-dynamic';
+
 interface SkillsPageProps {
   searchParams: Promise<{
     page?: string;

@@ -8,6 +8,9 @@ import { CTASection } from "@/components/cta-section";
 import { Footer } from "@/components/footer";
 import { OAuthRedirectHandler } from "@/components/oauth-redirect-handler";
 
+// Force dynamic rendering to always fetch fresh skills data
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
