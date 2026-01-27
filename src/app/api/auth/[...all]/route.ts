@@ -12,7 +12,15 @@ console.log('[AUTH API] Handler created');
 // Wrap handlers to log errors
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
-  console.log('[AUTH API] GET request:', url.pathname, url.search);
+  const isCallback = url.pathname.includes('/callback/');
+  
+  console.log('[AUTH API] GET request:', url.pathname);
+  
+  if (isCallback) {
+    console.log('[AUTH API] OAuth callback detected');
+    console.log('[AUTH API] Query params:', Object.fromEntries(url.searchParams.entries()));
+    console.log('[AUTH API] Cookies present:', request.cookies.getAll().map(c => c.name).join(', '));
+  }
   
   try {
     const response = await baseGet(request);
@@ -21,7 +29,10 @@ export async function GET(request: NextRequest) {
     // Log Set-Cookie headers for debugging
     const setCookie = response?.headers?.get('set-cookie');
     if (setCookie) {
-      console.log('[AUTH API] Set-Cookie header present');
+      console.log('[AUTH API] Set-Cookie header present, length:', setCookie.length);
+      // Log cookie names being set (without values for security)
+      const cookieNames = setCookie.split(',').map(c => c.split('=')[0].trim());
+      console.log('[AUTH API] Cookies being set:', cookieNames);
     }
     
     // Log redirect location
@@ -30,9 +41,14 @@ export async function GET(request: NextRequest) {
       console.log('[AUTH API] Redirect location:', location);
     }
     
+    if (isCallback) {
+      console.log('[AUTH API] Callback response headers:', Object.fromEntries(response?.headers?.entries() || []));
+    }
+    
     return response;
   } catch (error) {
     console.error('[AUTH API] GET error:', error);
+    console.error('[AUTH API] Error stack:', (error as Error).stack);
     return NextResponse.json(
       { error: 'Internal auth error', message: String(error) },
       { status: 500 }

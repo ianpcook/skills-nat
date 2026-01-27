@@ -50,6 +50,42 @@ function getAuth() {
       },
     },
     trustedOrigins: [baseURL],
+    // Log OAuth events for debugging
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (user) => {
+            console.log('[AUTH] Creating user:', user.email);
+            return user;
+          },
+          after: async (user) => {
+            console.log('[AUTH] User created:', user.id, user.email);
+          },
+        },
+      },
+      session: {
+        create: {
+          before: async (session) => {
+            console.log('[AUTH] Creating session for user:', session.userId);
+            return session;
+          },
+          after: async (session) => {
+            console.log('[AUTH] Session created:', session.id);
+          },
+        },
+      },
+      account: {
+        create: {
+          before: async (account) => {
+            console.log('[AUTH] Creating account:', account.providerId, 'for user:', account.userId);
+            return account;
+          },
+          after: async (account) => {
+            console.log('[AUTH] Account created:', account.id, account.providerId);
+          },
+        },
+      },
+    },
   });
 
   console.log('[AUTH] better-auth initialized successfully');
