@@ -15,10 +15,10 @@ export async function RecentlyUpdated() {
         <div className="mb-10 flex items-end justify-between">
           <div>
             <h2 className="font-serif text-3xl font-bold text-foreground md:text-4xl">
-              Recently Updated
+              Latest Skills
             </h2>
             <p className="mt-2 text-foreground/70">
-              The latest skill updates from the community
+              Fresh additions from the community
             </p>
           </div>
           <Link

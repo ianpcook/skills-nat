@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Star, Copy, Download, FileText, Code, Clock } from 'lucide-react';
+import { ArrowLeft, Copy, Download, FileText, Code, Clock } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DeleteSkillButton } from '@/components/delete-skill-button';
+import { VoteButton } from '@/components/vote-button';
 import { getAgentName, getAgentColor } from '@/lib/constants';
 import type { Skill, SubmissionFile } from '@/db/schema';
 
@@ -110,10 +111,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
 
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1 text-foreground/70">
-                    <Star className="h-5 w-5 fill-current" />
-                    <span className="font-medium">{skill.stars}</span>
-                  </div>
+                  <VoteButton slug={skill.slug} initialStars={skill.stars} />
                   <Badge variant="outline" className="border-foreground/20 text-foreground">
                     {skill.version}
                   </Badge>
