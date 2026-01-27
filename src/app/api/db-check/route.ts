@@ -1,6 +1,5 @@
 import { db } from '@/db';
-import { users, sessions, accounts } from '@/db/auth-schema';
-import { desc } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -9,14 +8,14 @@ export async function GET() {
   }
   
   try {
-    const recentUsers = await db.select().from(users).orderBy(desc(users.createdAt)).limit(5);
-    const recentAccounts = await db.select().from(accounts).orderBy(desc(accounts.createdAt)).limit(5);
-    const recentSessions = await db.select().from(sessions).orderBy(desc(sessions.createdAt)).limit(5);
+    const usersResult = await db.execute(sql`SELECT id, email, created_at FROM users ORDER BY created_at DESC LIMIT 5`);
+    const accountsResult = await db.execute(sql`SELECT id, provider_id, user_id, created_at FROM accounts ORDER BY created_at DESC LIMIT 5`);
+    const sessionsResult = await db.execute(sql`SELECT id, user_id, expires_at, created_at FROM sessions ORDER BY created_at DESC LIMIT 5`);
 
     return NextResponse.json({
-      users: recentUsers,
-      accounts: recentAccounts,
-      sessions: recentSessions
+      users: usersResult.rows,
+      accounts: accountsResult.rows,
+      sessions: sessionsResult.rows
     });
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });
