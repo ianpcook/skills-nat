@@ -241,12 +241,10 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   <Button
                     variant="outline"
                     className="w-full justify-start gap-2 border-foreground/20"
-                    onClick={() => {
-                      // Download all files as a zip (future feature)
-                    }}
+                    disabled
                   >
                     <Download className="h-4 w-4" />
-                    Download Files
+                    Download Files (coming soon)
                   </Button>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-foreground/70">Vote:</span>
