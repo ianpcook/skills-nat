@@ -20,11 +20,17 @@ function getAuth() {
   console.log('[AUTH] Client ID length:', process.env.GOOGLE_CLIENT_ID?.length);
   console.log('[AUTH] Client Secret length:', process.env.GOOGLE_CLIENT_SECRET?.length);
 
-  const baseURL = process.env.BETTER_AUTH_URL || 'http://localhost:3000';
+  // Clean env vars (Vercel CLI can add trailing newlines)
+  const baseURL = (process.env.BETTER_AUTH_URL || 'http://localhost:3000').trim();
+  const secret = (process.env.BETTER_AUTH_SECRET || '').trim();
+  const isProduction = process.env.NODE_ENV === 'production' || baseURL.startsWith('https://');
   console.log('[AUTH] Base URL:', baseURL);
+  console.log('[AUTH] Is production:', isProduction);
+  console.log('[AUTH] Secret length:', secret.length);
 
   authInstance = betterAuth({
     baseURL,
+    secret,
     basePath: '/api/auth',
     database: drizzleAdapter(db, {
       provider: 'pg',
@@ -37,8 +43,8 @@ function getAuth() {
     },
     socialProviders: {
       google: {
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        clientId: (process.env.GOOGLE_CLIENT_ID || '').trim(),
+        clientSecret: (process.env.GOOGLE_CLIENT_SECRET || '').trim(),
       },
     },
     session: {
@@ -49,15 +55,15 @@ function getAuth() {
         maxAge: 60 * 5, // 5 minutes
       },
     },
-    trustedOrigins: [baseURL],
-    // Log OAuth events for debugging
+    advanced: {
+      // Force secure cookies in production (HTTPS)
+      useSecureCookies: isProduction,
+    },
+    trustedOrigins: [baseURL, 'https://ai-at-skills.vercel.app'],
+    // Log OAuth events for debugging (after hooks only to avoid breaking changes)
     databaseHooks: {
       user: {
         create: {
-          before: async (user) => {
-            console.log('[AUTH] Creating user:', user.email);
-            return { data: user };
-          },
           after: async (user) => {
             console.log('[AUTH] User created:', user.id, user.email);
           },
@@ -65,23 +71,15 @@ function getAuth() {
       },
       session: {
         create: {
-          before: async (session) => {
-            console.log('[AUTH] Creating session for user:', session.userId);
-            return { data: session };
-          },
           after: async (session) => {
-            console.log('[AUTH] Session created:', session.id);
+            console.log('[AUTH] Session created:', session.id, 'for user:', session.userId);
           },
         },
       },
       account: {
         create: {
-          before: async (account) => {
-            console.log('[AUTH] Creating account:', account.providerId, 'for user:', account.userId);
-            return { data: account };
-          },
           after: async (account) => {
-            console.log('[AUTH] Account created:', account.id, account.providerId);
+            console.log('[AUTH] Account created:', account.id, account.providerId, 'for user:', account.userId);
           },
         },
       },

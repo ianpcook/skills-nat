@@ -6,10 +6,12 @@ import { FeaturedSkills } from "@/components/featured-skills";
 import { RecentlyUpdated } from "@/components/recently-updated";
 import { CTASection } from "@/components/cta-section";
 import { Footer } from "@/components/footer";
+import { OAuthRedirectHandler } from "@/components/oauth-redirect-handler";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <OAuthRedirectHandler />
       <Header />
       <main>
         <HeroSection />

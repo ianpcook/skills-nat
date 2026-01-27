@@ -60,9 +60,32 @@ export async function POST(request: NextRequest) {
   const url = new URL(request.url);
   console.log('[AUTH API] POST request:', url.pathname);
   
+  // Log request body for social sign-in (for debugging callbackURL)
+  if (url.pathname.includes('/sign-in/social')) {
+    try {
+      const clonedRequest = request.clone();
+      const body = await clonedRequest.json();
+      console.log('[AUTH API] Sign-in social body:', JSON.stringify(body));
+    } catch (e) {
+      console.log('[AUTH API] Could not parse body:', e);
+    }
+  }
+  
   try {
     const response = await basePost(request);
     console.log('[AUTH API] POST response status:', response?.status);
+    
+    // Log response body for sign-in to see what URL is returned
+    if (url.pathname.includes('/sign-in/social') && response) {
+      try {
+        const clonedResponse = response.clone();
+        const responseBody = await clonedResponse.text();
+        console.log('[AUTH API] Sign-in social response:', responseBody.substring(0, 500));
+      } catch (e) {
+        console.log('[AUTH API] Could not read response body:', e);
+      }
+    }
+    
     return response;
   } catch (error) {
     console.error('[AUTH API] POST error:', error);

@@ -15,14 +15,42 @@ export default function AdminLoginPage() {
   const [checkingAdmin, setCheckingAdmin] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
 
+  // Check for pending OAuth redirect (fallback if callbackURL wasn't preserved)
+  useEffect(() => {
+    const pendingRedirect = sessionStorage.getItem('admin_oauth_redirect');
+    if (pendingRedirect && window.location.pathname === '/') {
+      console.log('[ADMIN LOGIN] Found pending redirect, checking session...');
+      sessionStorage.removeItem('admin_oauth_redirect');
+      // Redirect to admin to check session there
+      window.location.href = '/admin';
+    }
+  }, []);
+
+  // Debug: Log session state and call session API directly
+  useEffect(() => {
+    console.log('[ADMIN LOGIN] Session state:', { session, isPending });
+    console.log('[ADMIN LOGIN] Document cookies (non-httpOnly):', document.cookie);
+    
+    // Also call the session API directly to see what we get
+    fetch('/api/auth/get-session', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => console.log('[ADMIN LOGIN] Direct session API call:', data))
+      .catch(err => console.error('[ADMIN LOGIN] Session API error:', err));
+  }, [session, isPending]);
+
   // Check admin access when session is available
   useEffect(() => {
     async function checkAdminAccess() {
+      console.log('[ADMIN LOGIN] checkAdminAccess called', { session: !!session, isPending });
       if (session && !isPending) {
         setCheckingAdmin(true);
         try {
           // Check if user is an admin by hitting the admin API
+          console.log('[ADMIN LOGIN] Calling /api/admin/check');
           const res = await fetch('/api/admin/check');
+          const data = await res.json();
+          console.log('[ADMIN LOGIN] Admin check response:', res.status, data);
+          
           if (res.ok) {
             console.log('[ADMIN LOGIN] Admin access confirmed, redirecting');
             router.push('/admin/submissions');
@@ -46,31 +74,36 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
+      // Store the intended destination in sessionStorage before OAuth
+      // This is a fallback in case the callbackURL isn't preserved
+      sessionStorage.setItem('admin_oauth_redirect', '/admin');
+      
+      // Use the full URL for callbackURL to ensure proper redirect
+      const callbackURL = `${window.location.origin}/admin`;
+      console.log('[ADMIN LOGIN] Starting OAuth with callbackURL:', callbackURL);
+      
+      // Don't use fetchOptions callbacks - let better-auth handle redirect automatically
+      // Setting disableRedirect: false (default) will auto-redirect to Google
       const result = await signIn.social({
         provider: 'google',
-        callbackURL: '/admin',
+        callbackURL,
       });
       
-      console.log('[ADMIN LOGIN] signIn.social result:', result);
+      console.log('[ADMIN LOGIN] signIn.social returned:', result);
       
-      // Check for error first
+      // If signIn.social returned a URL (disableRedirect wasn't triggered), redirect manually
+      if (result?.data && typeof result.data === 'object' && 'url' in result.data) {
+        console.log('[ADMIN LOGIN] Redirecting to OAuth URL:', result.data.url);
+        window.location.href = result.data.url as string;
+        return;
+      }
+      
+      // If we get here without a redirect, check for errors
       if (result?.error) {
-        console.error('[ADMIN LOGIN] Sign-in error:', result.error);
+        console.error('[ADMIN LOGIN] OAuth error:', result.error);
         setError(result.error.message || 'Sign-in failed');
         setLoading(false);
-        return;
       }
-      
-      // Check if data contains a redirect URL
-      const data = result?.data as { url?: string; redirect?: boolean } | undefined;
-      if (data?.url) {
-        window.location.href = data.url;
-        return;
-      }
-      
-      // If we get here without redirect, something's wrong
-      setError('Sign-in did not redirect. Check console for details.');
-      setLoading(false);
     } catch (err) {
       console.error('[ADMIN LOGIN] Google sign-in error:', err);
       setError('Failed to sign in with Google');
