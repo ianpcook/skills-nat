@@ -20,6 +20,12 @@ export async function GET(request: NextRequest) {
     console.log('[AUTH API] OAuth callback detected');
     console.log('[AUTH API] Query params:', Object.fromEntries(url.searchParams.entries()));
     console.log('[AUTH API] Cookies present:', request.cookies.getAll().map(c => c.name).join(', '));
+    
+    // Log the state cookie value which is needed for PKCE
+    const stateCookie = request.cookies.get('better-auth.state');
+    const pkceCodeVerifier = request.cookies.get('better-auth.pkce_code_verifier');
+    console.log('[AUTH API] State cookie:', stateCookie?.value ? 'present' : 'MISSING');
+    console.log('[AUTH API] PKCE code verifier:', pkceCodeVerifier?.value ? 'present' : 'MISSING');
   }
   
   try {
