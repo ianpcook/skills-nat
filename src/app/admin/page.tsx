@@ -122,7 +122,7 @@ export default function AdminLoginPage() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-foreground" />
-          <p className="mt-4 text-foreground/70">
+          <p className="mt-4 text-muted-foreground">
             {checkingAdmin ? 'Verifying admin access...' : 'Loading...'}
           </p>
         </div>
@@ -137,10 +137,10 @@ export default function AdminLoginPage() {
         <div className="w-full max-w-md text-center">
           <ShieldX className="mx-auto h-16 w-16 text-destructive mb-6" />
           <h1 className="section-title mb-4">Access Denied</h1>
-          <p className="text-foreground/70 mb-2">
+          <p className="text-muted-foreground mb-2">
             Signed in as <strong>{session.user?.email}</strong>
           </p>
-          <p className="text-foreground/70 mb-6">
+          <p className="text-muted-foreground mb-6">
             This account does not have admin privileges.
           </p>
           <div className="space-y-3">
@@ -149,7 +149,7 @@ export default function AdminLoginPage() {
             </Button>
             <Link
               href="/"
-              className="inline-flex items-center justify-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+              className="inline-flex items-center justify-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to home
@@ -169,11 +169,11 @@ export default function AdminLoginPage() {
             <span>Skills N'at</span>
           </div>
           <h1 className="section-title mb-2">Admin Login</h1>
-          <p className="text-foreground/70">Sign in to review skill submissions</p>
+          <p className="text-muted-foreground">Sign in to review skill submissions</p>
         </div>
 
         {/* Sign In Box */}
-        <div className="border border-foreground/20 bg-card p-6">
+        <div className="rounded-lg border border-border bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
           {error && (
             <div className="mb-4 border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
@@ -215,7 +215,7 @@ export default function AdminLoginPage() {
             )}
           </Button>
 
-          <p className="mt-4 text-center text-xs text-foreground/50">
+          <p className="mt-4 text-center text-xs text-muted-foreground">
             Only authorized administrators can access this area.
           </p>
         </div>
@@ -224,7 +224,7 @@ export default function AdminLoginPage() {
         <p className="mt-6 text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to home

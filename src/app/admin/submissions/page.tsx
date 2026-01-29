@@ -98,30 +98,30 @@ export default function AdminSubmissionsPage() {
         </div>
       ) : submissions.length === 0 ? (
         <div className="py-12 text-center">
-          <Inbox className="mx-auto mb-4 h-12 w-12 text-foreground/30" />
-          <p className="text-foreground/50">No submissions found</p>
+          <Inbox className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+          <p className="text-muted-foreground">No submissions found</p>
         </div>
       ) : (
-        <div className="overflow-hidden border border-foreground/20 bg-card">
+        <div className="overflow-hidden rounded-lg border border-border bg-card" style={{ boxShadow: 'var(--shadow-card)' }}>
           <table className="w-full">
             <thead>
-              <tr className="border-b border-foreground/10">
-                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
+              <tr className="border-b border-border">
+                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
                   Name
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
+                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
                   Version
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
+                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
+                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
                   Submitted
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-foreground/60">
+                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
                   Files
                 </th>
-                <th className="px-6 py-4 text-right text-sm font-medium text-foreground/60">
+                <th className="px-6 py-4 text-right text-sm font-medium text-muted-foreground">
                   Actions
                 </th>
               </tr>
@@ -130,17 +130,17 @@ export default function AdminSubmissionsPage() {
               {submissions.map((submission) => (
                 <tr
                   key={submission.id}
-                  className="border-b border-foreground/10 transition-colors last:border-b-0 hover:bg-background/50"
+                  className="border-b border-border transition-colors last:border-b-0 hover:bg-background/50"
                 >
                   <td className="px-6 py-4">
                     <div className="font-medium text-card-foreground">
                       {submission.name}
                     </div>
-                    <div className="text-sm text-foreground/50">
+                    <div className="text-sm text-muted-foreground">
                       {submission.slug}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-foreground/70">
+                  <td className="px-6 py-4 text-muted-foreground">
                     {submission.version}
                   </td>
                   <td className="px-6 py-4">
@@ -148,10 +148,10 @@ export default function AdminSubmissionsPage() {
                       {submission.status}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4 text-sm text-foreground/50">
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
                     {formatDate(submission.submittedAt)}
                   </td>
-                  <td className="px-6 py-4 text-foreground/70">
+                  <td className="px-6 py-4 text-muted-foreground">
                     <span className="flex items-center gap-2">
                       <FileText className="h-4 w-4" />
                       {submission.files?.length || 0}

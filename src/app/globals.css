@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================
-   AI@SKILLS DESIGN SYSTEM
-   Pittsburgh-inspired warm golden theme
+   SKILLS N'AT DESIGN SYSTEM
+   Warm cream aesthetic with colorful accents
    ============================================ */
 
 :root {
@@ -14,42 +14,50 @@
      =================== */
 
   /* Brand Colors */
-  --gold: #E9A319;           /* Primary brand - warm mustard */
-  --gold-dark: #D4940F;      /* Darker gold for sections/muted */
-  --black: #0D0D0D;          /* Primary text and accents */
+  --cream: #F5F0E8;          /* Primary background - warm cream */
+  --cream-dark: #EDE6DA;     /* Darker cream for alt sections */
+  --black: #1A1A1A;          /* Primary text */
   --white: #FFFFFF;          /* Cards and contrast elements */
 
+  /* Accent Palette (from bridge illustration) */
+  --teal: #3BBFAD;           /* Primary accent */
+  --coral: #E87D5F;          /* Secondary accent */
+  --red: #DC4C4C;            /* Tertiary accent */
+  --gold: #E9C46A;           /* Quaternary accent */
+
   /* Neutral Grays */
-  --gray-dark: #3D3D3D;      /* Muted text */
-  --gray-medium: #666666;    /* Secondary text */
+  --gray-100: #F3F4F6;       /* Light gray */
+  --gray-200: #E5E7EB;       /* Border gray */
+  --gray-400: #9CA3AF;       /* Muted text */
+  --gray-600: #4B5563;       /* Secondary text */
 
   /* Semantic Color Mapping */
-  --background: var(--gold);
+  --background: var(--cream);
   --foreground: var(--black);
   --card: var(--white);
   --card-foreground: var(--black);
   --popover: var(--white);
   --popover-foreground: var(--black);
-  --primary: var(--black);
+  --primary: var(--teal);
   --primary-foreground: var(--white);
-  --secondary: var(--gold-dark);
+  --secondary: var(--cream-dark);
   --secondary-foreground: var(--black);
-  --muted: var(--gold-dark);
-  --muted-foreground: var(--gray-dark);
-  --accent: var(--black);
-  --accent-foreground: var(--gold);
+  --muted: var(--cream-dark);
+  --muted-foreground: var(--gray-600);
+  --accent: var(--coral);
+  --accent-foreground: var(--white);
   --destructive: #DC2626;
   --destructive-foreground: var(--white);
-  --border: var(--black);
-  --input: var(--black);
-  --ring: var(--black);
+  --border: var(--gray-200);
+  --input: var(--gray-200);
+  --ring: var(--teal);
 
   /* Chart Colors */
-  --chart-1: var(--black);
-  --chart-2: var(--gold-dark);
+  --chart-1: var(--teal);
+  --chart-2: var(--coral);
   --chart-3: var(--gold);
-  --chart-4: var(--gray-dark);
-  --chart-5: var(--gray-medium);
+  --chart-4: var(--red);
+  --chart-5: var(--gray-600);
 
   /* ===================
      TYPOGRAPHY SCALE
@@ -64,8 +72,12 @@
      SPACING & LAYOUT
      =================== */
 
-  /* Border Radius - Sharp edges for this brand */
-  --radius: 0rem;
+  /* Border Radius - Soft rounded corners */
+  --radius: 0.5rem;          /* 8px - default */
+  --radius-sm: 0.25rem;      /* 4px - badges */
+  --radius-md: 0.5rem;       /* 8px - cards, inputs */
+  --radius-lg: 0.75rem;      /* 12px - terminals, modals */
+  --radius-xl: 1rem;         /* 16px - large elements */
 
   /* Container */
   --container-max: 72rem;    /* max-w-6xl = 1152px */
@@ -76,16 +88,26 @@
   --section-padding-y-md: 7rem; /* md:py-28 */
 
   /* ===================
+     SHADOWS
+     =================== */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-terminal: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* ===================
      SIDEBAR (for future use)
      =================== */
   --sidebar: var(--black);
   --sidebar-foreground: var(--white);
-  --sidebar-primary: var(--gold);
-  --sidebar-primary-foreground: var(--black);
-  --sidebar-accent: var(--gray-dark);
+  --sidebar-primary: var(--teal);
+  --sidebar-primary-foreground: var(--white);
+  --sidebar-accent: var(--gray-600);
   --sidebar-accent-foreground: var(--white);
-  --sidebar-border: var(--gray-dark);
-  --sidebar-ring: var(--gold);
+  --sidebar-border: var(--gray-600);
+  --sidebar-ring: var(--teal);
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -129,11 +151,18 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
+  /* Custom accent colors */
+  --color-teal: var(--teal);
+  --color-coral: var(--coral);
+  --color-gold: var(--gold);
+  --color-cream: var(--cream);
+  --color-cream-dark: var(--cream-dark);
+
   /* Radius */
-  --radius-sm: var(--radius);
-  --radius-md: var(--radius);
-  --radius-lg: var(--radius);
-  --radius-xl: var(--radius);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
 
   /* Sidebar */
   --color-sidebar: var(--sidebar);
@@ -197,13 +226,18 @@
     @apply mx-auto max-w-6xl;
   }
 
+  /* Section with alt background */
+  .section-alt {
+    @apply bg-[--cream-dark];
+  }
+
   /* Logo box - black background with brand text */
   .logo-box {
-    @apply bg-foreground px-3 py-1.5;
+    @apply bg-foreground px-3 py-1.5 rounded-sm;
   }
 
   .logo-box span {
-    @apply font-serif text-lg font-bold text-background;
+    @apply font-serif text-lg font-bold text-white;
   }
 
   /* Section headers */
@@ -216,7 +250,7 @@
   }
 
   .section-subtitle {
-    @apply mt-2 text-foreground/70;
+    @apply mt-2 text-muted-foreground;
   }
 
   /* Hero title */
@@ -226,49 +260,54 @@
 
   /* Body text */
   .body-text {
-    @apply font-sans text-lg leading-relaxed text-foreground/80;
+    @apply font-sans text-lg leading-relaxed text-muted-foreground;
   }
 
   .body-text-sm {
-    @apply font-sans text-sm text-foreground/70;
+    @apply font-sans text-sm text-muted-foreground;
   }
 
   /* Label text - uppercase tracking */
   .label-text {
-    @apply font-sans text-xs font-medium uppercase tracking-widest text-foreground/60;
+    @apply font-sans text-xs font-medium uppercase tracking-widest text-muted-foreground;
   }
 
   /* Navigation links */
   .nav-link {
-    @apply text-sm font-medium text-foreground hover:underline hover:underline-offset-4;
+    @apply text-sm font-medium text-foreground hover:text-[--teal] transition-colors;
   }
 
   .nav-link-active {
-    @apply text-sm font-medium text-foreground underline underline-offset-4;
+    @apply text-sm font-medium text-[--teal];
   }
 
   /* Text link with arrow */
   .link-arrow {
-    @apply flex items-center gap-1 text-sm font-medium text-foreground hover:underline;
+    @apply flex items-center gap-1 text-sm font-medium text-foreground hover:text-[--teal] transition-colors;
   }
 
   /* Button - primary (filled) */
   .btn-primary {
-    @apply bg-foreground px-8 text-background hover:bg-foreground/90;
+    @apply bg-foreground px-8 text-white rounded-md hover:bg-foreground/90 transition-colors;
   }
 
   /* Button - secondary (outline) */
   .btn-outline {
-    @apply border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background;
+    @apply border border-foreground bg-transparent text-foreground rounded-md hover:bg-foreground hover:text-white transition-colors;
+  }
+
+  /* Button - accent (teal) */
+  .btn-accent {
+    @apply bg-[--teal] px-8 text-white rounded-md hover:bg-[--teal]/90 transition-colors;
   }
 
   /* Code block container */
   .code-block {
-    @apply border border-foreground/20 bg-foreground/5;
+    @apply border border-border bg-white/50 rounded-lg;
   }
 
   .code-block-header {
-    @apply flex items-center justify-between border-b border-foreground/10 px-4 py-2;
+    @apply flex items-center justify-between border-b border-border px-4 py-2;
   }
 
   .code-block-content {
@@ -277,43 +316,61 @@
 
   /* Card styling */
   .skill-card {
-    @apply flex h-full flex-col border border-foreground/20 bg-card p-5 transition-all hover:border-foreground/40;
+    @apply flex h-full flex-col bg-card rounded-lg p-5 transition-all;
+    box-shadow: var(--shadow-card);
+  }
+
+  .skill-card:hover {
+    box-shadow: var(--shadow-card-hover);
   }
 
   /* Divider lines */
   .divider {
-    @apply border-t border-foreground/10;
+    @apply border-t border-border;
   }
 
   .divider-y {
-    @apply border-y border-foreground/10;
+    @apply border-y border-border;
   }
 
   /* Muted emphasis text */
   .text-emphasis-muted {
-    @apply text-foreground/70;
+    @apply text-muted-foreground;
   }
 
   /* Agent/tag badges */
   .agent-badge {
-    @apply border-foreground/20 bg-background text-xs text-foreground;
+    @apply border border-border bg-white text-xs text-foreground rounded-sm;
   }
 
-  /* Terminal window styling */
+  /* Terminal window styling - macOS style */
   .terminal {
-    @apply bg-foreground text-background;
+    @apply bg-[#1E1E1E] text-white rounded-lg overflow-hidden;
+    box-shadow: var(--shadow-terminal);
   }
 
   .terminal-header {
-    @apply flex items-center gap-2 border-b border-background/10 px-4 py-3;
+    @apply flex items-center gap-2 px-4 py-3 border-b border-white/10;
   }
 
   .terminal-dot {
     @apply h-3 w-3 rounded-full;
   }
 
+  .terminal-dot-red {
+    @apply bg-[#FF5F56];
+  }
+
+  .terminal-dot-yellow {
+    @apply bg-[#FFBD2E];
+  }
+
+  .terminal-dot-green {
+    @apply bg-[#27C93F];
+  }
+
   .terminal-content {
-    @apply p-4 font-mono text-sm;
+    @apply p-4 font-mono text-sm text-white/90;
   }
 }
 

@@ -43,27 +43,27 @@ export default function AdminSubmissionsLayout({
   return (
     <div className="min-h-screen bg-background">
       {/* Admin Header */}
-      <header className="border-b border-foreground/20 bg-card">
+      <header className="border-b border-border bg-card">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
               <Link href="/" className="logo-box">
                 <span>Skills N'at</span>
               </Link>
-              <span className="text-foreground/40">/</span>
+              <span className="text-muted-foreground">/</span>
               <span className="font-medium text-foreground">Admin</span>
             </div>
 
             <nav className="flex items-center gap-6">
               <Link
                 href="/admin/submissions"
-                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+                className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 <FileText className="h-4 w-4" />
                 Submissions
               </Link>
               <div className="flex items-center gap-4">
-                <span className="text-sm text-foreground/50">
+                <span className="text-sm text-muted-foreground">
                   {session.user.email}
                 </span>
                 <Button

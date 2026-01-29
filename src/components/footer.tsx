@@ -2,39 +2,109 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t border-foreground/10 px-6 py-8">
-      <div className="container mx-auto flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="bg-foreground px-2 py-1">
-          <span className="font-serif text-sm font-bold text-background">
-            Skills N'at
-          </span>
+    <footer className="border-t border-border px-6 py-12">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          {/* Logo column */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="inline-block">
+              <div className="logo-box">
+                <span>Skills N'at</span>
+              </div>
+            </Link>
+            <p className="mt-4 text-sm text-muted-foreground max-w-xs">
+              The marketplace for AI agent skills. Built for developers, by developers.
+            </p>
+          </div>
+
+          {/* Links column */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Links</h4>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="/docs"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/skills"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Browse Skills
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/submit"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Submit a Skill
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Services column */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Services</h4>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="/docs"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Documentation
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://github.com/ianpcook/skills-nat"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  GitHub
+                </Link>
+              </li>
+              <li>
+                <span className="text-sm text-muted-foreground">
+                  Privacy
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Connect column */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Connect</h4>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="https://github.com/ianpcook/skills-nat"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  GitHub
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
-        <nav className="flex items-center gap-6">
-          <Link
-            href="/skills"
-            className="text-sm text-foreground/60 hover:text-foreground hover:underline"
-          >
-            Browse Skills
-          </Link>
-          <Link
-            href="/docs"
-            className="text-sm text-foreground/60 hover:text-foreground hover:underline"
-          >
-            Documentation
-          </Link>
-          <Link
-            href="https://github.com/ianpcook/skills-nat"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-foreground/60 hover:text-foreground hover:underline"
-          >
-            GitHub
-          </Link>
-        </nav>
+
+        {/* Bottom bar */}
+        <div className="mt-12 pt-8 border-t border-border">
+          <p className="text-sm text-muted-foreground text-center">
+            &copy; {new Date().getFullYear()} Skills N'at. Built with care in Pittsburgh.
+          </p>
+        </div>
       </div>
     </footer>
   );
 }
 
-// Also export as default for compatibility
 export default Footer;

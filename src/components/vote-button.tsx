@@ -80,7 +80,7 @@ export function VoteButton({ slug, initialStars = 0, size = "md", className }: V
         textSize,
         voted
           ? "border-amber-500/50 bg-amber-500/10 text-amber-500"
-          : "border-foreground/20 bg-background/50 text-foreground/70 hover:border-amber-500/30 hover:text-amber-500",
+          : "border-border bg-background/50 text-muted-foreground hover:border-amber-500/30 hover:text-amber-500",
         loading && "opacity-50 cursor-wait",
         className
       )}

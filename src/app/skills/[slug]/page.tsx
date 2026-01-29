@@ -79,18 +79,18 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
           {/* Back Link */}
           <Link
             href="/skills"
-            className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
+            className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Skills
           </Link>
 
           {/* Skill Header */}
-          <div className="mb-10 border-b border-foreground/10 pb-10">
+          <div className="mb-10 border-b border-border pb-10">
             <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
               <div className="flex-1">
                 <h1 className="section-title-lg mb-2">{skill.name}</h1>
-                <p className="mb-4 text-foreground/70">
+                <p className="mb-4 text-muted-foreground">
                   by <span className="font-medium text-foreground">{skill.author || 'Unknown'}</span>
                 </p>
                 <p className="body-text max-w-2xl">
@@ -101,7 +101,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-4">
                   <VoteButton slug={skill.slug} initialStars={skill.stars} />
-                  <Badge variant="outline" className="border-foreground/20 text-foreground">
+                  <Badge variant="outline" className="border-border text-foreground">
                     {skill.version}
                   </Badge>
                 </div>
@@ -109,9 +109,9 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                 {/* Install Command */}
                 <div className="terminal mt-2">
                   <div className="terminal-header">
-                    <span className="terminal-dot bg-red-500" />
-                    <span className="terminal-dot bg-yellow-500" />
-                    <span className="terminal-dot bg-green-500" />
+                    <span className="terminal-dot terminal-dot-red" />
+                    <span className="terminal-dot terminal-dot-yellow" />
+                    <span className="terminal-dot terminal-dot-green" />
                   </div>
                   <div className="terminal-content flex items-center justify-between gap-4">
                     <code className="text-sm">
@@ -137,22 +137,23 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   {skill.files.map((file: SubmissionFile) => (
                     <div
                       key={file.name}
-                      className="border border-foreground/20 bg-card"
+                      className="rounded-lg border border-border bg-card overflow-hidden"
+                      style={{ boxShadow: 'var(--shadow-card)' }}
                     >
-                      <div className="flex items-center justify-between border-b border-foreground/10 px-4 py-3">
+                      <div className="flex items-center justify-between border-b border-border px-4 py-3">
                         <div className="flex items-center gap-3">
                           <FileIcon filename={file.name} />
                           <span className="font-mono text-sm font-medium text-card-foreground">
                             {file.name}
                           </span>
                           {file.name.toLowerCase() === 'skill.md' && (
-                            <Badge className="border-foreground bg-foreground text-background">
+                            <Badge className="bg-[--teal] text-white border-0">
                               Main
                             </Badge>
                           )}
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className="text-xs text-foreground/50">
+                          <span className="text-xs text-muted-foreground">
                             {file.size < 1024
                               ? `${file.size} B`
                               : `${(file.size / 1024).toFixed(1)} KB`}
@@ -160,7 +161,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                           <CopyButton content={file.content} label={file.name} />
                         </div>
                       </div>
-                      <div className="max-h-96 overflow-auto bg-foreground/5 p-4">
+                      <div className="max-h-96 overflow-auto bg-muted/50 p-4">
                         <pre className="whitespace-pre-wrap font-mono text-sm text-card-foreground">
                           {file.content}
                         </pre>
@@ -169,9 +170,9 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   ))}
                 </div>
               ) : (
-                <div className="border border-foreground/20 bg-card p-8 text-center">
-                  <FileText className="mx-auto mb-4 h-12 w-12 text-foreground/30" />
-                  <p className="text-foreground/60">No files available</p>
+                <div className="rounded-lg border border-border bg-card p-8 text-center" style={{ boxShadow: 'var(--shadow-card)' }}>
+                  <FileText className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                  <p className="text-muted-foreground">No files available</p>
                 </div>
               )}
             </div>
@@ -179,7 +180,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
             {/* Sidebar - Details */}
             <div className="space-y-6">
               {/* Agents */}
-              <div className="border border-foreground/20 bg-card p-6">
+              <div className="rounded-lg border border-border bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
                 <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
                   Compatible Agents
                 </h3>
@@ -188,7 +189,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                     <Badge
                       key={agent.id}
                       variant="outline"
-                      className="border-foreground/20 bg-background text-foreground"
+                      className="border-border bg-background text-foreground"
                       style={{ borderLeftColor: agent.color, borderLeftWidth: 3 }}
                     >
                       {agent.name}
@@ -198,33 +199,33 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
               </div>
 
               {/* Details */}
-              <div className="border border-foreground/20 bg-card p-6">
+              <div className="rounded-lg border border-border bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
                 <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
                   Details
                 </h3>
                 <dl className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Category</dt>
+                    <dt className="text-muted-foreground">Category</dt>
                     <dd className="font-medium text-card-foreground">
                       {skill.category || 'Uncategorized'}
                     </dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Version</dt>
+                    <dt className="text-muted-foreground">Version</dt>
                     <dd className="font-medium text-card-foreground">{skill.version}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Stars</dt>
+                    <dt className="text-muted-foreground">Stars</dt>
                     <dd className="font-medium text-card-foreground">{skill.stars}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Added</dt>
+                    <dt className="text-muted-foreground">Added</dt>
                     <dd className="font-medium text-card-foreground">
                       {formatDate(skill.approvedAt)}
                     </dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Updated</dt>
+                    <dt className="text-muted-foreground">Updated</dt>
                     <dd className="font-medium text-card-foreground">
                       {formatDate(skill.updatedAt)}
                     </dd>
@@ -233,21 +234,21 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
               </div>
 
               {/* Actions */}
-              <div className="border border-foreground/20 bg-card p-6">
+              <div className="rounded-lg border border-border bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
                 <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
                   Actions
                 </h3>
                 <div className="space-y-3">
                   <Button
                     variant="outline"
-                    className="w-full justify-start gap-2 border-foreground/20"
+                    className="w-full justify-start gap-2 border-border"
                     disabled
                   >
                     <Download className="h-4 w-4" />
                     Download Files (coming soon)
                   </Button>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-foreground/70">Vote:</span>
+                    <span className="text-sm text-muted-foreground">Vote:</span>
                     <VoteButton slug={skill.slug} initialStars={skill.stars} size="sm" />
                   </div>
                   <DeleteSkillButton slug={skill.slug} skillName={skill.name} />

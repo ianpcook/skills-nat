@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 interface UploadedFile {
   file: File;
   name: string;
-  path: string;  // relative path within folder
+  path: string;
   size: number;
   content: string;
 }
@@ -71,13 +71,10 @@ export default function SubmitPage() {
 
     const uploadedFiles: UploadedFile[] = [];
     for (const file of validFiles) {
-      // Get the relative path (from webkitRelativePath or constructed)
       const relativePath = (file as any).webkitRelativePath || file.name;
-      // Strip the top-level folder name for display
       const pathParts = relativePath.split('/');
       const displayPath = pathParts.length > 1 ? pathParts.slice(1).join('/') : relativePath;
-      
-      // Check if file already exists
+
       if (files.some((f) => f.path === displayPath)) {
         console.log(`[SUBMIT] Skipping duplicate: ${displayPath}`);
         continue;
@@ -101,12 +98,10 @@ export default function SubmitPage() {
     setFiles((prev) => [...prev, ...uploadedFiles]);
   }, [files]);
 
-  // Handle folder drop via DataTransfer API
   const processEntry = async (entry: FileSystemEntry, path = ''): Promise<File[]> => {
     if (entry.isFile) {
       return new Promise((resolve) => {
         (entry as FileSystemFileEntry).file((file) => {
-          // Attach the path to the file object
           Object.defineProperty(file, 'webkitRelativePath', {
             value: path + file.name,
             writable: false,
@@ -155,27 +150,24 @@ export default function SubmitPage() {
     const items = e.dataTransfer.items;
     if (items && items.length > 0) {
       const allFiles: File[] = [];
-      
+
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
         const entry = item.webkitGetAsEntry?.();
-        
+
         if (entry) {
-          // Use the FileSystem API for folders
           const files = await processEntry(entry);
           allFiles.push(...files);
         } else if (item.kind === 'file') {
-          // Fallback for regular files
           const file = item.getAsFile();
           if (file) allFiles.push(file);
         }
       }
-      
+
       if (allFiles.length > 0) {
         addFiles(allFiles);
       }
     } else if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      // Fallback for browsers that don't support items
       addFiles(e.dataTransfer.files);
     }
   }, [addFiles]);
@@ -184,7 +176,6 @@ export default function SubmitPage() {
     if (e.target.files && e.target.files.length > 0) {
       addFiles(e.target.files);
     }
-    // Reset input to allow selecting the same file again
     e.target.value = '';
   };
 
@@ -192,7 +183,6 @@ export default function SubmitPage() {
     if (e.target.files && e.target.files.length > 0) {
       addFiles(e.target.files);
     }
-    // Reset input to allow selecting the same folder again
     e.target.value = '';
   };
 
@@ -239,7 +229,7 @@ export default function SubmitPage() {
           <div className="mx-auto max-w-2xl">
             <div className="py-16 text-center">
               {/* Success Icon */}
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center border border-green-600 bg-green-500/10">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20">
                 <Check className="h-10 w-10 text-green-600" />
               </div>
 
@@ -250,27 +240,27 @@ export default function SubmitPage() {
               </p>
 
               {/* Submission Details */}
-              <div className="mb-8 border border-foreground/20 bg-card p-6 text-left">
+              <div className="mb-8 rounded-lg bg-card p-6 text-left" style={{ boxShadow: 'var(--shadow-card)' }}>
                 <h3 className="mb-4 font-serif font-medium text-card-foreground">
                   Submission Details
                 </h3>
                 <dl className="space-y-3 text-sm">
                   {submissionId && (
                     <div className="flex justify-between">
-                      <dt className="text-foreground/60">Submission ID</dt>
+                      <dt className="text-muted-foreground">Submission ID</dt>
                       <dd className="font-mono text-xs text-card-foreground">{submissionId}</dd>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Status</dt>
+                    <dt className="text-muted-foreground">Status</dt>
                     <dd>
-                      <Badge className="border-yellow-600 bg-yellow-500/10 text-yellow-700">
+                      <Badge className="bg-yellow-500/10 text-yellow-700 border border-yellow-500/20 rounded-sm">
                         Pending Review
                       </Badge>
                     </dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Files</dt>
+                    <dt className="text-muted-foreground">Files</dt>
                     <dd className="text-card-foreground">
                       {files.length} file{files.length !== 1 ? 's' : ''}
                     </dd>
@@ -281,7 +271,7 @@ export default function SubmitPage() {
               {/* Actions */}
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link href="/skills">
-                  <Button className="btn-primary gap-2">
+                  <Button className="btn-accent gap-2">
                     Browse Skills
                     <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -324,11 +314,11 @@ export default function SubmitPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* File Upload */}
-            <div className="border border-foreground/20 bg-card p-6">
+            <div className="rounded-lg bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
               <label className="mb-2 block font-serif text-lg font-medium text-card-foreground">
                 Skill Files
               </label>
-              <p className="mb-4 text-sm text-foreground/60">
+              <p className="mb-4 text-sm text-muted-foreground">
                 Drag and drop files or click to browse. Required: SKILL.md
               </p>
 
@@ -337,10 +327,10 @@ export default function SubmitPage() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`relative border-2 border-dashed p-8 text-center transition-colors ${
+                className={`relative rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
                   isDragOver
-                    ? 'border-foreground bg-foreground/5'
-                    : 'border-foreground/30'
+                    ? 'border-[--teal] bg-[--teal]/5'
+                    : 'border-border'
                 }`}
               >
                 <input
@@ -363,17 +353,17 @@ export default function SubmitPage() {
                 />
                 <Upload
                   className={`mx-auto mb-4 h-12 w-12 ${
-                    isDragOver ? 'text-foreground' : 'text-foreground/40'
+                    isDragOver ? 'text-[--teal]' : 'text-muted-foreground'
                   }`}
                 />
-                <p className="mb-4 text-foreground/70">
+                <p className="mb-4 text-muted-foreground">
                   Drag and drop files or a folder here
                 </p>
                 <div className="flex justify-center gap-3">
                   <Button
                     type="button"
                     variant="outline"
-                    className="gap-2"
+                    className="gap-2 rounded-md"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Upload className="h-4 w-4" />
@@ -382,14 +372,14 @@ export default function SubmitPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="gap-2"
+                    className="gap-2 rounded-md"
                     onClick={() => folderInputRef.current?.click()}
                   >
                     <FolderOpen className="h-4 w-4" />
                     Upload Folder
                   </Button>
                 </div>
-                <p className="mt-4 text-xs text-foreground/50">
+                <p className="mt-4 text-xs text-muted-foreground">
                   Allowed: {ALLOWED_EXTENSIONS.join(', ')}
                 </p>
               </div>
@@ -400,20 +390,20 @@ export default function SubmitPage() {
                   {files.map((file) => (
                     <div
                       key={file.path}
-                      className="flex items-center justify-between border border-foreground/10 bg-background px-4 py-3"
+                      className="flex items-center justify-between rounded-md border border-border bg-background px-4 py-3"
                     >
                       <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-foreground/50" />
+                        <FileText className="h-5 w-5 text-muted-foreground" />
                         <div>
                           <p className="flex items-center gap-2 font-mono text-sm text-card-foreground">
                             {file.path}
                             {file.name.toLowerCase() === 'skill.md' && (
-                              <Badge className="border-foreground bg-foreground text-background">
+                              <Badge className="bg-foreground text-white border-0 rounded-sm">
                                 Required
                               </Badge>
                             )}
                           </p>
-                          <p className="text-xs text-foreground/50">
+                          <p className="text-xs text-muted-foreground">
                             {formatFileSize(file.size)}
                           </p>
                         </div>
@@ -421,7 +411,7 @@ export default function SubmitPage() {
                       <button
                         type="button"
                         onClick={() => removeFile(file.path)}
-                        className="p-1 text-foreground/50 transition-colors hover:text-destructive"
+                        className="p-1 text-muted-foreground transition-colors hover:text-destructive"
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -448,42 +438,47 @@ export default function SubmitPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
+              <div className="rounded-md border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
                 {error}
               </div>
             )}
 
             {/* Guidelines */}
-            <div className="border border-foreground/20 bg-card p-6">
+            <div className="rounded-lg bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
               <h3 className="mb-4 font-serif text-lg font-medium text-card-foreground">
                 Submission Guidelines
               </h3>
-              <ul className="space-y-3 text-sm text-foreground/70">
+              <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-foreground" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
                   <span>
-                    Include a <code className="border border-foreground/20 bg-background px-1.5 py-0.5 text-xs">SKILL.md</code> file
+                    Include a <code className="rounded bg-muted px-1.5 py-0.5 text-xs">SKILL.md</code> file
                     with YAML frontmatter containing: name, description, version
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-foreground" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
                   <span>Include installation instructions and usage examples in your SKILL.md</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-foreground" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
                   <span>All code should be original work or properly licensed</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-foreground" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
                   <span>No malicious code or security vulnerabilities</span>
                 </li>
               </ul>
 
               {/* Example SKILL.md */}
-              <div className="mt-6 border border-foreground/10 bg-background p-4">
-                <p className="mb-2 text-xs text-foreground/50">Example SKILL.md frontmatter:</p>
-                <pre className="overflow-x-auto font-mono text-xs text-foreground/80">
+              <div className="terminal mt-6">
+                <div className="terminal-header">
+                  <span className="terminal-dot terminal-dot-red" />
+                  <span className="terminal-dot terminal-dot-yellow" />
+                  <span className="terminal-dot terminal-dot-green" />
+                  <span className="ml-3 text-xs text-white/50">SKILL.md</span>
+                </div>
+                <pre className="terminal-content overflow-x-auto text-xs">
 {`---
 name: My Awesome Skill
 description: A brief description of what the skill does

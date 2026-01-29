@@ -67,7 +67,7 @@ export function DeleteSkillButton({ slug, skillName }: DeleteSkillButtonProps) {
             size="sm"
             onClick={() => setShowConfirm(false)}
             disabled={isDeleting}
-            className="flex-1 border-foreground/20"
+            className="flex-1 border-border"
           >
             Cancel
           </Button>

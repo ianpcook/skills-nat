@@ -188,7 +188,7 @@ export default function AdminSubmissionDetailPage({
         <div className="mt-4">
           <Link
             href="/admin/submissions"
-            className="inline-flex items-center gap-2 text-foreground/70 transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to submissions
@@ -207,7 +207,7 @@ export default function AdminSubmissionDetailPage({
       {/* Back link */}
       <Link
         href="/admin/submissions"
-        className="mb-6 inline-flex items-center gap-2 text-foreground/70 transition-colors hover:text-foreground"
+        className="mb-6 inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to submissions
@@ -217,7 +217,7 @@ export default function AdminSubmissionDetailPage({
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="section-title mb-2">{submission.name}</h1>
-          <div className="flex items-center gap-4 text-sm text-foreground/50">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>v{submission.version}</span>
             <span>&bull;</span>
             <span>{submission.slug}</span>
@@ -238,7 +238,8 @@ export default function AdminSubmissionDetailPage({
           {submission.files?.map((file: SubmissionFile) => (
             <div
               key={file.name}
-              className="overflow-hidden border border-foreground/20 bg-card"
+              className="overflow-hidden rounded-lg border border-border bg-card"
+              style={{ boxShadow: 'var(--shadow-card)' }}
             >
               <button
                 onClick={() => toggleFile(file.name)}
@@ -246,28 +247,28 @@ export default function AdminSubmissionDetailPage({
               >
                 <div className="flex items-center gap-3">
                   <ChevronRight
-                    className={`h-4 w-4 text-foreground/50 transition-transform ${
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${
                       expandedFiles.has(file.name) ? 'rotate-90' : ''
                     }`}
                   />
-                  <FileText className="h-4 w-4 text-foreground/50" />
+                  <FileText className="h-4 w-4 text-muted-foreground" />
                   <span className="font-mono text-sm text-card-foreground">
                     {file.name}
                   </span>
                   {file.name.toLowerCase() === 'skill.md' && (
-                    <Badge className="border-foreground bg-foreground text-background">
+                    <Badge className="bg-[--teal] text-white border-0">
                       Required
                     </Badge>
                   )}
                 </div>
-                <span className="text-xs text-foreground/50">
+                <span className="text-xs text-muted-foreground">
                   {formatFileSize(file.size)}
                 </span>
               </button>
 
               {expandedFiles.has(file.name) && (
-                <div className="border-t border-foreground/10 bg-foreground/5 p-4">
-                  <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-sm text-foreground/80">
+                <div className="border-t border-border bg-muted/50 p-4">
+                  <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-sm text-foreground">
                     {file.content}
                   </pre>
                 </div>
@@ -279,21 +280,21 @@ export default function AdminSubmissionDetailPage({
         {/* Sidebar - Details & Actions */}
         <div className="space-y-6">
           {/* Details */}
-          <div className="border border-foreground/20 bg-card p-6">
+          <div className="rounded-lg border border-border bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
             <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
               Details
             </h3>
 
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-foreground/60">Submitted</dt>
+                <dt className="text-muted-foreground">Submitted</dt>
                 <dd className="text-card-foreground">
                   {formatDate(submission.submittedAt)}
                 </dd>
               </div>
               {submission.reviewedAt && (
                 <div className="flex justify-between">
-                  <dt className="text-foreground/60">Reviewed</dt>
+                  <dt className="text-muted-foreground">Reviewed</dt>
                   <dd className="text-card-foreground">
                     {formatDate(submission.reviewedAt)}
                   </dd>
@@ -301,7 +302,7 @@ export default function AdminSubmissionDetailPage({
               )}
               {submission.description && (
                 <div>
-                  <dt className="mb-1 text-foreground/60">Description</dt>
+                  <dt className="mb-1 text-muted-foreground">Description</dt>
                   <dd className="text-card-foreground">
                     {submission.description}
                   </dd>
@@ -312,7 +313,7 @@ export default function AdminSubmissionDetailPage({
 
           {/* Review Actions */}
           {submission.status === 'pending' && (
-            <div className="border border-foreground/20 bg-card p-6">
+            <div className="rounded-lg border border-border bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
               <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
                 Review
               </h3>
@@ -329,7 +330,7 @@ export default function AdminSubmissionDetailPage({
                   value={reviewerNotes}
                   onChange={(e) => setReviewerNotes(e.target.value)}
                   rows={3}
-                  className="w-full resize-none border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder-foreground/40 transition-colors focus:border-foreground focus:outline-none"
+                  className="w-full resize-none rounded-md border border-border bg-background px-4 py-3 text-foreground placeholder-muted-foreground transition-colors focus:border-[--teal] focus:outline-none focus:ring-1 focus:ring-[--teal]"
                   placeholder="Add notes about this submission..."
                 />
               </div>
@@ -369,18 +370,18 @@ export default function AdminSubmissionDetailPage({
 
           {/* Reviewer Notes (if already reviewed) */}
           {submission.status !== 'pending' && submission.reviewerNotes && (
-            <div className="border border-foreground/20 bg-card p-6">
+            <div className="rounded-lg border border-border bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
               <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
                 Reviewer Notes
               </h3>
-              <p className="text-foreground/70">
+              <p className="text-muted-foreground">
                 {submission.reviewerNotes}
               </p>
             </div>
           )}
 
           {/* Delete Action */}
-          <div className="border border-destructive/20 bg-card p-6">
+          <div className="rounded-lg border border-destructive/20 bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
             <h3 className="mb-4 font-serif text-lg font-semibold text-card-foreground">
               Danger Zone
             </h3>
@@ -407,7 +408,7 @@ export default function AdminSubmissionDetailPage({
                     onClick={() => setShowDeleteConfirm(false)}
                     disabled={deleting}
                     variant="outline"
-                    className="flex-1 border-foreground/20"
+                    className="flex-1 border-border"
                   >
                     Cancel
                   </Button>

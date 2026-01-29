@@ -20,7 +20,7 @@ export function CopyButton({ content, label }: CopyButtonProps) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1 text-xs text-foreground/60 transition-colors hover:text-foreground"
+      className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
       title={`Copy ${label}`}
     >
       {copied ? (

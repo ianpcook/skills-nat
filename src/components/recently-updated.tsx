@@ -5,7 +5,7 @@ import { getRecentSkills } from "@/lib/api";
 
 export async function RecentlyUpdated() {
   const skills = await getRecentSkills();
-  
+
   // Transform backend skills to frontend format
   const displaySkills = skills.map(toDisplaySkill);
 
@@ -14,22 +14,20 @@ export async function RecentlyUpdated() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <h2 className="font-serif text-3xl font-bold text-foreground md:text-4xl">
-              Latest Skills
-            </h2>
-            <p className="mt-2 text-foreground/70">
+            <h2 className="section-title">Latest Skills</h2>
+            <p className="section-subtitle">
               Fresh additions from the community
             </p>
           </div>
           <Link
             href="/skills"
-            className="hidden items-center gap-1 text-sm font-medium text-foreground hover:underline md:flex"
+            className="hidden items-center gap-1 text-sm font-medium text-foreground hover:text-[--teal] transition-colors md:flex"
           >
             View all skills
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        
+
         {displaySkills.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {displaySkills.map((skill) => (
@@ -40,20 +38,22 @@ export async function RecentlyUpdated() {
           </div>
         ) : (
           <div className="py-12 text-center">
-            <p className="text-foreground/60">No skills yet. The community is just getting started!</p>
+            <p className="text-muted-foreground">
+              No skills yet. The community is just getting started!
+            </p>
             <Link
               href="/submit"
-              className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-foreground hover:underline"
+              className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-foreground hover:text-[--teal] transition-colors"
             >
               Be the first to submit
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         )}
-        
+
         <Link
           href="/skills"
-          className="mt-8 flex items-center justify-center gap-1 text-sm font-medium text-foreground hover:underline md:hidden"
+          className="mt-8 flex items-center justify-center gap-1 text-sm font-medium text-foreground hover:text-[--teal] transition-colors md:hidden"
         >
           View all skills
           <ArrowRight className="h-4 w-4" />

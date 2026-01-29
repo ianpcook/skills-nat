@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { Search, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { SkillCard, toDisplaySkill } from '@/components/skill-card';
@@ -18,12 +18,12 @@ interface SkillsPageProps {
   }>;
 }
 
-async function getSkills(params: {
+const getSkills = async (params: {
   page?: number;
   limit?: number;
   search?: string;
   category?: string;
-}) {
+}) => {
   const searchParams = new URLSearchParams();
   if (params.page) searchParams.set('page', String(params.page));
   if (params.limit) searchParams.set('limit', String(params.limit));
@@ -40,7 +40,7 @@ async function getSkills(params: {
   }
 
   return res.json();
-}
+};
 
 function SkillsLoading() {
   return (
@@ -48,7 +48,8 @@ function SkillsLoading() {
       {[...Array(8)].map((_, i) => (
         <div
           key={i}
-          className="h-64 animate-pulse border border-foreground/20 bg-card"
+          className="h-64 animate-pulse rounded-lg bg-card"
+          style={{ boxShadow: 'var(--shadow-card)' }}
         />
       ))}
     </div>
@@ -77,18 +78,18 @@ async function SkillsGrid({
   if (skills.length === 0) {
     return (
       <div className="py-20 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border border-foreground/20 bg-card">
-          <Search className="h-8 w-8 text-foreground/40" />
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-card" style={{ boxShadow: 'var(--shadow-card)' }}>
+          <Search className="h-8 w-8 text-muted-foreground" />
         </div>
         <h3 className="font-serif text-lg font-medium text-foreground">
           No skills found
         </h3>
-        <p className="mt-2 text-foreground/70">
+        <p className="mt-2 text-muted-foreground">
           Try adjusting your search or filters
         </p>
         <Link
           href="/skills"
-          className="mt-4 inline-block text-sm font-medium text-foreground underline underline-offset-4"
+          className="mt-4 inline-block text-sm font-medium text-[--teal] hover:underline"
         >
           Clear all filters
         </Link>
@@ -108,7 +109,7 @@ async function SkillsGrid({
   return (
     <>
       {/* Results count */}
-      <div className="mb-6 text-sm text-foreground/60">
+      <div className="mb-6 text-sm text-muted-foreground">
         Showing {skills.length} of {pagination.total} skills
       </div>
 
@@ -127,32 +128,32 @@ async function SkillsGrid({
           {pagination.page > 1 ? (
             <Link
               href={buildPageUrl(pagination.page - 1)}
-              className="flex items-center gap-1 border border-foreground/20 bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-foreground/40"
+              className="flex items-center gap-1 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Link>
           ) : (
-            <span className="flex cursor-not-allowed items-center gap-1 border border-foreground/10 bg-card/50 px-4 py-2 text-sm font-medium text-foreground/40">
+            <span className="flex cursor-not-allowed items-center gap-1 rounded-md border border-border bg-card/50 px-4 py-2 text-sm font-medium text-muted-foreground">
               <ChevronLeft className="h-4 w-4" />
               Previous
             </span>
           )}
 
-          <span className="px-4 py-2 text-sm text-foreground/60">
+          <span className="px-4 py-2 text-sm text-muted-foreground">
             Page {pagination.page} of {pagination.totalPages}
           </span>
 
           {pagination.page < pagination.totalPages ? (
             <Link
               href={buildPageUrl(pagination.page + 1)}
-              className="flex items-center gap-1 border border-foreground/20 bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-foreground/40"
+              className="flex items-center gap-1 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               Next
               <ChevronRight className="h-4 w-4" />
             </Link>
           ) : (
-            <span className="flex cursor-not-allowed items-center gap-1 border border-foreground/10 bg-card/50 px-4 py-2 text-sm font-medium text-foreground/40">
+            <span className="flex cursor-not-allowed items-center gap-1 rounded-md border border-border bg-card/50 px-4 py-2 text-sm font-medium text-muted-foreground">
               Next
               <ChevronRight className="h-4 w-4" />
             </span>
@@ -188,13 +189,13 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
             <div className="flex flex-col gap-4 sm:flex-row">
               {/* Search Input */}
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/40" />
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   name="search"
                   defaultValue={search}
                   placeholder="Search skills by name or description..."
-                  className="w-full border border-foreground/20 bg-card py-3 pl-12 pr-4 text-foreground placeholder-foreground/40 transition-colors focus:border-foreground focus:outline-none"
+                  className="w-full rounded-md border border-border bg-card py-3 pl-12 pr-4 text-foreground placeholder-muted-foreground transition-colors focus:border-[--teal] focus:outline-none focus:ring-1 focus:ring-[--teal]"
                 />
               </div>
 
@@ -203,7 +204,7 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
                 <select
                   name="category"
                   defaultValue={category}
-                  className="w-full appearance-none border border-foreground/20 bg-card px-4 py-3 pr-10 text-foreground transition-colors focus:border-foreground focus:outline-none sm:w-48"
+                  className="w-full appearance-none rounded-md border border-border bg-card px-4 py-3 pr-10 text-foreground transition-colors focus:border-[--teal] focus:outline-none focus:ring-1 focus:ring-[--teal] sm:w-48"
                 >
                   <option value="">All Categories</option>
                   {CATEGORIES.map((cat) => (
@@ -212,7 +213,7 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
                     </option>
                   ))}
                 </select>
-                <ChevronRight className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rotate-90 text-foreground/40" />
+                <ChevronRight className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rotate-90 text-muted-foreground" />
               </div>
 
               {/* Search Button */}
@@ -228,20 +229,20 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
             {/* Active Filters */}
             {(search || category) && (
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="text-sm text-foreground/60">Active filters:</span>
+                <span className="text-sm text-muted-foreground">Active filters:</span>
                 {search && (
-                  <span className="border border-foreground/20 bg-card px-3 py-1 text-sm text-foreground">
+                  <span className="rounded-md border border-border bg-card px-3 py-1 text-sm text-foreground">
                     &quot;{search}&quot;
                   </span>
                 )}
                 {category && (
-                  <span className="border border-foreground/20 bg-card px-3 py-1 text-sm text-foreground">
+                  <span className="rounded-md border border-border bg-card px-3 py-1 text-sm text-foreground">
                     {category}
                   </span>
                 )}
                 <Link
                   href="/skills"
-                  className="text-sm font-medium text-foreground underline underline-offset-4"
+                  className="text-sm font-medium text-[--teal] hover:underline"
                 >
                   Clear all
                 </Link>
@@ -250,13 +251,13 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
           </form>
 
           {/* Agent Pills */}
-          <div className="mb-10 border-y border-foreground/10 py-6">
+          <div className="mb-10 border-y border-border py-6">
             <p className="label-text mb-4">Filter by agent</p>
             <div className="flex flex-wrap gap-2">
               {AGENTS.map((agent) => (
                 <span
                   key={agent.id}
-                  className="flex items-center gap-2 border border-foreground/20 bg-card px-3 py-1.5 text-sm text-foreground transition-colors hover:border-foreground/40"
+                  className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-muted cursor-pointer"
                 >
                   <span
                     className="h-2 w-2 rounded-full"
