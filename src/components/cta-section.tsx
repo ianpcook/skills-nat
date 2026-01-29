@@ -28,7 +28,7 @@ export function CTASection() {
             className="w-full border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background sm:w-auto"
           >
             <Link
-              href="https://github.com/skillshq/ai-at-skills"
+              href="https://github.com/ianpcook/skills-nat"
               target="_blank"
               rel="noopener noreferrer"
             >

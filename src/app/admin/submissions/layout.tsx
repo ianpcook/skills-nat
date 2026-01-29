@@ -48,7 +48,7 @@ export default function AdminSubmissionsLayout({
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
               <Link href="/" className="logo-box">
-                <span>AI@Skills</span>
+                <span>Skills N'at</span>
               </Link>
               <span className="text-foreground/40">/</span>
               <span className="font-medium text-foreground">Admin</span>

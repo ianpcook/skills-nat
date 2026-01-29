@@ -1,12 +1,12 @@
 # Frontend Design Sync Report
 
 **Date:** 2025-01-24  
-**v0 Canonical Source:** ~/repos/v0-ai-at-skills  
-**Target Repo:** ~/repos/ai_at_skills (branch: feature/v0-frontend-integration)
+**v0 Canonical Source:** ~/repos/v0-skills-nat  
+**Target Repo:** ~/repos/skills-nat (branch: feature/v0-frontend-integration)
 
 ## Summary
 
-This report documents the comparison between v0-ai-at-skills (canonical design) and ai_at_skills (current implementation). All design differences have been resolved in favor of v0 while preserving backend functionality.
+This report documents the comparison between v0-skills-nat (canonical design) and skills-nat (current implementation). All design differences have been resolved in favor of v0 while preserving backend functionality.
 
 ---
 
@@ -14,7 +14,7 @@ This report documents the comparison between v0-ai-at-skills (canonical design) 
 
 ### ✅ Identical Files (No Changes Needed)
 
-| v0 File | ai_at_skills File | Status |
+| v0 File | skills-nat File | Status |
 |---------|-------------------|--------|
 | `components/hero-section.tsx` | `src/components/hero-section.tsx` | ✅ Identical |
 | `components/agents-list.tsx` | `src/components/agents-list.tsx` | ✅ Identical |
@@ -24,11 +24,11 @@ This report documents the comparison between v0-ai-at-skills (canonical design) 
 
 ### ⚡ Files With Intentional Backend Differences (Design Preserved)
 
-| v0 File | ai_at_skills File | Difference | Resolution |
+| v0 File | skills-nat File | Difference | Resolution |
 |---------|-------------------|------------|------------|
-| `components/skill-card.tsx` | `src/components/skill-card.tsx` | ai_at_skills has backend integration (`toDisplaySkill`, `getAgentName`, `getAgentColor`) | **Kept ai_at_skills** - design is identical, backend functionality preserved |
-| `components/featured-skills.tsx` | `src/components/featured-skills.tsx` | ai_at_skills fetches from API + has empty state | **Kept ai_at_skills** - design is identical, backend functionality preserved |
-| `components/recently-updated.tsx` | `src/components/recently-updated.tsx` | ai_at_skills fetches from API + has empty state | **Kept ai_at_skills** - design is identical, backend functionality preserved |
+| `components/skill-card.tsx` | `src/components/skill-card.tsx` | skills-nat has backend integration (`toDisplaySkill`, `getAgentName`, `getAgentColor`) | **Kept skills-nat** - design is identical, backend functionality preserved |
+| `components/featured-skills.tsx` | `src/components/featured-skills.tsx` | skills-nat fetches from API + has empty state | **Kept skills-nat** - design is identical, backend functionality preserved |
+| `components/recently-updated.tsx` | `src/components/recently-updated.tsx` | skills-nat fetches from API + has empty state | **Kept skills-nat** - design is identical, backend functionality preserved |
 
 ---
 
@@ -42,7 +42,7 @@ This report documents the comparison between v0-ai-at-skills (canonical design) 
 - v0 had computed shadow variables in `@theme inline`
 - v0 had `.dark` theme with oklch color values
 
-**Action:** Updated ai_at_skills to include all v0 additions:
+**Action:** Updated skills-nat to include all v0 additions:
 - Added `@custom-variant dark (&:is(.dark *));`
 - Added shadow variables to `:root`
 - Added computed shadow variables to `@theme inline`
@@ -53,8 +53,8 @@ This report documents the comparison between v0-ai-at-skills (canonical design) 
 **Differences Found:**
 - v0: Navigation has "Home" (active), "Search", "Faves"
 - v0: Right side has GitHub icon + "Docs" button
-- ai_at_skills: Navigation had "Home", "Browse", "Submit"
-- ai_at_skills: Right side had GitHub icon + "Submit Skill" button
+- skills-nat: Navigation had "Home", "Browse", "Submit"
+- skills-nat: Right side had GitHub icon + "Submit Skill" button
 
 **Action:** Updated to match v0's design with TODO comments for missing pages:
 - Changed navigation to: Home (active), Search, Faves
@@ -70,9 +70,9 @@ This report documents the comparison between v0-ai-at-skills (canonical design) 
 - v0: Used `container` class for layout
 - v0: Links to /about, /docs, GitHub
 - v0: Logo used inline styles instead of `.logo-box` class
-- ai_at_skills: Used `max-w-6xl` class
-- ai_at_skills: Links to /skills, /submit, GitHub + had copyright
-- ai_at_skills: File was named `Footer.tsx` (PascalCase)
+- skills-nat: Used `max-w-6xl` class
+- skills-nat: Links to /skills, /submit, GitHub + had copyright
+- skills-nat: File was named `Footer.tsx` (PascalCase)
 
 **Action:** 
 - Renamed file from `Footer.tsx` to `footer.tsx` (to match v0)
@@ -88,7 +88,7 @@ This report documents the comparison between v0-ai-at-skills (canonical design) 
 ### 4. `src/app/page.tsx` ✏️
 
 **Differences Found:**
-- ai_at_skills imported Footer from `@/components/Footer`
+- skills-nat imported Footer from `@/components/Footer`
 - v0 imported Footer from `@/components/footer` (lowercase)
 
 **Action:** Updated import to match v0's lowercase naming convention:
@@ -101,29 +101,29 @@ import { Footer } from "@/components/footer";
 **Differences Found:**
 - v0: Has unused font variables (prefixed with `_`), includes `@vercel/analytics`
 - v0: Has `generator: 'v0.app'` in metadata
-- ai_at_skills: Has proper font variables used in body class, has `keywords` in metadata
+- skills-nat: Has proper font variables used in body class, has `keywords` in metadata
 
 **Action:** 
 - Added Analytics from v0: `import { Analytics } from '@vercel/analytics/next'`
 - Added `<Analytics />` component to body
 - Added `generator: 'v0.app'` to metadata
-- **Kept** ai_at_skills's font variable handling (it's actually better/functional)
-- **Kept** ai_at_skills's `keywords` metadata (good SEO addition)
+- **Kept** skills-nat's font variable handling (it's actually better/functional)
+- **Kept** skills-nat's `keywords` metadata (good SEO addition)
 
 ---
 
 ## TODO List - Missing Pages
 
-The following pages exist in v0's navigation but don't exist in ai_at_skills yet:
+The following pages exist in v0's navigation but don't exist in skills-nat yet:
 
 | Page | Status | Notes |
 |------|--------|-------|
-| `/search` | ❌ Missing | v0 header links here. ai_at_skills has `/skills` for browsing. Consider implementing search or redirecting. |
+| `/search` | ❌ Missing | v0 header links here. skills-nat has `/skills` for browsing. Consider implementing search or redirecting. |
 | `/faves` | ❌ Missing | v0 header links here. Needs user favorites/bookmarking functionality. |
 | `/docs` | ❌ Missing | v0 header button + footer links here. Needs documentation pages. |
 | `/about` | ❌ Missing | v0 footer links here. Needs about page. |
 
-### Existing Pages in ai_at_skills (not in v0 nav)
+### Existing Pages in skills-nat (not in v0 nav)
 
 | Page | Notes |
 |------|-------|

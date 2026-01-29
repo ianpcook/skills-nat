@@ -1,5 +1,5 @@
 /**
- * Agent definitions for AI@Skills
+ * Agent definitions for Skills N'at
  * Maps agent IDs to display names and colors
  */
 

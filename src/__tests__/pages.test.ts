@@ -1,5 +1,5 @@
 /**
- * Basic page load tests for AI@Skills
+ * Basic page load tests for Skills N'at
  * 
  * These tests verify that all main pages load correctly
  * and contain expected content.
@@ -14,10 +14,10 @@ describe('Page Load Tests', () => {
       expect(response.status).toBe(200);
     });
 
-    it('should contain AI@Skills branding', async () => {
+    it("should contain Skills N'at branding", async () => {
       const response = await fetch(`${BASE_URL}/`);
       const html = await response.text();
-      expect(html).toContain('AI@Skills');
+      expect(html).toContain("Skills N'at");
     });
 
     it('should contain expected hero text', async () => {

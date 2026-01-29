@@ -75,7 +75,7 @@ function getAuth() {
         },
       },
     },
-    trustedOrigins: [baseURL, 'https://ai-at-skills.vercel.app'],
+    trustedOrigins: [baseURL, 'https://skills-nat.vercel.app'],
     // Log OAuth events for debugging (after hooks only to avoid breaking changes)
     databaseHooks: {
       user: {

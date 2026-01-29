@@ -33,7 +33,7 @@ export default function Navigation() {
                 </svg>
               </div>
               <span className="text-xl font-bold">
-                AI<span className="text-[#ffbc20]">@</span>Skills
+                Skills N'at
               </span>
             </Link>
 
@@ -73,7 +73,7 @@ export default function Navigation() {
 
           <div className="flex items-center gap-4">
             <a
-              href="https://github.com/ai-at-skills"
+              href="https://github.com/ianpcook/skills-nat"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#bfbfbf] hover:text-[#f5f0e6] transition-colors"

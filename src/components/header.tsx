@@ -12,7 +12,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2">
             <div className="bg-foreground px-3 py-1.5">
               <span className="font-serif text-lg font-bold text-background">
-                AI@Skills
+                Skills N'at
               </span>
             </div>
           </Link>
@@ -47,7 +47,7 @@ export function Header() {
             <span className="sr-only">Admin</span>
           </Link>
           <Link
-            href="https://github.com/ianpcook/ai_at_skills"
+            href="https://github.com/ianpcook/skills-nat"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground hover:opacity-70"

@@ -166,7 +166,7 @@ export default function AdminLoginPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="logo-box mx-auto mb-6 inline-block">
-            <span>AI@Skills</span>
+            <span>Skills N'at</span>
           </div>
           <h1 className="section-title mb-2">Admin Login</h1>
           <p className="text-foreground/70">Sign in to review skill submissions</p>

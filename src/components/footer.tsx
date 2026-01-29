@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container mx-auto flex flex-col items-center justify-between gap-4 md:flex-row">
         <div className="bg-foreground px-2 py-1">
           <span className="font-serif text-sm font-bold text-background">
-            AI@Skills
+            Skills N'at
           </span>
         </div>
         <nav className="flex items-center gap-6">
@@ -23,7 +23,7 @@ export function Footer() {
             Documentation
           </Link>
           <Link
-            href="https://github.com/skillshq/ai-at-skills"
+            href="https://github.com/ianpcook/skills-nat"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-foreground/60 hover:text-foreground hover:underline"

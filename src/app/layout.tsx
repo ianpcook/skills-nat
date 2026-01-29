@@ -19,10 +19,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'AI@Skills - Skills for your AI agents, n\'at',
+  title: "Skills N'at - Skills for your AI agents, n'at",
   description: 'Discover, share, and install skills for Claude Code, Cursor, Codex, and more. Extend your AI assistant with powerful integrations built by the Pittsburgh community.',
   generator: 'v0.app',
-  keywords: ["AI skills", "Claude Code", "Cursor", "Codex", "AI agents", "skills marketplace", "Pittsburgh"],
+  keywords: ["AI skills", "Claude Code", "Cursor", "Codex", "AI agents", "skills marketplace", "Pittsburgh", "Skills N'at"],
   icons: {
     icon: [
       {

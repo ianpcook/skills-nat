@@ -1,6 +1,6 @@
-# AI@Skills Integration Plan
+# Skills N'at Integration Plan
 
-**Goal:** Replace the old frontend in `ai_at_skills` with the new v0 frontend while preserving the backend.
+**Goal:** Replace the old frontend in `skills-nat` with the new v0 frontend while preserving the backend.
 
 **Date:** January 24, 2026  
 **Status:** 📋 Planning Phase
@@ -11,7 +11,7 @@
 
 ### Repository Overview
 
-| Aspect | ai_at_skills (Current) | v0-ai-at-skills (New) |
+| Aspect | skills-nat (Current) | v0-skills-nat (New) |
 |--------|------------------------|------------------------|
 | **Frontend** | Custom dark theme | shadcn/ui light golden theme |
 | **Backend** | ✅ Postgres + Drizzle + better-auth | ❌ None |
@@ -21,7 +21,7 @@
 
 ### Files Inventory
 
-#### ai_at_skills - Backend (KEEP)
+#### skills-nat - Backend (KEEP)
 ```
 src/
 ├── app/api/
@@ -41,7 +41,7 @@ src/
 └── types/index.ts               # TypeScript types
 ```
 
-#### ai_at_skills - Frontend (REPLACE)
+#### skills-nat - Frontend (REPLACE)
 ```
 src/
 ├── app/
@@ -66,7 +66,7 @@ src/
     └── Footer.tsx
 ```
 
-#### v0-ai-at-skills - Frontend (ADOPT)
+#### v0-skills-nat - Frontend (ADOPT)
 ```
 app/
 ├── page.tsx                     # New homepage
@@ -313,7 +313,7 @@ interface Skill {
 
 ### 5. Dependencies to Reconcile
 
-**Add to ai_at_skills (from v0):**
+**Add to skills-nat (from v0):**
 ```json
 {
   "@radix-ui/react-slot": "^1.1.1",
@@ -345,7 +345,7 @@ interface Skill {
 
 #### Step 1.1: Backup
 ```bash
-cd ~/repos/ai_at_skills
+cd ~/repos/skills-nat
 git checkout -b backup/pre-integration
 git push origin backup/pre-integration
 git checkout main
@@ -375,27 +375,27 @@ export function cn(...inputs: ClassValue[]) {
 
 #### Step 2.1: Copy UI Components
 ```bash
-# From v0-ai-at-skills, copy to ai_at_skills/src/components/
-cp -r ~/repos/v0-ai-at-skills/components/ui ~/repos/ai_at_skills/src/components/
+# From v0-skills-nat, copy to skills-nat/src/components/
+cp -r ~/repos/v0-skills-nat/components/ui ~/repos/skills-nat/src/components/
 ```
 
 #### Step 2.2: Copy Page Components
 ```bash
-cp ~/repos/v0-ai-at-skills/components/header.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/footer.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/hero-section.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/agents-list.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/what-are-skills.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/featured-skills.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/recently-updated.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/skill-card.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/cta-section.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/theme-provider.tsx ~/repos/ai_at_skills/src/components/
-cp ~/repos/v0-ai-at-skills/components/sprocket.tsx ~/repos/ai_at_skills/src/components/
+cp ~/repos/v0-skills-nat/components/header.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/footer.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/hero-section.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/agents-list.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/what-are-skills.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/featured-skills.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/recently-updated.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/skill-card.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/cta-section.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/theme-provider.tsx ~/repos/skills-nat/src/components/
+cp ~/repos/v0-skills-nat/components/sprocket.tsx ~/repos/skills-nat/src/components/
 ```
 
 #### Step 2.3: Update Import Paths
-All copied components use `@/components/` imports. Update to match ai_at_skills structure.
+All copied components use `@/components/` imports. Update to match skills-nat structure.
 
 ---
 
@@ -403,12 +403,12 @@ All copied components use `@/components/` imports. Update to match ai_at_skills 
 
 #### Step 3.1: Replace globals.css
 ```bash
-cp ~/repos/v0-ai-at-skills/app/globals.css ~/repos/ai_at_skills/src/app/globals.css
+cp ~/repos/v0-skills-nat/app/globals.css ~/repos/skills-nat/src/app/globals.css
 ```
 
 #### Step 3.2: Copy Public Assets
 ```bash
-cp -r ~/repos/v0-ai-at-skills/public/* ~/repos/ai_at_skills/public/
+cp -r ~/repos/v0-skills-nat/public/* ~/repos/skills-nat/public/
 ```
 
 ---
@@ -450,7 +450,7 @@ export default function Home() {
 #### Step 4.2: Update layout.tsx
 ```bash
 # Use v0's layout with fonts
-cp ~/repos/v0-ai-at-skills/app/layout.tsx ~/repos/ai_at_skills/src/app/layout.tsx
+cp ~/repos/v0-skills-nat/app/layout.tsx ~/repos/skills-nat/src/app/layout.tsx
 # Then manually add back any Next.js config from original
 ```
 
