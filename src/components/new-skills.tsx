@@ -1,69 +1,40 @@
 "use client"
 
-import { SkillCard, type Skill } from "@/components/skill-card"
+import { SkillCard, type Skill, type BackendSkill, toDisplaySkill } from "@/components/skill-card"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
-
-const newSkills: Skill[] = [
-  {
-    id: "n1",
-    name: "Andy Warhol Museum API",
-    description: "Access exhibit data, artwork information, and tour schedules from Pittsburgh's famous Andy Warhol Museum.",
-    author: "pop_art_dev",
-    authorLocation: "North Shore",
-    installCommand: "npx skillsnat add @pgh/warhol-skill",
-    tags: ["art", "museum", "culture"],
-    agents: ["Claude Code", "Codex", "Cursor", "OpenClaw"],
-    stars: 34,
-    accentColor: "pink",
-    icon: "🎨",
-    isNew: true,
-  },
-  {
-    id: "n2",
-    name: "Incline Status",
-    description: "Real-time status of the Duquesne and Monongahela Inclines. Know before you go if Mt. Washington is accessible.",
-    author: "incline_io",
-    authorLocation: "Mt. Washington",
-    installCommand: "npx skillsnat add @pgh/incline-skill",
-    tags: ["transit", "tourism", "real-time"],
-    agents: ["Claude Code", "Cursor", "Antigravity"],
-    stars: 28,
-    accentColor: "orange",
-    icon: "🚃",
-    isNew: true,
-  },
-  {
-    id: "n3",
-    name: "Strip District Markets",
-    description: "Search vendors, prices, and hours at the Strip District markets. Find that perfect cannoli or fresh fish.",
-    author: "strip_coder",
-    authorLocation: "Strip District",
-    installCommand: "npx skillsnat add @pgh/strip-markets",
-    tags: ["food", "shopping", "local"],
-    agents: ["Claude Code", "Codex", "Continue"],
-    stars: 19,
-    accentColor: "lime",
-    icon: "🛒",
-    isNew: true,
-  },
-  {
-    id: "n4",
-    name: "Pittsburgh Bridge Tracker",
-    description: "Status and history of all 446 bridges in Pittsburgh. Because we have more bridges than Venice.",
-    author: "bridge_nerd",
-    authorLocation: "Point Breeze",
-    installCommand: "npx skillsnat add @pgh/bridges-skill",
-    tags: ["infrastructure", "history", "data"],
-    agents: ["Claude Code", "Codex", "Cursor", "OpenClaw", "Windsurf"],
-    stars: 45,
-    accentColor: "yellow",
-    icon: "🌉",
-    isNew: true,
-  },
-]
+import { ArrowRight, Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export function NewSkills() {
+  const [skills, setSkills] = useState<Skill[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchNewSkills() {
+      try {
+        const res = await fetch('/api/skills?sort=new&limit=4')
+        if (!res.ok) throw new Error('Failed to fetch skills')
+        const data = await res.json()
+        
+        // Transform backend skills to display format and mark as new
+        const displaySkills = data.skills.map((skill: BackendSkill) => ({
+          ...toDisplaySkill(skill),
+          isNew: true,
+        }))
+        
+        setSkills(displaySkills)
+      } catch (err) {
+        console.error('Error fetching new skills:', err)
+        setError('Failed to load new skills')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchNewSkills()
+  }, [])
+
   return (
     <section id="new" className="py-20">
       <div className="container mx-auto px-4">
@@ -80,12 +51,36 @@ export function NewSkills() {
           Hot new skills from Pittsburgh{"'"}s developer community. Baked fresh daily, just like Mancini{"'"}s bread.
         </p>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-pop-cyan" />
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && skills.length === 0 && (
+          <div className="text-center py-12 border-4 border-dashed border-foreground/30">
+            <p className="text-xl font-bold text-muted-foreground mb-2">No new skills yet!</p>
+            <p className="text-muted-foreground">Be the first to submit a skill to the registry.</p>
+          </div>
+        )}
+
         {/* Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newSkills.map((skill) => (
-            <SkillCard key={skill.id} skill={skill} />
-          ))}
-        </div>
+        {!loading && !error && skills.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {skills.map((skill) => (
+              <SkillCard key={skill.id} skill={skill} />
+            ))}
+          </div>
+        )}
 
         {/* View All CTA - Pop Art Style */}
         <div className="mt-12 text-center">

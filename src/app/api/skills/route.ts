@@ -38,8 +38,10 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')?.trim() || null;
     const category = searchParams.get('category')?.trim() || null;
     const agent = searchParams.get('agent')?.trim() || null;
+    const sort = searchParams.get('sort')?.trim() || 'stars'; // 'stars' (default) or 'new'
+    const featured = searchParams.get('featured') === 'true';
 
-    console.log(`[SKILLS API] Query params: page=${page}, limit=${limit}, search="${search}", category="${category}", agent="${agent}"`);
+    console.log(`[SKILLS API] Query params: page=${page}, limit=${limit}, search="${search}", category="${category}", agent="${agent}", sort="${sort}", featured=${featured}`);
 
     // Build where conditions
     const conditions = [];
@@ -66,6 +68,10 @@ export async function GET(request: NextRequest) {
       conditions.push(sql`${skills.agents} @> ${JSON.stringify([agent])}::jsonb`);
     }
 
+    if (featured) {
+      conditions.push(eq(skills.featured, true));
+    }
+
     // Count total matching skills
     const countResult = await db
       .select({ count: sql<number>`count(*)` })
@@ -79,11 +85,16 @@ export async function GET(request: NextRequest) {
       ? sql`${conditions.reduce((a, b) => sql`${a} AND ${b}`)}`
       : conditions[0];
 
+    // Determine sort order
+    const orderByClause = sort === 'new'
+      ? [desc(skills.createdAt), desc(skills.approvedAt)]
+      : [desc(skills.stars), desc(skills.approvedAt)];
+
     const results = await db
       .select()
       .from(skills)
       .where(whereClause)
-      .orderBy(desc(skills.stars), desc(skills.approvedAt))
+      .orderBy(...orderByClause)
       .limit(limit)
       .offset(offset);
 
