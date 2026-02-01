@@ -37,8 +37,9 @@ export async function GET(request: NextRequest) {
     // Filters
     const search = searchParams.get('search')?.trim() || null;
     const category = searchParams.get('category')?.trim() || null;
+    const agent = searchParams.get('agent')?.trim() || null;
 
-    console.log(`[SKILLS API] Query params: page=${page}, limit=${limit}, search="${search}", category="${category}"`);
+    console.log(`[SKILLS API] Query params: page=${page}, limit=${limit}, search="${search}", category="${category}", agent="${agent}"`);
 
     // Build where conditions
     const conditions = [];
@@ -58,6 +59,11 @@ export async function GET(request: NextRequest) {
 
     if (category) {
       conditions.push(eq(skills.category, category));
+    }
+
+    if (agent) {
+      // Filter skills that have this agent in their agents array (jsonb contains)
+      conditions.push(sql`${skills.agents} @> ${JSON.stringify([agent])}::jsonb`);
     }
 
     // Count total matching skills

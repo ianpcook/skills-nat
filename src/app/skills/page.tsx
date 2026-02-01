@@ -23,12 +23,14 @@ const getSkills = async (params: {
   limit?: number;
   search?: string;
   category?: string;
+  agent?: string;
 }) => {
   const searchParams = new URLSearchParams();
   if (params.page) searchParams.set('page', String(params.page));
   if (params.limit) searchParams.set('limit', String(params.limit));
   if (params.search) searchParams.set('search', params.search);
   if (params.category) searchParams.set('category', params.category);
+  if (params.agent) searchParams.set('agent', params.agent);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const res = await fetch(`${baseUrl}/api/skills?${searchParams}`, {
@@ -60,16 +62,19 @@ async function SkillsGrid({
   page,
   search,
   category,
+  agent,
 }: {
   page: number;
   search?: string;
   category?: string;
+  agent?: string;
 }) {
   const data = await getSkills({
     page,
     limit: 12,
     search,
     category,
+    agent,
   });
 
   const skills = data.skills || [];
@@ -103,6 +108,7 @@ async function SkillsGrid({
     params.set('page', String(newPage));
     if (search) params.set('search', search);
     if (category) params.set('category', category);
+    if (agent) params.set('agent', agent);
     return `/skills?${params.toString()}`;
   };
 
@@ -169,6 +175,7 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
   const page = Number(params.page) || 1;
   const search = params.search || '';
   const category = params.category || '';
+  const agent = params.agent || '';
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -227,7 +234,7 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
             </div>
 
             {/* Active Filters */}
-            {(search || category) && (
+            {(search || category || agent) && (
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <span className="text-sm text-muted-foreground">Active filters:</span>
                 {search && (
@@ -238,6 +245,11 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
                 {category && (
                   <span className="rounded-md border border-border bg-card px-3 py-1 text-sm text-foreground">
                     {category}
+                  </span>
+                )}
+                {agent && (
+                  <span className="rounded-md border border-border bg-card px-3 py-1 text-sm text-foreground">
+                    Agent: {AGENTS.find(a => a.id === agent)?.name || agent}
                   </span>
                 )}
                 <Link
@@ -254,24 +266,42 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
           <div className="mb-10 border-y border-border py-6">
             <p className="label-text mb-4">Filter by agent</p>
             <div className="flex flex-wrap gap-2">
-              {AGENTS.map((agent) => (
-                <span
-                  key={agent.id}
-                  className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-muted cursor-pointer"
-                >
-                  <span
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: agent.color }}
-                  />
-                  {agent.name}
-                </span>
-              ))}
+              {AGENTS.map((agentItem) => {
+                const isActive = agent === agentItem.id;
+                // Build URL preserving other filters
+                const agentUrl = (() => {
+                  const params = new URLSearchParams();
+                  if (search) params.set('search', search);
+                  if (category) params.set('category', category);
+                  if (!isActive) params.set('agent', agentItem.id);
+                  const query = params.toString();
+                  return query ? `/skills?${query}` : '/skills';
+                })();
+                
+                return (
+                  <Link
+                    key={agentItem.id}
+                    href={agentUrl}
+                    className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                      isActive
+                        ? 'border-foreground bg-foreground text-background'
+                        : 'border-border bg-card text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <span
+                      className="h-2 w-2 rounded-full"
+                      style={{ backgroundColor: agentItem.color }}
+                    />
+                    {agentItem.name}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
           {/* Skills Grid */}
           <Suspense fallback={<SkillsLoading />}>
-            <SkillsGrid page={page} search={search} category={category} />
+            <SkillsGrid page={page} search={search} category={category} agent={agent} />
           </Suspense>
         </div>
       </main>

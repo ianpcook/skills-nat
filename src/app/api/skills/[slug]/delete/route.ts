@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { skills, skillEmbeddings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { isAdminEmail } from '@/lib/admin';
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -11,6 +14,31 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
   
   console.log(`[DELETE] Attempting to delete skill: ${slug}`);
+
+  // Admin authentication check
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    console.log(`[DELETE] Unauthorized: no session`);
+    return NextResponse.json(
+      { error: 'Not authenticated' },
+      { status: 401 }
+    );
+  }
+
+  const email = session.user.email;
+  
+  if (!isAdminEmail(email)) {
+    console.log(`[DELETE] Forbidden: ${email} is not an admin`);
+    return NextResponse.json(
+      { error: 'Not authorized' },
+      { status: 403 }
+    );
+  }
+
+  console.log(`[DELETE] Authorized admin: ${email}`);
 
   if (!db) {
     return NextResponse.json(
