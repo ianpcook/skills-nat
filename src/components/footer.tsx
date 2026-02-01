@@ -96,7 +96,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://github.com/ianpcook/skills-nat/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                <a href="https://github.com/ianpcook/skills-nat#contributing" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pop-cyan transition-colors">
                   Contributing
                 </a>
               </li>
