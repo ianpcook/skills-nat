@@ -34,19 +34,21 @@ export function Footer() {
               and as strong as the steel that built this city.
             </p>
             <div className="flex gap-4">
-              <a 
-                href="https://github.com" 
-                target="_blank" 
+              <a
+                href="https://github.com/ianpcook/skills-nat"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-pop-yellow transition-colors"
+                aria-label="GitHub repository"
               >
                 <Github className="h-5 w-5" />
               </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
+              <a
+                href="https://twitter.com/skillsnat"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-pop-cyan transition-colors"
+                aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
               </a>
@@ -55,25 +57,25 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <h4 className="font-bold text-pop-pink mb-4">Skills</h4>
+            <h4 className="font-bold text-pop-pink mb-4 uppercase">Skills</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="#featured" className="text-muted-foreground hover:text-pop-pink transition-colors">
-                  Featured
-                </Link>
-              </li>
-              <li>
-                <Link href="#new" className="text-muted-foreground hover:text-pop-pink transition-colors">
-                  New Skills
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                <Link href="/skills" className="text-muted-foreground hover:text-pop-pink transition-colors">
                   Browse All
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                <Link href="/skills?category=API" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                  API Skills
+                </Link>
+              </li>
+              <li>
+                <Link href="/skills?category=Data" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                  Data Skills
+                </Link>
+              </li>
+              <li>
+                <Link href="/submit" className="text-muted-foreground hover:text-pop-pink transition-colors">
                   Submit Skill
                 </Link>
               </li>
@@ -81,27 +83,27 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold text-pop-cyan mb-4">Resources</h4>
+            <h4 className="font-bold text-pop-cyan mb-4 uppercase">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                <Link href="/docs" className="text-muted-foreground hover:text-pop-cyan transition-colors">
                   Documentation
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
-                  API Reference
-                </Link>
+                <a href="https://github.com/ianpcook/skills-nat" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                  GitHub Repo
+                </a>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                <a href="https://github.com/ianpcook/skills-nat/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pop-cyan transition-colors">
                   Contributing
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
-                  Community
-                </Link>
+                <a href="https://github.com/ianpcook/skills-nat/issues" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                  Report Issue
+                </a>
               </li>
             </ul>
           </div>

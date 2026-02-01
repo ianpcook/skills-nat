@@ -225,60 +225,60 @@ export default function SubmitPage() {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
-        <main className="section">
-          <div className="mx-auto max-w-2xl">
+        <main className="py-12 md:py-16">
+          <div className="container mx-auto px-4 max-w-2xl">
             <div className="py-16 text-center">
-              {/* Success Icon */}
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20">
-                <Check className="h-10 w-10 text-green-600" />
+              {/* Success Icon - Pop Art Style */}
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center border-4 border-foreground bg-pop-lime shadow-[4px_4px_0_0_theme(colors.foreground)]">
+                <Check className="h-10 w-10 text-foreground" />
               </div>
 
-              <h1 className="section-title mb-4">Skill Submitted!</h1>
-              <p className="body-text mx-auto mb-8 max-w-md">
+              <h1 className="text-3xl md:text-4xl font-black uppercase text-foreground mb-4">Skill Submitted!</h1>
+              <p className="text-lg text-muted-foreground mx-auto mb-8 max-w-md">
                 Your skill has been submitted and is pending review. We&apos;ll review it and add it to
                 the directory once approved.
               </p>
 
-              {/* Submission Details */}
-              <div className="mb-8 rounded-lg bg-card p-6 text-left" style={{ boxShadow: 'var(--shadow-card)' }}>
-                <h3 className="mb-4 font-serif font-medium text-card-foreground">
+              {/* Submission Details - Pop Art Style */}
+              <div className="mb-8 border-4 border-foreground bg-card p-6 text-left shadow-[4px_4px_0_0_theme(colors.foreground)]">
+                <h3 className="mb-4 font-black uppercase text-foreground">
                   Submission Details
                 </h3>
                 <dl className="space-y-3 text-sm">
                   {submissionId && (
-                    <div className="flex justify-between">
-                      <dt className="text-muted-foreground">Submission ID</dt>
-                      <dd className="font-mono text-xs text-card-foreground">{submissionId}</dd>
+                    <div className="flex justify-between border-b-2 border-foreground/20 pb-2">
+                      <dt className="font-bold uppercase text-muted-foreground">Submission ID</dt>
+                      <dd className="font-mono text-xs font-bold text-foreground">{submissionId}</dd>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <dt className="text-muted-foreground">Status</dt>
+                  <div className="flex justify-between border-b-2 border-foreground/20 pb-2">
+                    <dt className="font-bold uppercase text-muted-foreground">Status</dt>
                     <dd>
-                      <Badge className="bg-yellow-500/10 text-yellow-700 border border-yellow-500/20 rounded-sm">
+                      <Badge className="bg-pop-orange text-foreground border-2 border-foreground font-bold">
                         Pending Review
                       </Badge>
                     </dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-muted-foreground">Files</dt>
-                    <dd className="text-card-foreground">
+                    <dt className="font-bold uppercase text-muted-foreground">Files</dt>
+                    <dd className="font-bold text-foreground">
                       {files.length} file{files.length !== 1 ? 's' : ''}
                     </dd>
                   </div>
                 </dl>
               </div>
 
-              {/* Actions */}
+              {/* Actions - Pop Art Style */}
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link href="/skills">
-                  <Button className="btn-accent gap-2">
+                  <Button className="bg-pop-pink text-foreground font-black uppercase border-3 border-foreground shadow-[4px_4px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all gap-2">
                     Browse Skills
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Button
                   variant="outline"
-                  className="btn-outline"
+                  className="bg-card text-foreground font-black uppercase border-3 border-foreground shadow-[4px_4px_0_0_theme(colors.pop-cyan)] hover:shadow-[2px_2px_0_0_theme(colors.pop-cyan)] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-pop-cyan transition-all"
                   onClick={() => {
                     setIsSubmitted(false);
                     setFiles([]);
@@ -301,36 +301,42 @@ export default function SubmitPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <main className="section">
-        <div className="mx-auto max-w-2xl">
-          {/* Header */}
+      <main className="py-12 md:py-16">
+        <div className="container mx-auto px-4 max-w-2xl">
+          {/* Header - Pop Art Style */}
           <div className="mb-10">
-            <h1 className="section-title-lg mb-4">Submit a Skill</h1>
-            <p className="body-text">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-2 flex-1 bg-foreground" />
+              <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
+                <span className="text-pop-orange">Submit</span> a Skill
+              </h1>
+              <div className="h-2 flex-1 bg-foreground" />
+            </div>
+            <p className="text-center text-lg text-muted-foreground">
               Upload your skill files for review. Your submission must include a SKILL.md file.
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* File Upload */}
-            <div className="rounded-lg bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
-              <label className="mb-2 block font-serif text-lg font-medium text-card-foreground">
+            {/* File Upload - Pop Art Style */}
+            <div className="border-4 border-foreground bg-card p-6 shadow-[4px_4px_0_0_theme(colors.foreground)]">
+              <label className="mb-2 block text-lg font-black uppercase text-foreground">
                 Skill Files
               </label>
               <p className="mb-4 text-sm text-muted-foreground">
                 Drag and drop files or click to browse. Required: SKILL.md
               </p>
 
-              {/* Drop Zone */}
+              {/* Drop Zone - Pop Art Style */}
               <div
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`relative rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
+                className={`relative border-4 border-dashed p-8 text-center transition-colors ${
                   isDragOver
-                    ? 'border-[--teal] bg-[--teal]/5'
-                    : 'border-border'
+                    ? 'border-pop-pink bg-pop-pink/10'
+                    : 'border-foreground'
                 }`}
               >
                 <input
@@ -353,17 +359,17 @@ export default function SubmitPage() {
                 />
                 <Upload
                   className={`mx-auto mb-4 h-12 w-12 ${
-                    isDragOver ? 'text-[--teal]' : 'text-muted-foreground'
+                    isDragOver ? 'text-pop-pink' : 'text-foreground'
                   }`}
                 />
-                <p className="mb-4 text-muted-foreground">
+                <p className="mb-4 font-bold text-foreground">
                   Drag and drop files or a folder here
                 </p>
                 <div className="flex justify-center gap-3">
                   <Button
                     type="button"
                     variant="outline"
-                    className="gap-2 rounded-md"
+                    className="gap-2 border-2 border-foreground bg-pop-cyan font-bold uppercase text-foreground hover:bg-pop-cyan/80"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Upload className="h-4 w-4" />
@@ -372,38 +378,38 @@ export default function SubmitPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="gap-2 rounded-md"
+                    className="gap-2 border-2 border-foreground bg-pop-lime font-bold uppercase text-foreground hover:bg-pop-lime/80"
                     onClick={() => folderInputRef.current?.click()}
                   >
                     <FolderOpen className="h-4 w-4" />
                     Upload Folder
                   </Button>
                 </div>
-                <p className="mt-4 text-xs text-muted-foreground">
+                <p className="mt-4 text-xs font-bold text-muted-foreground">
                   Allowed: {ALLOWED_EXTENSIONS.join(', ')}
                 </p>
               </div>
 
-              {/* File List */}
+              {/* File List - Pop Art Style */}
               {files.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {files.map((file) => (
                     <div
                       key={file.path}
-                      className="flex items-center justify-between rounded-md border border-border bg-background px-4 py-3"
+                      className="flex items-center justify-between border-2 border-foreground bg-background px-4 py-3"
                     >
                       <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-muted-foreground" />
+                        <FileText className="h-5 w-5 text-foreground" />
                         <div>
-                          <p className="flex items-center gap-2 font-mono text-sm text-card-foreground">
+                          <p className="flex items-center gap-2 font-mono text-sm font-bold text-foreground">
                             {file.path}
                             {file.name.toLowerCase() === 'skill.md' && (
-                              <Badge className="bg-foreground text-white border-0 rounded-sm">
+                              <Badge className="bg-pop-pink text-foreground border-2 border-foreground font-bold">
                                 Required
                               </Badge>
                             )}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs font-bold text-muted-foreground">
                             {formatFileSize(file.size)}
                           </p>
                         </div>
@@ -411,7 +417,7 @@ export default function SubmitPage() {
                       <button
                         type="button"
                         onClick={() => removeFile(file.path)}
-                        className="p-1 text-muted-foreground transition-colors hover:text-destructive"
+                        className="p-1 text-foreground transition-colors hover:text-pop-pink hover:scale-110"
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -420,65 +426,65 @@ export default function SubmitPage() {
                 </div>
               )}
 
-              {/* Validation Messages */}
+              {/* Validation Messages - Pop Art Style */}
               {files.length > 0 && !hasSkillMd && (
-                <p className="mt-3 flex items-center gap-2 text-sm text-yellow-700">
+                <p className="mt-3 flex items-center gap-2 text-sm font-bold text-pop-orange">
                   <AlertTriangle className="h-4 w-4" />
                   SKILL.md file is required
                 </p>
               )}
 
               {files.length > 0 && hasSkillMd && (
-                <p className="mt-3 flex items-center gap-2 text-sm text-green-700">
+                <p className="mt-3 flex items-center gap-2 text-sm font-bold text-pop-lime">
                   <Check className="h-4 w-4" />
                   SKILL.md found - ready to submit
                 </p>
               )}
             </div>
 
-            {/* Error Message */}
+            {/* Error Message - Pop Art Style */}
             {error && (
-              <div className="rounded-md border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
+              <div className="border-4 border-foreground bg-pop-pink p-4 text-sm font-bold text-foreground">
                 {error}
               </div>
             )}
 
-            {/* Guidelines */}
-            <div className="rounded-lg bg-card p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
-              <h3 className="mb-4 font-serif text-lg font-medium text-card-foreground">
+            {/* Guidelines - Pop Art Style */}
+            <div className="border-4 border-foreground bg-card p-6 shadow-[4px_4px_0_0_theme(colors.foreground)]">
+              <h3 className="mb-4 text-lg font-black uppercase text-foreground">
                 Submission Guidelines
               </h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
+              <ul className="space-y-3 text-sm text-foreground">
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-pop-lime" />
                   <span>
-                    Include a <code className="rounded bg-muted px-1.5 py-0.5 text-xs">SKILL.md</code> file
+                    Include a <code className="border border-foreground bg-pop-yellow px-1.5 py-0.5 text-xs font-bold">SKILL.md</code> file
                     with YAML frontmatter containing: name, description, version
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-pop-lime" />
                   <span>Include installation instructions and usage examples in your SKILL.md</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-pop-lime" />
                   <span>All code should be original work or properly licensed</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-[--teal]" />
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-pop-lime" />
                   <span>No malicious code or security vulnerabilities</span>
                 </li>
               </ul>
 
-              {/* Example SKILL.md */}
-              <div className="terminal mt-6">
-                <div className="terminal-header">
-                  <span className="terminal-dot terminal-dot-red" />
-                  <span className="terminal-dot terminal-dot-yellow" />
-                  <span className="terminal-dot terminal-dot-green" />
-                  <span className="ml-3 text-xs text-white/50">SKILL.md</span>
+              {/* Example SKILL.md - Pop Art Terminal */}
+              <div className="mt-6 border-4 border-foreground shadow-[4px_4px_0_0_theme(colors.foreground)]">
+                <div className="bg-foreground px-3 py-2 flex items-center gap-2">
+                  <span className="w-3 h-3 bg-pop-pink" />
+                  <span className="w-3 h-3 bg-pop-yellow" />
+                  <span className="w-3 h-3 bg-pop-lime" />
+                  <span className="ml-3 text-xs text-card/50 font-bold">SKILL.md</span>
                 </div>
-                <pre className="terminal-content overflow-x-auto text-xs">
+                <pre className="bg-foreground text-card p-4 overflow-x-auto text-xs font-mono">
 {`---
 name: My Awesome Skill
 description: A brief description of what the skill does
@@ -492,11 +498,11 @@ Instructions and documentation here...`}
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit Button - Pop Art Style */}
             <Button
               type="submit"
               disabled={isSubmitting || files.length === 0 || !hasSkillMd}
-              className="btn-primary w-full py-4 text-base"
+              className="w-full py-6 text-lg bg-pop-yellow text-foreground font-black uppercase border-4 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[3px_3px_0_0_theme(colors.foreground)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[6px_6px_0_0_theme(colors.foreground)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
             >
               {isSubmitting ? (
                 <>

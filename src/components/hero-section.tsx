@@ -1,9 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Sparkles, Copy, Check, Terminal, Star, ExternalLink } from "lucide-react"
+import { ArrowRight, Sparkles, Copy, Check, Star, Search } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 const featuredSkills = [
   {
@@ -151,20 +152,20 @@ export function HeroSection() {
             </h1>
           </div>
 
-          {/* Right column - Featured Skill Card */}
+          {/* Right column - Featured Skill Card (Simplified) */}
           <div className="flex justify-center lg:justify-end">
-            <div 
+            <div
               className={`
                 group relative border-4 border-foreground ${colors.bg}
-                p-0 transition-all duration-200 
+                p-0 transition-all duration-200
                 shadow-[6px_6px_0_0_theme(colors.foreground)]
-                hover:shadow-[2px_2px_0_0_theme(colors.foreground)] 
+                hover:shadow-[2px_2px_0_0_theme(colors.foreground)]
                 hover:translate-x-1 hover:translate-y-1
                 overflow-hidden w-full max-w-md
               `}
             >
               {/* Corner badge */}
-              <div className="absolute top-0 right-0 flex">
+              <div className="absolute top-0 right-0 flex z-10">
                 <div className="bg-pop-yellow text-foreground font-black text-xs px-3 py-1 border-l-4 border-b-4 border-foreground uppercase flex items-center gap-1">
                   <Star className="h-3 w-3 fill-current" />
                   FEATURED
@@ -172,130 +173,133 @@ export function HeroSection() {
               </div>
 
               {/* Header stripe with icon */}
-              <div className="bg-foreground text-card p-4 flex items-center gap-4">
-                <div className={`text-3xl ${colors.bgSolid} p-2 border-2 border-card`}>
+              <div className="bg-foreground text-card p-4 flex items-center gap-3">
+                <div className={`text-2xl ${colors.bgSolid} p-2 border-2 border-card`}>
                   {randomSkill.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-black uppercase truncate">{randomSkill.name}</h3>
-                  <p className="text-xs opacity-80">
-                    by {randomSkill.author} • {randomSkill.authorLocation}
-                  </p>
+                  <h3 className="text-base font-black uppercase truncate">{randomSkill.name}</h3>
+                  <p className="text-xs opacity-70">by {randomSkill.author}</p>
+                </div>
+                <div className="flex items-center gap-1 text-card font-bold shrink-0">
+                  <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
+                  <span className="text-sm">{randomSkill.stars}</span>
                 </div>
               </div>
 
-              {/* Content area */}
+              {/* Content area - simplified */}
               <div className="p-4 bg-card">
                 {/* Description */}
-                <p className="text-foreground text-sm mb-4 line-clamp-2">
+                <p className="text-foreground text-sm mb-3 line-clamp-2">
                   {randomSkill.description}
                 </p>
 
-                {/* Tags - pop art style */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {randomSkill.tags.slice(0, 3).map((tag, i) => (
-                    <Badge 
-                      key={tag} 
-                      className={`
-                        ${i === 0 ? 'bg-pop-pink' : i === 1 ? 'bg-pop-cyan' : 'bg-pop-lime'}
-                        text-foreground font-bold text-xs border-2 border-foreground uppercase
-                      `}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
+                {/* Category + Agents simplified */}
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge className="bg-pop-pink text-foreground font-bold text-xs border-2 border-foreground uppercase">
+                    {randomSkill.tags[0]}
+                  </Badge>
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {randomSkill.agents.length} agents
+                  </span>
                 </div>
 
-                {/* Compatible Agents */}
-                <div className="flex flex-wrap gap-1 mb-4">
-                  <span className="text-xs font-bold text-muted-foreground mr-1 uppercase">Works with:</span>
-                  {randomSkill.agents.slice(0, 3).map((agent) => (
-                    <span key={agent} className="text-xs font-medium text-foreground bg-muted px-2 py-0.5 border border-foreground">
-                      {agent}
-                    </span>
-                  ))}
-                  {randomSkill.agents.length > 3 && (
-                    <span className="text-xs font-bold text-muted-foreground">+{randomSkill.agents.length - 3}</span>
-                  )}
-                </div>
-
-                {/* Install Command - terminal style */}
-                <div className="bg-foreground text-card p-3 mb-4 border-2 border-foreground">
+                {/* PRIMARY ACTION: Install Command */}
+                <button
+                  onClick={handleSkillCopy}
+                  className="w-full bg-foreground text-card p-3 border-2 border-foreground hover:bg-foreground/90 transition-colors cursor-pointer"
+                >
                   <div className="flex items-center justify-between gap-2">
-                    <code className="text-xs font-mono truncate flex-1">
+                    <code className="text-xs font-mono truncate flex-1 text-left">
                       <span className="text-pop-yellow">$</span> {randomSkill.installCommand}
                     </code>
-                    <Button 
-                      size="icon" 
-                      variant="ghost" 
-                      className="h-7 w-7 shrink-0 text-card hover:text-pop-yellow hover:bg-transparent"
-                      onClick={handleSkillCopy}
-                    >
-                      {skillCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    </Button>
+                    <div className={`shrink-0 flex items-center gap-1 font-bold text-xs uppercase ${skillCopied ? 'text-pop-lime' : 'text-pop-yellow'}`}>
+                      {skillCopied ? (
+                        <>
+                          <Check className="h-4 w-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4" />
+                          Copy
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-foreground font-bold">
-                    <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
-                    <span className="text-sm">{randomSkill.stars}</span>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-foreground font-bold hover:bg-pop-yellow border-2 border-foreground uppercase text-xs"
-                  >
-                    Details
-                    <ExternalLink className="ml-1 h-3 w-3" />
-                  </Button>
-                </div>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* CTA Buttons - centered below both columns */}
+        {/* SEARCH - Added for task-oriented users */}
+        <form action="/skills" method="GET" className="max-w-2xl mx-auto mb-10">
+          <div className="flex gap-0">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground" />
+              <input
+                type="text"
+                name="search"
+                placeholder="Search for a skill..."
+                className="w-full border-4 border-r-0 border-foreground bg-card py-4 pl-12 pr-4 text-foreground placeholder-muted-foreground font-bold focus:outline-none focus:bg-pop-yellow/20"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-8 bg-pop-pink text-foreground font-black uppercase border-4 border-foreground shadow-[4px_4px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-2"
+            >
+              <Search className="h-5 w-5" />
+              <span className="hidden sm:inline">Search</span>
+            </button>
+          </div>
+        </form>
+
+        {/* CTA Buttons - simplified, secondary to search */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
-          <Button 
-            size="lg" 
-            className="bg-pop-yellow text-foreground hover:bg-pop-orange font-black text-lg px-8 py-6 border-3 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-1 hover:translate-y-1 transition-all uppercase tracking-wide"
-          >
-            Browse Skills
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          <Button 
-            size="lg" 
-            variant="outline"
-            className="border-3 border-foreground text-foreground hover:bg-pop-cyan hover:text-foreground font-black text-lg px-8 py-6 shadow-[6px_6px_0_0_theme(colors.pop-pink)] hover:shadow-[2px_2px_0_0_theme(colors.pop-pink)] hover:translate-x-1 hover:translate-y-1 transition-all bg-card uppercase tracking-wide"
-          >
-            Submit Your Skill
-          </Button>
+          <Link href="/skills">
+            <Button
+              size="lg"
+              className="bg-pop-yellow text-foreground hover:bg-pop-orange font-black text-lg px-8 py-6 border-3 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-1 hover:translate-y-1 transition-all uppercase tracking-wide"
+            >
+              Browse All Skills
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+          <Link href="/submit">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-3 border-foreground text-foreground hover:bg-pop-cyan hover:text-foreground font-black text-lg px-8 py-6 shadow-[6px_6px_0_0_theme(colors.pop-pink)] hover:shadow-[2px_2px_0_0_theme(colors.pop-pink)] hover:translate-x-1 hover:translate-y-1 transition-all bg-card uppercase tracking-wide"
+            >
+              Submit Your Skill
+            </Button>
+          </Link>
         </div>
 
-        {/* Works With - Agent compatibility */}
-        <div className="max-w-4xl mx-auto py-6 px-4 border-3 border-foreground bg-foreground shadow-[6px_6px_0_0_theme(colors.foreground)]">
+        {/* Works With - Agent compatibility (now functional) */}
+        <div className="max-w-4xl mx-auto py-6 px-4 border-3 border-foreground bg-foreground shadow-[6px_6px_0_0_var(--color-foreground)]">
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
             <span className="text-xs font-black text-pop-yellow uppercase tracking-widest whitespace-nowrap">
-              Works with
+              Filter by agent
             </span>
             <div className="flex flex-wrap justify-center gap-0">
               {[
-                { name: "Claude Code", color: "bg-pop-pink" },
-                { name: "Codex", color: "bg-pop-lime" },
-                { name: "Cursor", color: "bg-pop-cyan" },
-                { name: "OpenClaw", color: "bg-pop-orange" },
-                { name: "Antigravity", color: "bg-pop-yellow" },
-                { name: "Windsurf", color: "bg-pop-pink" },
-                { name: "Aider", color: "bg-pop-lime" },
+                { name: "Claude Code", id: "claude-code", color: "bg-pop-pink" },
+                { name: "Codex", id: "codex", color: "bg-pop-lime" },
+                { name: "Cursor", id: "cursor", color: "bg-pop-cyan" },
+                { name: "OpenClaw", id: "openclaw", color: "bg-pop-orange" },
+                { name: "Antigravity", id: "antigravity", color: "bg-pop-yellow" },
+                { name: "Windsurf", id: "windsurf", color: "bg-pop-pink" },
+                { name: "Aider", id: "aider", color: "bg-pop-lime" },
               ].map((agent) => (
-                <div 
-                  key={agent.name} 
-                  className={`${agent.color} text-foreground text-xs font-black px-3 py-2 border border-foreground hover:scale-105 transition-transform cursor-default uppercase`}
+                <Link
+                  key={agent.id}
+                  href={`/skills?agent=${agent.id}`}
+                  className={`${agent.color} text-foreground text-xs font-black px-3 py-2 border border-foreground hover:scale-105 transition-transform uppercase`}
                 >
                   {agent.name}
-                </div>
+                </Link>
               ))}
             </div>
           </div>

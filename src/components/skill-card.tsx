@@ -110,29 +110,31 @@ export function SkillCard({ skill, variant = "default", featured }: SkillCardPro
   const colors = colorClasses[skill.accentColor || 'yellow'] || colorClasses.yellow
   const installCommand = skill.installCommand || `npx skillsnat add @pgh/${skill.slug || skill.name.toLowerCase().replace(/\s+/g, '-')}`
 
-  const handleCopy = async () => {
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     await navigator.clipboard.writeText(installCommand)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  // Derive tags from category if not provided
-  const tags = skill.tags || (skill.category ? [skill.category] : [])
+  // Single category for display
+  const category = skill.category || (skill.tags && skill.tags[0])
 
   return (
-    <div 
+    <div
       className={`
         group relative border-4 border-foreground ${colors.bg}
-        p-0 transition-all duration-200 
+        p-0 transition-all duration-200
         shadow-[6px_6px_0_0_theme(colors.foreground)]
-        hover:shadow-[2px_2px_0_0_theme(colors.foreground)] 
+        hover:shadow-[2px_2px_0_0_theme(colors.foreground)]
         hover:translate-x-1 hover:translate-y-1
         ${variant === "featured" || featured ? "md:col-span-2" : ""}
         overflow-hidden
       `}
     >
       {/* Corner badges - Warhol style */}
-      <div className="absolute top-0 right-0 flex">
+      <div className="absolute top-0 right-0 flex z-10">
         {skill.isNew && (
           <div className="bg-pop-pink text-foreground font-black text-xs px-3 py-1 border-l-4 border-b-4 border-foreground uppercase">
             NEW!
@@ -147,89 +149,66 @@ export function SkillCard({ skill, variant = "default", featured }: SkillCardPro
       </div>
 
       {/* Header stripe with icon */}
-      <div className="bg-foreground text-card p-4 flex items-center gap-4">
-        <div className={`text-3xl ${colors.bgSolid} p-2 border-2 border-card`}>
+      <div className="bg-foreground text-card p-4 flex items-center gap-3">
+        <div className={`text-2xl ${colors.bgSolid} p-2 border-2 border-card`}>
           {skill.icon || '🔧'}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-black uppercase truncate">{skill.name}</h3>
-          <p className="text-xs opacity-80">
-            by {skill.author}{skill.authorLocation ? ` • ${skill.authorLocation}` : ''}
-          </p>
+          <h3 className="text-base font-black uppercase truncate">{skill.name}</h3>
+          <p className="text-xs opacity-70">by {skill.author}</p>
+        </div>
+        {/* Stars inline in header */}
+        <div className="flex items-center gap-1 text-card font-bold shrink-0">
+          <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
+          <span className="text-sm">{skill.stars}</span>
         </div>
       </div>
 
-      {/* Content area */}
+      {/* Content area - simplified */}
       <div className="p-4 bg-card">
         {/* Description */}
-        <p className="text-foreground text-sm mb-4 line-clamp-2">
+        <p className="text-foreground text-sm mb-3 line-clamp-2">
           {skill.shortDescription || skill.description}
         </p>
 
-        {/* Tags - pop art style */}
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {tags.slice(0, 3).map((tag, i) => (
-              <Badge 
-                key={tag} 
-                className={`
-                  ${i === 0 ? 'bg-pop-pink' : i === 1 ? 'bg-pop-cyan' : 'bg-pop-lime'}
-                  text-foreground font-bold text-xs border-2 border-foreground uppercase
-                `}
-              >
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        )}
+        {/* Category + Agents in one line */}
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {category && (
+            <Badge className="bg-pop-pink text-foreground font-bold text-xs border-2 border-foreground uppercase">
+              {category}
+            </Badge>
+          )}
+          {skill.agents && skill.agents.length > 0 && (
+            <span className="text-xs font-bold text-muted-foreground">
+              {skill.agents.length} agent{skill.agents.length !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
 
-        {/* Compatible Agents */}
-        {skill.agents && skill.agents.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
-            <span className="text-xs font-bold text-muted-foreground mr-1 uppercase">Works with:</span>
-            {skill.agents.slice(0, 3).map((agent) => (
-              <span key={agent} className="text-xs font-medium text-foreground bg-muted px-2 py-0.5 border border-foreground">
-                {agent}
-              </span>
-            ))}
-            {skill.agents.length > 3 && (
-              <span className="text-xs font-bold text-muted-foreground">+{skill.agents.length - 3}</span>
-            )}
-          </div>
-        )}
-
-        {/* Install Command - terminal style */}
-        <div className="bg-foreground text-card p-3 mb-4 border-2 border-foreground">
+        {/* PRIMARY ACTION: Install Command - made prominent */}
+        <button
+          onClick={handleCopy}
+          className="w-full bg-foreground text-card p-3 border-2 border-foreground group/copy hover:bg-foreground/90 transition-colors cursor-pointer"
+        >
           <div className="flex items-center justify-between gap-2">
-            <code className="text-xs font-mono truncate flex-1">
+            <code className="text-xs font-mono truncate flex-1 text-left">
               <span className="text-pop-yellow">$</span> {installCommand}
             </code>
-            <Button 
-              size="icon" 
-              variant="ghost" 
-              className="h-7 w-7 shrink-0 text-card hover:text-pop-yellow hover:bg-transparent"
-              onClick={handleCopy}
-            >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            </Button>
+            <div className={`shrink-0 flex items-center gap-1 font-bold text-xs uppercase ${copied ? 'text-pop-lime' : 'text-pop-yellow'}`}>
+              {copied ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4" />
+                  Copy
+                </>
+              )}
+            </div>
           </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-foreground font-bold">
-            <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
-            <span className="text-sm">{skill.stars}</span>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-foreground font-bold hover:bg-pop-yellow border-2 border-foreground uppercase text-xs"
-          >
-            Details
-            <ExternalLink className="ml-1 h-3 w-3" />
-          </Button>
-        </div>
+        </button>
       </div>
     </div>
   )

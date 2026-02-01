@@ -44,34 +44,44 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav - Fixed: use explicit classes instead of dynamic */}
           <nav className="hidden md:flex items-center gap-1">
-            {[
-              { href: "#featured", label: "Featured", color: "bg-pop-pink" },
-              { href: "#new", label: "New Skills", color: "bg-pop-cyan" },
-              { href: "#install", label: "Install", color: "bg-pop-lime" },
-              { href: "#agents", label: "Agents", color: "bg-pop-orange" },
-            ].map((item) => (
-              <Link 
-                key={item.href}
-                href={item.href} 
-                className={`text-sm font-bold text-foreground px-4 py-2 border-2 border-transparent hover:border-foreground hover:${item.color} transition-all uppercase`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            <Link
+              href="/skills"
+              className="text-sm font-bold text-foreground px-4 py-2 border-2 border-transparent hover:border-foreground hover:bg-pop-pink transition-all uppercase"
+            >
+              Browse
+            </Link>
+            <Link
+              href="/skills?category=API"
+              className="text-sm font-bold text-foreground px-4 py-2 border-2 border-transparent hover:border-foreground hover:bg-pop-cyan transition-all uppercase"
+            >
+              APIs
+            </Link>
+            <Link
+              href="/submit"
+              className="text-sm font-bold text-foreground px-4 py-2 border-2 border-transparent hover:border-foreground hover:bg-pop-lime transition-all uppercase"
+            >
+              Submit
+            </Link>
+            <Link
+              href="/docs"
+              className="text-sm font-bold text-foreground px-4 py-2 border-2 border-transparent hover:border-foreground hover:bg-pop-orange transition-all uppercase"
+            >
+              Docs
+            </Link>
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button 
-              size="sm" 
-              className="hidden sm:flex bg-foreground text-pop-yellow hover:bg-pop-pink hover:text-foreground font-bold border-2 border-foreground shadow-[3px_3px_0_0_theme(colors.pop-pink)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all uppercase"
+            <Button
+              size="sm"
+              className="hidden sm:flex bg-foreground text-pop-yellow hover:bg-pop-pink hover:text-foreground font-bold border-2 border-foreground shadow-[3px_3px_0_0_var(--color-pop-pink)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all uppercase"
               asChild
             >
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/ianpcook/skills-nat" target="_blank" rel="noopener noreferrer">
                 <Github className="mr-2 h-4 w-4" />
-                Submit
+                GitHub
               </a>
             </Button>
             
@@ -87,35 +97,38 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu - Fixed: explicit classes */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t-2 border-foreground py-4">
             <nav className="flex flex-col gap-2">
-              {[
-                { href: "#featured", label: "Featured", color: "bg-pop-pink" },
-                { href: "#new", label: "New Skills", color: "bg-pop-cyan" },
-                { href: "#install", label: "Install", color: "bg-pop-lime" },
-                { href: "#agents", label: "Agents", color: "bg-pop-orange" },
-              ].map((item) => (
-                <Link 
-                  key={item.href}
-                  href={item.href} 
-                  className={`text-sm font-bold text-foreground px-4 py-3 border-2 border-foreground ${item.color} uppercase`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <Button 
-                size="sm" 
-                className="w-fit bg-foreground text-pop-yellow hover:bg-pop-pink hover:text-foreground font-bold border-2 border-foreground uppercase mt-2"
-                asChild
+              <Link
+                href="/skills"
+                className="text-sm font-bold text-foreground px-4 py-3 border-2 border-foreground bg-pop-pink uppercase"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-                  <Github className="mr-2 h-4 w-4" />
-                  Submit Skill
-                </a>
-              </Button>
+                Browse Skills
+              </Link>
+              <Link
+                href="/skills?category=API"
+                className="text-sm font-bold text-foreground px-4 py-3 border-2 border-foreground bg-pop-cyan uppercase"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                APIs
+              </Link>
+              <Link
+                href="/submit"
+                className="text-sm font-bold text-foreground px-4 py-3 border-2 border-foreground bg-pop-lime uppercase"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Submit Skill
+              </Link>
+              <Link
+                href="/docs"
+                className="text-sm font-bold text-foreground px-4 py-3 border-2 border-foreground bg-pop-orange uppercase"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Docs
+              </Link>
             </nav>
           </div>
         )}

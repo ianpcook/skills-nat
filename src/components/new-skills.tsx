@@ -67,13 +67,13 @@ export function NewSkills() {
   return (
     <section id="new" className="py-20">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+        {/* Section Header - Pop Art Style (consistent with Featured Skills) */}
         <div className="flex items-center gap-4 mb-12">
-          <div className="h-1 flex-1 bg-gradient-to-r from-transparent via-pop-pink to-transparent" />
-          <h2 className="text-3xl md:text-4xl font-bold text-center">
-            <span className="text-pop-pink">Fresh</span> Off the Press
+          <div className="h-2 flex-1 bg-foreground" />
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
+            <span className="text-pop-cyan">Fresh</span> Off the Press
           </h2>
-          <div className="h-1 flex-1 bg-gradient-to-r from-transparent via-pop-pink to-transparent" />
+          <div className="h-2 flex-1 bg-foreground" />
         </div>
 
         <p className="text-lg text-muted-foreground text-center mb-10 max-w-2xl mx-auto">
@@ -87,11 +87,11 @@ export function NewSkills() {
           ))}
         </div>
 
-        {/* View All CTA */}
+        {/* View All CTA - Pop Art Style */}
         <div className="mt-12 text-center">
-          <Button 
+          <Button
             size="lg"
-            className="bg-pop-pink text-background hover:bg-pop-pink/90 font-bold shadow-[4px_4px_0_0_theme(colors.pop-yellow)]"
+            className="bg-pop-pink text-foreground hover:bg-pop-orange font-black uppercase text-lg px-8 py-6 border-3 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-1 hover:translate-y-1 transition-all"
           >
             View All Skills
             <ArrowRight className="ml-2 h-5 w-5" />
