@@ -88,7 +88,7 @@ const featuredSkills: Skill[] = [
 
 export function FeaturedSkills() {
   return (
-    <section id="featured" className="py-16 md:py-24 relative">
+    <section id="featured" className="pt-8 pb-16 md:pt-10 md:pb-24 relative">
       {/* Warhol-style background quadrant - subtle */}
       <div className="absolute inset-0 pointer-events-none opacity-5">
         <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-pop-pink" />

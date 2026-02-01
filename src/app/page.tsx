@@ -1,6 +1,5 @@
 import { Header } from "@/components/header";
 import { HeroSection } from "@/components/hero-section";
-import { AgentCompatibility } from "@/components/agent-compatibility";
 import { FeaturedSkills } from "@/components/featured-skills";
 import { NewSkills } from "@/components/new-skills";
 import { Footer } from "@/components/footer";
@@ -26,9 +25,31 @@ export default function Home() {
       <div className="relative z-10">
         <Header />
         <HeroSection />
-        <AgentCompatibility />
         <FeaturedSkills />
         <NewSkills />
+        
+        {/* Stats - Warhol quadrant style */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-5xl mx-auto">
+              <div className="grid grid-cols-3 gap-0 border-3 border-foreground overflow-hidden shadow-[8px_8px_0_0_theme(colors.foreground)]">
+                <div className="bg-pop-pink p-6 md:p-8 text-center border-r-3 border-foreground">
+                  <div className="text-4xl md:text-5xl font-black text-foreground">24+</div>
+                  <div className="text-sm font-bold text-foreground/80 mt-1 uppercase tracking-wide">Skills</div>
+                </div>
+                <div className="bg-pop-cyan p-6 md:p-8 text-center border-r-3 border-foreground">
+                  <div className="text-4xl md:text-5xl font-black text-foreground">6</div>
+                  <div className="text-sm font-bold text-foreground/80 mt-1 uppercase tracking-wide">Agents</div>
+                </div>
+                <div className="bg-pop-lime p-6 md:p-8 text-center">
+                  <div className="text-4xl md:text-5xl font-black text-foreground">412</div>
+                  <div className="text-sm font-bold text-foreground/80 mt-1 uppercase tracking-wide">Devs</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         <Footer />
       </div>
     </main>
