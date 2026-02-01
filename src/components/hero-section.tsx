@@ -1,156 +1,170 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { BridgeIllustration } from "@/components/bridge-illustration";
-import { Check, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import { ArrowRight, Sparkles, Copy, Check, Terminal } from "lucide-react"
+import { useState } from "react"
+
+const codeExample = `# Install any skill with one command
+npx skillsnat add @pgh/transit-skill
+
+# Or use with your favorite agent
+claude-code --skill @pgh/transit-skill
+cursor --install-skill @pgh/pierogi-skill`;
 
 export function HeroSection() {
-  const [copied, setCopied] = useState(false);
-  const installCommand = "npm install skills-nat";
+  const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(installCommand);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    await navigator.clipboard.writeText(codeExample)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
-    <section className="relative overflow-hidden min-h-[600px] lg:min-h-[700px]">
-      {/* Bridge illustration - positioned to bleed off right edge */}
-      <div className="absolute inset-0 hidden lg:block">
-        <BridgeIllustration className="absolute top-1/2 -translate-y-1/2 right-0 w-[70vw] h-auto max-h-[800px] translate-x-[15%]" />
+    <section className="relative py-12 md:py-20 overflow-hidden">
+      {/* Warhol-style color block background - inspired by the cat/dog quadrants */}
+      <div className="absolute inset-0 grid grid-cols-2 md:grid-cols-4 pointer-events-none opacity-[0.08]">
+        <div className="bg-pop-pink" />
+        <div className="bg-pop-cyan" />
+        <div className="bg-pop-lime" />
+        <div className="bg-pop-orange" />
       </div>
 
-      {/* Content layer */}
-      <div className="relative z-10 px-6 py-16 md:py-24 lg:py-32">
-        <div className="mx-auto max-w-6xl">
-          <div className="max-w-xl lg:max-w-lg">
-            <h1 className="mb-6 font-serif text-4xl font-bold leading-tight text-foreground md:text-5xl lg:text-6xl text-balance">
-              Skills for your{" "}
-              <span className="text-muted-foreground">AI agents</span>, n'at
-            </h1>
-            <p className="mb-10 text-lg leading-relaxed text-muted-foreground">
-              Discover and integrate premium AI skills for Claude Code, Cursor,
-              and Codex.
-            </p>
+      {/* Stylized bridge silhouette - Pittsburgh's iconic yellow bridges */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+        <svg viewBox="0 0 1200 120" className="w-full h-24 md:h-32" preserveAspectRatio="none">
+          {/* Bridge suspension cables */}
+          <path 
+            d="M0 120 L0 80 Q100 40 200 60 Q300 80 400 50 Q500 20 600 40 Q700 60 800 30 Q900 0 1000 50 Q1100 100 1200 60 L1200 120 Z" 
+            className="fill-pop-yellow"
+          />
+          {/* Bridge deck */}
+          <rect x="0" y="100" width="1200" height="20" className="fill-pop-yellow" />
+          {/* Tower silhouettes */}
+          <rect x="200" y="40" width="20" height="60" className="fill-pop-orange" />
+          <rect x="500" y="20" width="24" height="80" className="fill-pop-orange" />
+          <rect x="800" y="30" width="20" height="70" className="fill-pop-orange" />
+          <rect x="1000" y="50" width="18" height="50" className="fill-pop-orange" />
+        </svg>
+      </div>
+
+      <div className="container mx-auto px-4 relative">
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Badge with pop-art styling */}
+          <div className="inline-flex items-center gap-2 px-5 py-2 border-3 border-foreground bg-pop-pink text-foreground text-sm font-bold mb-8 shadow-[4px_4px_0_0_theme(colors.foreground)]">
+            <Sparkles className="h-4 w-4" />
+            <span>Made in Pittsburgh, for the world</span>
           </div>
 
-          {/* Mobile bridge illustration */}
-          <div className="lg:hidden mb-10 -mx-6 overflow-hidden">
-            <BridgeIllustration className="w-full h-auto max-h-[300px]" />
+          {/* Main headline - bold like the poster text */}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 uppercase">
+            <span className="text-foreground">Skills</span>
+            <br />
+            <span 
+              className="relative inline-block text-pop-yellow"
+              style={{ 
+                WebkitTextStroke: '3px currentColor',
+                textShadow: '4px 4px 0 var(--pop-pink), 8px 8px 0 var(--pop-cyan)'
+              }}
+            >
+              N{"'"}at
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            AI coding skills built by Pittsburgh{"'"}s finest developers, 
+            researchers, and makers. One command to install, endless possibilities.
+          </p>
+
+          {/* CTA Buttons - bold pop-art style */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <Button 
+              size="lg" 
+              className="bg-pop-yellow text-foreground hover:bg-pop-orange font-black text-lg px-8 py-6 border-3 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-1 hover:translate-y-1 transition-all uppercase tracking-wide"
+            >
+              Browse Skills
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="border-3 border-foreground text-foreground hover:bg-pop-cyan hover:text-foreground font-black text-lg px-8 py-6 shadow-[6px_6px_0_0_theme(colors.pop-pink)] hover:shadow-[2px_2px_0_0_theme(colors.pop-pink)] hover:translate-x-1 hover:translate-y-1 transition-all bg-card uppercase tracking-wide"
+            >
+              Submit Your Skill
+            </Button>
           </div>
 
-          <div className="max-w-xl lg:max-w-md">
-            {/* Terminal block - macOS style */}
-            <div className="terminal mb-8">
-              <div className="terminal-header">
-                <span className="terminal-dot terminal-dot-red" />
-                <span className="terminal-dot terminal-dot-yellow" />
-                <span className="terminal-dot terminal-dot-green" />
-              </div>
-              <div className="flex items-center justify-between px-4 py-4">
-                <code className="font-mono text-sm text-white/90">
-                  {installCommand}
-                </code>
-                <button
-                  onClick={handleCopy}
-                  className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors"
-                  aria-label="Copy command"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-3.5 w-3.5" />
-                      <span>Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" />
-                      <span>Copy</span>
-                    </>
-                  )}
-                </button>
+          {/* Quick Install Terminal - moved up here */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-foreground translate-x-3 translate-y-3 transition-transform group-hover:translate-x-4 group-hover:translate-y-4" />
+              <div className="relative border-4 border-foreground bg-pop-pink overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-foreground text-background">
+                  <div className="flex items-center gap-2">
+                    <Terminal className="h-5 w-5" />
+                    <span className="font-black uppercase text-sm">
+                      Quick Install
+                    </span>
+                  </div>
+                  <button
+                    className="hover:scale-110 transition-transform"
+                    onClick={handleCopy}
+                    aria-label="Copy install commands"
+                  >
+                    {copied ? (
+                      <Check className="h-5 w-5" />
+                    ) : (
+                      <Copy className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                <pre className="p-5 overflow-x-auto text-sm bg-card text-left">
+                  <code className="font-mono">
+                    {codeExample.split("\n").map((line, i) => (
+                      <div key={i} className="leading-relaxed">
+                        {line.startsWith("#") ? (
+                          <span className="text-muted-foreground">{line}</span>
+                        ) : line.startsWith("npx") ||
+                          line.startsWith("claude") ||
+                          line.startsWith("cursor") ? (
+                          <>
+                            <span className="text-pop-pink font-bold">
+                              {line.split(" ")[0]}
+                            </span>
+                            <span className="text-foreground">
+                              {" "}
+                              {line.split(" ").slice(1).join(" ")}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-foreground">{line}</span>
+                        )}
+                      </div>
+                    ))}
+                  </code>
+                </pre>
               </div>
             </div>
+          </div>
 
-            {/* Agent badges */}
-            <div className="flex flex-wrap items-center gap-3 mb-10">
-              <AgentBadge name="Claude Code" icon={<ClaudeIcon />} />
-              <AgentBadge name="Cursor" icon={<CursorIcon />} />
-              <AgentBadge name="Codex" icon={<CodexIcon />} />
+          {/* Stats - Warhol quadrant style */}
+          <div className="grid grid-cols-3 gap-0 border-3 border-foreground overflow-hidden shadow-[8px_8px_0_0_theme(colors.foreground)]">
+            <div className="bg-pop-pink p-6 md:p-8 text-center border-r-3 border-foreground">
+              <div className="text-4xl md:text-5xl font-black text-foreground">24+</div>
+              <div className="text-sm font-bold text-foreground/80 mt-1 uppercase tracking-wide">Skills</div>
             </div>
-
-            {/* CTA buttons */}
-            <div className="flex flex-col items-start gap-4 sm:flex-row">
-              <Button
-                asChild
-                size="lg"
-                className="w-full btn-primary sm:w-auto"
-              >
-                <Link href="/skills">Browse Skills</Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="w-full btn-outline sm:w-auto"
-              >
-                <Link href="/submit">Submit Your Skill</Link>
-              </Button>
+            <div className="bg-pop-cyan p-6 md:p-8 text-center border-r-3 border-foreground">
+              <div className="text-4xl md:text-5xl font-black text-foreground">6</div>
+              <div className="text-sm font-bold text-foreground/80 mt-1 uppercase tracking-wide">Agents</div>
+            </div>
+            <div className="bg-pop-lime p-6 md:p-8 text-center">
+              <div className="text-4xl md:text-5xl font-black text-foreground">412</div>
+              <div className="text-sm font-bold text-foreground/80 mt-1 uppercase tracking-wide">Devs</div>
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
+  )
 }
-
-// Agent badge component
-interface AgentBadgeProps {
-  name: string;
-  icon: React.ReactNode;
-}
-
-const AgentBadge = ({ name, icon }: AgentBadgeProps) => (
-  <div className="flex items-center gap-2 bg-white rounded-md px-3 py-1.5 shadow-sm border border-border">
-    {icon}
-    <span className="text-sm font-medium text-foreground">{name}</span>
-  </div>
-);
-
-// Mini agent icons
-const ClaudeIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-    <circle cx="10" cy="10" r="9" fill="#D97757" />
-    <path
-      d="M12.5 10C12.5 11.38 11.38 12.5 10 12.5C8.62 12.5 7.5 11.38 7.5 10C7.5 8.62 8.62 7.5 10 7.5"
-      stroke="white"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const CursorIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-    <rect width="20" height="20" rx="4" fill="#0D0D0D" />
-    <path d="M6 5L6 14L9 11L12 15L14 14L11 10L14 10L6 5Z" fill="white" />
-  </svg>
-);
-
-const CodexIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-    <path
-      d="M10 1L18 5.5V14.5L10 19L2 14.5V5.5L10 1Z"
-      fill="#10A37F"
-    />
-    <path
-      d="M10 6V14M7 8L10 6L13 8M7 12L10 14L13 12"
-      stroke="white"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);

@@ -1,10 +1,8 @@
 import { Header } from "@/components/header";
 import { HeroSection } from "@/components/hero-section";
-import { AgentsList } from "@/components/agents-list";
-import { WhatAreSkills } from "@/components/what-are-skills";
+import { AgentCompatibility } from "@/components/agent-compatibility";
 import { FeaturedSkills } from "@/components/featured-skills";
-import { RecentlyUpdated } from "@/components/recently-updated";
-import { CTASection } from "@/components/cta-section";
+import { NewSkills } from "@/components/new-skills";
 import { Footer } from "@/components/footer";
 import { OAuthRedirectHandler } from "@/components/oauth-redirect-handler";
 
@@ -13,18 +11,26 @@ export const dynamic = 'force-dynamic';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background overflow-x-hidden">
       <OAuthRedirectHandler />
-      <Header />
-      <main>
+      
+      {/* Warhol-style halftone dots pattern */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px)`,
+          backgroundSize: '8px 8px'
+        }} 
+      />
+      
+      <div className="relative z-10">
+        <Header />
         <HeroSection />
-        <AgentsList />
-        <WhatAreSkills />
+        <AgentCompatibility />
         <FeaturedSkills />
-        <RecentlyUpdated />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+        <NewSkills />
+        <Footer />
+      </div>
+    </main>
   );
 }

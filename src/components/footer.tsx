@@ -1,110 +1,129 @@
-import Link from "next/link";
+"use client"
+
+import Link from "next/link"
+import { Github, Twitter } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="border-t border-border px-6 py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          {/* Logo column */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-block">
-              <div className="logo-box">
-                <span>Skills N'at</span>
-              </div>
+    <footer className="border-t-4 border-pop-yellow bg-card/50 py-12">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand */}
+          <div className="md:col-span-2">
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <svg 
+                viewBox="0 0 48 32" 
+                className="h-8 w-12 text-pop-yellow"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+              >
+                <path d="M4 28 L12 8 L24 4 L36 8 L44 28" strokeLinecap="round" strokeLinejoin="round" />
+                <line x1="0" y1="28" x2="48" y2="28" strokeLinecap="round" />
+                <line x1="12" y1="8" x2="12" y2="28" />
+                <line x1="24" y1="4" x2="24" y2="28" />
+                <line x1="36" y1="8" x2="36" y2="28" />
+              </svg>
+              <span className="text-xl font-bold">
+                <span className="text-pop-yellow">Skills</span>
+                <span className="text-foreground"> N{"'"}at</span>
+              </span>
             </Link>
-            <p className="mt-4 text-sm text-muted-foreground max-w-xs">
-              The marketplace for AI agent skills. Built for developers, by developers.
+            <p className="text-muted-foreground max-w-sm mb-4">
+              AI agent skills built by Pittsburgh{"'"}s finest, n{"'"}at. Open source, community-driven, 
+              and as strong as the steel that built this city.
             </p>
+            <div className="flex gap-4">
+              <a 
+                href="https://github.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-pop-yellow transition-colors"
+              >
+                <Github className="h-5 w-5" />
+              </a>
+              <a 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-pop-cyan transition-colors"
+              >
+                <Twitter className="h-5 w-5" />
+              </a>
+            </div>
           </div>
 
-          {/* Links column */}
+          {/* Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Links</h4>
-            <ul className="space-y-3">
+            <h4 className="font-bold text-pop-pink mb-4">Skills</h4>
+            <ul className="space-y-2">
               <li>
-                <Link
-                  href="/docs"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  About
+                <Link href="#featured" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                  Featured
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/skills"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Browse Skills
+                <Link href="#new" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                  New Skills
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/submit"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Submit a Skill
+                <Link href="#" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                  Browse All
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-muted-foreground hover:text-pop-pink transition-colors">
+                  Submit Skill
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Services column */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Services</h4>
-            <ul className="space-y-3">
+            <h4 className="font-bold text-pop-cyan mb-4">Resources</h4>
+            <ul className="space-y-2">
               <li>
-                <Link
-                  href="/docs"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
+                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
                   Documentation
                 </Link>
               </li>
               <li>
-                <Link
-                  href="https://github.com/ianpcook/skills-nat"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  GitHub
+                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                  API Reference
                 </Link>
               </li>
               <li>
-                <span className="text-sm text-muted-foreground">
-                  Privacy
-                </span>
+                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                  Contributing
+                </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Connect column */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Connect</h4>
-            <ul className="space-y-3">
               <li>
-                <Link
-                  href="https://github.com/ianpcook/skills-nat"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  GitHub
+                <Link href="#" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                  Community
                 </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground text-center">
-            &copy; {new Date().getFullYear()} Skills N'at. Built with care in Pittsburgh.
+        {/* Bottom */}
+        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Skills N{"'"}at. Built with love in Pittsburgh, PA.
           </p>
+          <div className="flex items-center gap-2">
+            {/* Warhol-style decorative dots */}
+            <div className="flex gap-1">
+              <div className="w-3 h-3 rounded-full bg-pop-yellow" />
+              <div className="w-3 h-3 rounded-full bg-pop-pink" />
+              <div className="w-3 h-3 rounded-full bg-pop-cyan" />
+              <div className="w-3 h-3 rounded-full bg-pop-orange" />
+              <div className="w-3 h-3 rounded-full bg-pop-lime" />
+            </div>
+          </div>
         </div>
       </div>
     </footer>
-  );
+  )
 }
-
-export default Footer;

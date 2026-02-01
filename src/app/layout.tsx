@@ -1,26 +1,21 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { Inter, Instrument_Serif, Geist_Mono } from 'next/font/google'
+import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const inter = Inter({ 
+const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
 });
-const instrumentSerif = Instrument_Serif({ 
-  subsets: ["latin"], 
-  weight: "400",
-  variable: "--font-instrument-serif",
-});
-const geistMono = Geist_Mono({ 
+const jetbrainsMono = JetBrains_Mono({ 
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
-  title: "Skills N'at - Skills for your AI agents, n'at",
-  description: 'Discover, share, and install skills for Claude Code, Cursor, Codex, and more. Extend your AI assistant with powerful integrations built by the Pittsburgh community.',
+  title: "Skills N'at | Pittsburgh AI Agent Skills Hub",
+  description: "Discover and install AI agent skills built by Pittsburgh makers. Compatible with Claude Code, Codex, Cursor, and more. Yinz gonna love it!",
   generator: 'v0.app',
   keywords: ["AI skills", "Claude Code", "Cursor", "Codex", "AI agents", "skills marketplace", "Pittsburgh", "Skills N'at"],
   icons: {
@@ -49,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
