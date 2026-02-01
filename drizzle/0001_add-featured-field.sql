@@ -1,0 +1,1 @@
+ALTER TABLE "skills" ADD COLUMN "featured" boolean DEFAULT false NOT NULL;

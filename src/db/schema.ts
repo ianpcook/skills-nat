@@ -6,6 +6,7 @@ import {
   timestamp,
   jsonb,
   integer,
+  boolean,
   pgEnum,
   index,
   customType,
@@ -92,6 +93,8 @@ export const skills = pgTable('skills', {
   // Submission reference
   submissionId: uuid('submission_id').references(() => submissions.id),
   approvedAt: timestamp('approved_at'),
+  // Featured flag for homepage display
+  featured: boolean('featured').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
