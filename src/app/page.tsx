@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { Header } from "@/components/header";
 import { HeroSection } from "@/components/hero-section";
 import { FeaturedSkills } from "@/components/featured-skills";
@@ -5,10 +8,9 @@ import { NewSkills } from "@/components/new-skills";
 import { Footer } from "@/components/footer";
 import { OAuthRedirectHandler } from "@/components/oauth-redirect-handler";
 
-// Force dynamic rendering to always fetch fresh skills data
-export const dynamic = 'force-dynamic';
-
 export default function Home() {
+  const [isSearchActive, setIsSearchActive] = useState(false)
+
   return (
     <main className="min-h-screen bg-background overflow-x-hidden">
       <OAuthRedirectHandler />
@@ -24,11 +26,17 @@ export default function Home() {
       
       <div className="relative z-10">
         <Header />
-        <HeroSection />
-        <FeaturedSkills />
-        <NewSkills />
+        <HeroSection onSearchActiveChange={setIsSearchActive} />
         
-        {/* Stats - Warhol quadrant style */}
+        {/* Only show Featured and New sections when not searching */}
+        {!isSearchActive && (
+          <>
+            <FeaturedSkills />
+            <NewSkills />
+          </>
+        )}
+        
+        {/* Stats - Warhol quadrant style - always visible */}
         <section className="py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
