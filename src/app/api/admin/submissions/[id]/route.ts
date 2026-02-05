@@ -4,7 +4,9 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
 import { indexSkill } from '@/lib/skill-indexer';
-import { isAdminEmail } from '@/lib/admin';
+
+// Admin access is controlled via Google OAuth test users.
+// Only approved test users can complete authentication, so a valid session = admin.
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -16,7 +18,6 @@ export async function GET(
   console.log(`[ADMIN SUBMISSION] Fetching submission: ${id}`);
 
   try {
-    // Verify authentication
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -26,14 +27,6 @@ export async function GET(
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    if (!isAdminEmail(session.user.email)) {
-      console.log(`[ADMIN SUBMISSION] Forbidden - not an admin: ${session.user.email}`);
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
       );
     }
 
@@ -83,7 +76,6 @@ export async function PATCH(
   console.log(`[ADMIN SUBMISSION] Updating submission: ${id}`);
 
   try {
-    // Verify authentication
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -93,14 +85,6 @@ export async function PATCH(
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    if (!isAdminEmail(session.user.email)) {
-      console.log(`[ADMIN SUBMISSION] Forbidden - not an admin: ${session.user.email}`);
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
       );
     }
 
@@ -242,7 +226,6 @@ export async function DELETE(
   console.log(`[ADMIN SUBMISSION] Deleting submission: ${id}`);
 
   try {
-    // Verify authentication
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -252,14 +235,6 @@ export async function DELETE(
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    if (!isAdminEmail(session.user.email)) {
-      console.log(`[ADMIN SUBMISSION] Forbidden - not an admin: ${session.user.email}`);
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
       );
     }
 

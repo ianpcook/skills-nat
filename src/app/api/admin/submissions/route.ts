@@ -3,13 +3,14 @@ import { db, submissions, type SubmissionStatus } from '@/db';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { desc, eq } from 'drizzle-orm';
-import { isAdminEmail } from '@/lib/admin';
+
+// Admin access is controlled via Google OAuth test users.
+// Only approved test users can complete authentication, so a valid session = admin.
 
 export async function GET(request: NextRequest) {
   console.log('[ADMIN SUBMISSIONS] Fetching submissions list');
 
   try {
-    // Verify authentication
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -19,14 +20,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    if (!isAdminEmail(session.user.email)) {
-      console.log(`[ADMIN SUBMISSIONS] Forbidden - not an admin: ${session.user.email}`);
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
       );
     }
 

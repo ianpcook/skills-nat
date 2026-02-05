@@ -105,6 +105,11 @@ export function Footer() {
                   Report Issue
                 </a>
               </li>
+              <li>
+                <Link href="/admin" className="text-muted-foreground hover:text-pop-cyan transition-colors">
+                  Admin
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

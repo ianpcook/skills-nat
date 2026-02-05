@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { isAdminEmail } from '@/lib/admin';
+
+// Admin access is controlled via Google OAuth test users in Google Cloud Console.
+// Only approved test users can complete authentication, so a valid session = admin.
 
 export async function GET() {
   try {
@@ -17,18 +19,10 @@ export async function GET() {
     }
 
     const email = session.user.email;
-    
-    if (!isAdminEmail(email)) {
-      console.log(`[ADMIN CHECK] Access denied for: ${email}`);
-      return NextResponse.json(
-        { error: 'Not authorized', email },
-        { status: 403 }
-      );
-    }
-
     console.log(`[ADMIN CHECK] Access granted for: ${email}`);
-    return NextResponse.json({ 
-      authorized: true, 
+
+    return NextResponse.json({
+      authorized: true,
       email,
     });
   } catch (error) {

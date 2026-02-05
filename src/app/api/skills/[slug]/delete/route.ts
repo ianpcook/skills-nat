@@ -4,7 +4,9 @@ import { skills, skillEmbeddings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { isAdminEmail } from '@/lib/admin';
+
+// Admin access is controlled via Google OAuth test users.
+// Only approved test users can complete authentication, so a valid session = admin.
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -12,10 +14,9 @@ interface RouteParams {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
-  
+
   console.log(`[DELETE] Attempting to delete skill: ${slug}`);
 
-  // Admin authentication check
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -28,17 +29,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     );
   }
 
-  const email = session.user.email;
-  
-  if (!isAdminEmail(email)) {
-    console.log(`[DELETE] Forbidden: ${email} is not an admin`);
-    return NextResponse.json(
-      { error: 'Not authorized' },
-      { status: 403 }
-    );
-  }
-
-  console.log(`[DELETE] Authorized admin: ${email}`);
+  console.log(`[DELETE] Authorized admin: ${session.user.email}`);
 
   if (!db) {
     return NextResponse.json(

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ArrowLeft, ShieldX } from 'lucide-react';
-import { signIn, signOut, useSession } from '@/lib/auth-client';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { signIn, useSession } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 
 export default function AdminLoginPage() {
@@ -13,7 +13,6 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(false);
-  const [accessDenied, setAccessDenied] = useState(false);
 
   // Check for pending OAuth redirect (fallback if callbackURL wasn't preserved)
   useEffect(() => {
@@ -55,8 +54,8 @@ export default function AdminLoginPage() {
             console.log('[ADMIN LOGIN] Admin access confirmed, redirecting');
             router.push('/admin/submissions');
           } else {
-            console.log('[ADMIN LOGIN] Access denied - not an admin');
-            setAccessDenied(true);
+            console.log('[ADMIN LOGIN] Authentication issue');
+            setError('Authentication failed. Please try again.');
           }
         } catch (err) {
           console.error('[ADMIN LOGIN] Error checking admin status:', err);
@@ -111,12 +110,6 @@ export default function AdminLoginPage() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    setAccessDenied(false);
-    setError(null);
-  };
-
   if (isPending || checkingAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -125,36 +118,6 @@ export default function AdminLoginPage() {
           <p className="mt-4 text-muted-foreground">
             {checkingAdmin ? 'Verifying admin access...' : 'Loading...'}
           </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Access denied state
-  if (accessDenied && session) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
-        <div className="w-full max-w-md text-center">
-          <ShieldX className="mx-auto h-16 w-16 text-destructive mb-6" />
-          <h1 className="section-title mb-4">Access Denied</h1>
-          <p className="text-muted-foreground mb-2">
-            Signed in as <strong>{session.user?.email}</strong>
-          </p>
-          <p className="text-muted-foreground mb-6">
-            This account does not have admin privileges.
-          </p>
-          <div className="space-y-3">
-            <Button onClick={handleSignOut} className="btn-primary w-full py-3">
-              Sign Out & Try Different Account
-            </Button>
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to home
-            </Link>
-          </div>
         </div>
       </div>
     );
