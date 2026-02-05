@@ -8,87 +8,6 @@ import Link from "next/link"
 import { SkillCard, toDisplaySkill, type Skill, type BackendSkill } from "@/components/skill-card"
 import { AGENTS, CATEGORIES } from "@/lib/constants"
 
-const featuredSkills = [
-  {
-    id: "1",
-    name: "Pittsburgh Transit API",
-    description: "Get real-time bus and rail data from Port Authority. Track schedules, delays, and plan routes across the Steel City.",
-    author: "yinzer_dev",
-    authorLocation: "Squirrel Hill",
-    installCommand: "npx skillsnat add @pgh/transit-skill",
-    tags: ["transit", "api", "real-time"],
-    agents: ["Claude Code", "Codex", "Cursor", "OpenClaw", "Antigravity"],
-    stars: 127,
-    accentColor: "yellow",
-    icon: "🚌",
-  },
-  {
-    id: "2",
-    name: "Pierogi Finder",
-    description: "Locate the best pierogis in Pittsburgh. Search by filling, neighborhood, and open hours. Mrs. T would be proud.",
-    author: "iron_city_io",
-    authorLocation: "Polish Hill",
-    installCommand: "npx skillsnat add @pgh/pierogi-skill",
-    tags: ["food", "local", "search"],
-    agents: ["Claude Code", "Cursor", "Aider"],
-    stars: 89,
-    accentColor: "pink",
-    icon: "🥟",
-  },
-  {
-    id: "3",
-    name: "CMU Research Papers",
-    description: "Search and summarize research papers from Carnegie Mellon University. AI, robotics, and computer science focus.",
-    author: "tartan_coder",
-    authorLocation: "Oakland",
-    installCommand: "npx skillsnat add @pgh/cmu-papers",
-    tags: ["research", "academic", "ai"],
-    agents: ["Claude Code", "Codex", "Cursor", "OpenClaw", "Antigravity", "Continue"],
-    stars: 256,
-    accentColor: "cyan",
-    icon: "📚",
-  },
-  {
-    id: "4",
-    name: "Three Rivers Weather",
-    description: "Hyperlocal weather data for Pittsburgh neighborhoods. Know if it's raining downtown when it's sunny in Shadyside.",
-    author: "bridge_builder",
-    authorLocation: "North Shore",
-    installCommand: "npx skillsnat add @pgh/weather-skill",
-    tags: ["weather", "local", "api"],
-    agents: ["Claude Code", "Codex", "Cursor"],
-    stars: 73,
-    accentColor: "lime",
-    icon: "⛈️",
-  },
-  {
-    id: "5",
-    name: "Steelers Stats",
-    description: "Real-time and historical Pittsburgh Steelers statistics. Player data, game scores, and Terrible Towel moments.",
-    author: "steel_curtain",
-    authorLocation: "South Side",
-    installCommand: "npx skillsnat add @pgh/steelers-stats",
-    tags: ["sports", "nfl", "stats"],
-    agents: ["Claude Code", "Cursor", "Windsurf"],
-    stars: 184,
-    accentColor: "orange",
-    icon: "🏈",
-  },
-  {
-    id: "6",
-    name: "Pitt Event Scraper",
-    description: "Scrape and organize events from University of Pittsburgh. Concerts, lectures, and campus happenings.",
-    author: "panther_dev",
-    authorLocation: "Oakland",
-    installCommand: "npx skillsnat add @pgh/pitt-events",
-    tags: ["events", "scraping", "university"],
-    agents: ["Claude Code", "Codex", "Antigravity"],
-    stars: 62,
-    accentColor: "yellow",
-    icon: "🎓",
-  },
-]
-
 const colorClasses: Record<string, { bg: string; bgSolid: string }> = {
   yellow: { bg: "bg-pop-yellow", bgSolid: "bg-pop-yellow" },
   pink: { bg: "bg-pop-pink", bgSolid: "bg-pop-pink" },
@@ -119,10 +38,10 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onSearchActiveChange }: HeroSectionProps) {
-  const [copied, setCopied] = useState(false)
   const [skillCopied, setSkillCopied] = useState(false)
-  const [randomSkill, setRandomSkill] = useState(featuredSkills[0])
-  
+  const [featuredSkill, setFeaturedSkill] = useState<Skill | null>(null)
+  const [isLoadingFeatured, setIsLoadingFeatured] = useState(true)
+
   // Search state
   const [searchState, setSearchState] = useState<SearchState>({ query: "", category: "", agent: "" })
   const [searchResults, setSearchResults] = useState<SearchResults | null>(null)
@@ -130,18 +49,35 @@ export function HeroSection({ onSearchActiveChange }: HeroSectionProps) {
   const [hasSearched, setHasSearched] = useState(false)
 
   useEffect(() => {
-    // Pick a random skill on mount (client-side only)
-    const randomIndex = Math.floor(Math.random() * featuredSkills.length)
-    setRandomSkill(featuredSkills[randomIndex])
+    // Fetch skills from database and pick a random one
+    const fetchRandomSkill = async () => {
+      try {
+        const res = await fetch('/api/skills?limit=50')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.skills && data.skills.length > 0) {
+            const randomIndex = Math.floor(Math.random() * data.skills.length)
+            const skill = toDisplaySkill(data.skills[randomIndex])
+            setFeaturedSkill(skill)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch featured skill:', error)
+      } finally {
+        setIsLoadingFeatured(false)
+      }
+    }
+    fetchRandomSkill()
   }, [])
 
   const handleSkillCopy = async () => {
-    await navigator.clipboard.writeText(randomSkill.installCommand)
+    if (!featuredSkill?.installCommand) return
+    await navigator.clipboard.writeText(featuredSkill.installCommand)
     setSkillCopied(true)
     setTimeout(() => setSkillCopied(false), 2000)
   }
 
-  const colors = colorClasses[randomSkill.accentColor] || colorClasses.yellow
+  const colors = colorClasses[featuredSkill?.accentColor || 'yellow'] || colorClasses.yellow
 
   // Search function
   const performSearch = useCallback(async (state: SearchState) => {
@@ -247,82 +183,95 @@ export function HeroSection({ onSearchActiveChange }: HeroSectionProps) {
 
           {/* Right column - Featured Skill Card (Simplified) */}
           <div className="flex justify-center lg:justify-end">
-            <div
-              className={`
-                group relative border-4 border-foreground ${colors.bg}
-                p-0 transition-all duration-200
-                shadow-[6px_6px_0_0_theme(colors.foreground)]
-                hover:shadow-[2px_2px_0_0_theme(colors.foreground)]
-                hover:translate-x-1 hover:translate-y-1
-                overflow-hidden w-full max-w-md
-              `}
-            >
-              {/* Corner badge */}
-              <div className="absolute top-0 right-0 flex z-10">
-                <div className="bg-pop-yellow text-foreground font-black text-xs px-3 py-1 border-l-4 border-b-4 border-foreground uppercase flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-current" />
-                  FEATURED
-                </div>
+            {isLoadingFeatured ? (
+              <div className="w-full max-w-md border-4 border-foreground bg-card p-8 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-pop-pink" />
               </div>
-
-              {/* Header stripe with icon */}
-              <div className="bg-foreground text-card p-4 flex items-center gap-3">
-                <div className={`text-2xl ${colors.bgSolid} p-2 border-2 border-card`}>
-                  {randomSkill.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-black uppercase truncate">{randomSkill.name}</h3>
-                  <p className="text-xs opacity-70">by {randomSkill.author}</p>
-                </div>
-                <div className="flex items-center gap-1 text-card font-bold shrink-0">
-                  <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
-                  <span className="text-sm">{randomSkill.stars}</span>
-                </div>
-              </div>
-
-              {/* Content area - simplified */}
-              <div className="p-4 bg-card">
-                {/* Description */}
-                <p className="text-foreground text-sm mb-3 line-clamp-2">
-                  {randomSkill.description}
-                </p>
-
-                {/* Category + Agents simplified */}
-                <div className="flex items-center gap-2 mb-4">
-                  <Badge className="bg-pop-pink text-foreground font-bold text-xs border-2 border-foreground uppercase">
-                    {randomSkill.tags[0]}
-                  </Badge>
-                  <span className="text-xs font-bold text-muted-foreground">
-                    {randomSkill.agents.length} agents
-                  </span>
-                </div>
-
-                {/* PRIMARY ACTION: Install Command */}
-                <button
-                  onClick={handleSkillCopy}
-                  className="w-full bg-foreground text-card p-3 border-2 border-foreground hover:bg-foreground/90 transition-colors cursor-pointer"
+            ) : featuredSkill ? (
+              <Link href={`/skills/${featuredSkill.slug}`} className="block w-full max-w-md">
+                <div
+                  className={`
+                    group relative border-4 border-foreground ${colors.bg}
+                    p-0 transition-all duration-200
+                    shadow-[6px_6px_0_0_theme(colors.foreground)]
+                    hover:shadow-[2px_2px_0_0_theme(colors.foreground)]
+                    hover:translate-x-1 hover:translate-y-1
+                    overflow-hidden w-full
+                  `}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <code className="text-xs font-mono truncate flex-1 text-left">
-                      <span className="text-pop-yellow">$</span> {randomSkill.installCommand}
-                    </code>
-                    <div className={`shrink-0 flex items-center gap-1 font-bold text-xs uppercase ${skillCopied ? 'text-pop-lime' : 'text-pop-yellow'}`}>
-                      {skillCopied ? (
-                        <>
-                          <Check className="h-4 w-4" />
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-4 w-4" />
-                          Copy
-                        </>
-                      )}
+                  {/* Corner badge */}
+                  <div className="absolute top-0 right-0 flex z-10">
+                    <div className="bg-pop-yellow text-foreground font-black text-xs px-3 py-1 border-l-4 border-b-4 border-foreground uppercase flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-current" />
+                      FEATURED
                     </div>
                   </div>
-                </button>
-              </div>
-            </div>
+
+                  {/* Header stripe with icon */}
+                  <div className="bg-foreground text-card p-4 flex items-center gap-3">
+                    <div className={`text-2xl ${colors.bgSolid} p-2 border-2 border-card`}>
+                      {featuredSkill.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-black uppercase truncate">{featuredSkill.name}</h3>
+                      <p className="text-xs opacity-70">by {featuredSkill.author}</p>
+                    </div>
+                    <div className="flex items-center gap-1 text-card font-bold shrink-0">
+                      <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
+                      <span className="text-sm">{featuredSkill.stars}</span>
+                    </div>
+                  </div>
+
+                  {/* Content area - simplified */}
+                  <div className="p-4 bg-card">
+                    {/* Description */}
+                    <p className="text-foreground text-sm mb-3 line-clamp-2">
+                      {featuredSkill.description}
+                    </p>
+
+                    {/* Category + Agents simplified */}
+                    <div className="flex items-center gap-2 mb-4">
+                      {featuredSkill.category && (
+                        <Badge className="bg-pop-pink text-foreground font-bold text-xs border-2 border-foreground uppercase">
+                          {featuredSkill.category}
+                        </Badge>
+                      )}
+                      <span className="text-xs font-bold text-muted-foreground">
+                        {featuredSkill.agents.length} agent{featuredSkill.agents.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    {/* PRIMARY ACTION: Install Command */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleSkillCopy()
+                      }}
+                      className="w-full bg-foreground text-card p-3 border-2 border-foreground hover:bg-foreground/90 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <code className="text-xs font-mono truncate flex-1 text-left">
+                          <span className="text-pop-yellow">$</span> {featuredSkill.installCommand}
+                        </code>
+                        <div className={`shrink-0 flex items-center gap-1 font-bold text-xs uppercase ${skillCopied ? 'text-pop-lime' : 'text-pop-yellow'}`}>
+                          {skillCopied ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </Link>
+            ) : null}
           </div>
         </div>
 

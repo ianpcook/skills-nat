@@ -65,16 +65,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/skills?category=API" className="text-muted-foreground hover:text-pop-pink transition-colors">
-                  API Skills
-                </Link>
-              </li>
-              <li>
-                <Link href="/skills?category=Data" className="text-muted-foreground hover:text-pop-pink transition-colors">
-                  Data Skills
-                </Link>
-              </li>
-              <li>
                 <Link href="/submit" className="text-muted-foreground hover:text-pop-pink transition-colors">
                   Submit Skill
                 </Link>
@@ -93,11 +83,6 @@ export function Footer() {
               <li>
                 <a href="https://github.com/ianpcook/skills-nat" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pop-cyan transition-colors">
                   GitHub Repo
-                </a>
-              </li>
-              <li>
-                <a href="https://github.com/ianpcook/skills-nat#contributing" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pop-cyan transition-colors">
-                  Contributing
                 </a>
               </li>
               <li>
