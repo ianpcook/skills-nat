@@ -5,9 +5,13 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { SkillCard, toDisplaySkill } from '@/components/skill-card';
 import { AGENTS, CATEGORIES } from '@/lib/constants';
+import { db, skills } from '@/db';
+import { desc, ilike, or, sql, eq } from 'drizzle-orm';
 
 // Force dynamic rendering to always fetch fresh skills data
 export const dynamic = 'force-dynamic';
+
+const DEFAULT_PAGE_SIZE = 12;
 
 interface SkillsPageProps {
   searchParams: Promise<{
@@ -25,23 +29,66 @@ const getSkills = async (params: {
   category?: string;
   agent?: string;
 }) => {
-  const searchParams = new URLSearchParams();
-  if (params.page) searchParams.set('page', String(params.page));
-  if (params.limit) searchParams.set('limit', String(params.limit));
-  if (params.search) searchParams.set('search', params.search);
-  if (params.category) searchParams.set('category', params.category);
-  if (params.agent) searchParams.set('agent', params.agent);
-
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/skills?${searchParams}`, {
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch skills');
+  if (!db) {
+    return {
+      skills: [],
+      pagination: { page: 1, limit: DEFAULT_PAGE_SIZE, total: 0, totalPages: 0 },
+    };
   }
 
-  return res.json();
+  const page = params.page || 1;
+  const limit = params.limit || DEFAULT_PAGE_SIZE;
+  const offset = (page - 1) * limit;
+
+  // Build where conditions
+  const conditions = [sql`${skills.approvedAt} IS NOT NULL`];
+
+  if (params.search) {
+    conditions.push(
+      or(
+        ilike(skills.name, `%${params.search}%`),
+        ilike(skills.description, `%${params.search}%`),
+        ilike(skills.slug, `%${params.search}%`)
+      )!
+    );
+  }
+
+  if (params.category) {
+    conditions.push(eq(skills.category, params.category));
+  }
+
+  if (params.agent) {
+    conditions.push(sql`${skills.agents} @> ${JSON.stringify([params.agent])}::jsonb`);
+  }
+
+  const whereClause = conditions.reduce((a, b) => sql`${a} AND ${b}`);
+
+  // Count total
+  const countResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(skills)
+    .where(whereClause);
+
+  const total = Number(countResult[0]?.count || 0);
+
+  // Fetch skills
+  const results = await db
+    .select()
+    .from(skills)
+    .where(whereClause)
+    .orderBy(desc(skills.stars), desc(skills.approvedAt))
+    .limit(limit)
+    .offset(offset);
+
+  return {
+    skills: results,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 };
 
 function SkillsLoading() {
