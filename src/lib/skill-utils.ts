@@ -10,7 +10,17 @@ export interface BackendSkill {
   agents: string[];
   category: string | null;
   version: string | null;
+  repoUrl?: string | null;
 }
+
+// Extract owner from GitHub repo URL, default to 'ianpcook' for file uploads
+const getSkillOwner = (repoUrl?: string | null): string => {
+  if (repoUrl) {
+    const match = repoUrl.match(/github\.com\/([^\/]+)/);
+    if (match) return match[1];
+  }
+  return 'ianpcook';
+};
 
 // Display skill type (for UI)
 export interface Skill {
@@ -18,6 +28,7 @@ export interface Skill {
   slug?: string;
   name: string;
   author: string;
+  owner?: string; // GitHub owner or 'ianpcook' for file uploads
   authorLocation?: string;
   description: string;
   shortDescription?: string | null;
@@ -64,22 +75,26 @@ const getCategoryIcon = (category?: string): string => {
 };
 
 // Transform backend skill to display skill
-export const toDisplaySkill = (skill: BackendSkill): Skill => ({
-  id: skill.id,
-  slug: skill.slug,
-  name: skill.name,
-  author: skill.author || 'Anonymous',
-  description: skill.shortDescription || skill.description || '',
-  shortDescription: skill.shortDescription,
-  stars: skill.stars,
-  agents: skill.agents || [],
-  category: skill.category || undefined,
-  version: skill.version || undefined,
-  featured: false,
-  // Generate install command from slug
-  installCommand: `npx skillsnat add ianpcook/${skill.slug}`,
-  // Default color based on category or hash
-  accentColor: getCategoryColor(skill.category || undefined),
-  // Default icon based on category
-  icon: getCategoryIcon(skill.category || undefined),
-});
+export const toDisplaySkill = (skill: BackendSkill): Skill => {
+  const owner = getSkillOwner(skill.repoUrl);
+  return {
+    id: skill.id,
+    slug: skill.slug,
+    name: skill.name,
+    author: skill.author || 'Anonymous',
+    owner,
+    description: skill.shortDescription || skill.description || '',
+    shortDescription: skill.shortDescription,
+    stars: skill.stars,
+    agents: skill.agents || [],
+    category: skill.category || undefined,
+    version: skill.version || undefined,
+    featured: false,
+    // Generate install command from slug and owner
+    installCommand: `npx skillsnat add ${owner}/${skill.slug}`,
+    // Default color based on category or hash
+    accentColor: getCategoryColor(skill.category || undefined),
+    // Default icon based on category
+    icon: getCategoryIcon(skill.category || undefined),
+  };
+};

@@ -26,7 +26,7 @@ const colorClasses: Record<string, { bg: string; bgSolid: string }> = {
 export function SkillCard({ skill, variant = "default", featured }: SkillCardProps) {
   const [copied, setCopied] = useState(false)
   const colors = colorClasses[skill.accentColor || 'yellow'] || colorClasses.yellow
-  const installCommand = skill.installCommand || `npx skillsnat add ianpcook/${skill.slug || skill.name.toLowerCase().replace(/\s+/g, '-')}`
+  const installCommand = skill.installCommand || `npx skillsnat add ${skill.owner || 'ianpcook'}/${skill.slug || skill.name.toLowerCase().replace(/\s+/g, '-')}`
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault()

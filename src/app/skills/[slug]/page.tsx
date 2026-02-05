@@ -13,6 +13,15 @@ import { db, skills } from '@/db';
 import { eq, and, isNotNull } from 'drizzle-orm';
 import type { Skill, SubmissionFile } from '@/db/schema';
 
+// Extract owner from GitHub repo URL, default to 'ianpcook' for file uploads
+const getSkillOwner = (repoUrl?: string | null): string => {
+  if (repoUrl) {
+    const match = repoUrl.match(/github\.com\/([^\/]+)/);
+    if (match) return match[1];
+  }
+  return 'ianpcook';
+};
+
 interface SkillDetailPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -113,10 +122,10 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   </div>
                   <div className="bg-foreground text-card p-4 flex items-center justify-between gap-4">
                     <code className="text-sm font-mono">
-                      <span className="text-pop-yellow">$</span> npx skillsnat add ianpcook/{skill.slug}
+                      <span className="text-pop-yellow">$</span> npx skillsnat add {getSkillOwner(skill.repoUrl)}/{skill.slug}
                     </code>
                     <CopyButton
-                      content={`npx skillsnat add ianpcook/${skill.slug}`}
+                      content={`npx skillsnat add ${getSkillOwner(skill.repoUrl)}/${skill.slug}`}
                       label="install command"
                     />
                   </div>
