@@ -209,79 +209,84 @@ export default function DocsPage() {
 
             <div className="space-y-6">
               <p className="text-lg leading-relaxed text-muted-foreground">
-                Skills are installed by placing{" "}
-                <code className="border border-foreground bg-pop-yellow px-2 py-0.5 text-sm font-bold">SKILL.md</code>{" "}
-                files in Claude&apos;s commands directory. Once installed, skills become available as slash commands.
+                There are two ways to install skills in Claude Desktop: using the built-in GUI or manually placing files.
+                Once installed, skills become available as slash commands.
               </p>
 
-              <h3 className="mt-8 text-xl font-black uppercase text-foreground">
-                Step 1: Download the Skill
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Find a skill you want to install from the <Link href="/skills" className="text-pop-pink font-bold underline">Skills Directory</Link>.
-                On the skill&apos;s detail page, copy the contents of the <code className="border border-foreground bg-pop-yellow px-1 py-0.5 text-xs font-bold">SKILL.md</code> file.
-              </p>
+              {/* GUI Method */}
+              <div className="border-4 border-foreground bg-pop-pink p-6 shadow-[4px_4px_0_0_var(--color-foreground)]">
+                <h3 className="text-xl font-black uppercase text-foreground mb-4 flex items-center gap-2">
+                  <span className="bg-foreground text-card px-2 py-1 text-sm">Option A</span>
+                  Using the GUI (Recommended)
+                </h3>
+                <ol className="space-y-4 text-foreground">
+                  <li className="flex items-start gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-foreground text-card text-sm font-black">1</span>
+                    <span>Open <strong>Claude Desktop</strong> and go to <strong>Settings</strong> (gear icon)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-foreground text-card text-sm font-black">2</span>
+                    <span>Click on <strong>Capabilities</strong></span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-foreground text-card text-sm font-black">3</span>
+                    <span>Scroll down to the <strong>Skills</strong> section</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-foreground text-card text-sm font-black">4</span>
+                    <span>Click the <strong>+</strong> button to add a new skill</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-foreground text-card text-sm font-black">5</span>
+                    <span>Upload the <code className="bg-foreground text-card px-1 py-0.5 text-xs font-bold">SKILL.md</code> file (and any additional files)</span>
+                  </li>
+                </ol>
+              </div>
 
-              <h3 className="mt-8 text-xl font-black uppercase text-foreground">
-                Step 2: Create the Commands Directory
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Skills can be installed globally (available in all projects) or locally (specific to one project).
-              </p>
+              {/* Manual Method */}
+              <div className="border-4 border-foreground bg-card p-6 shadow-[4px_4px_0_0_var(--color-foreground)]">
+                <h3 className="text-xl font-black uppercase text-foreground mb-4 flex items-center gap-2">
+                  <span className="bg-pop-cyan text-foreground border-2 border-foreground px-2 py-1 text-sm">Option B</span>
+                  Manual Installation
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  For power users, you can manually place skill files in Claude&apos;s commands directory.
+                </p>
 
-              <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
-                <div className="bg-foreground px-3 py-2 flex items-center gap-2">
-                  <span className="w-3 h-3 bg-pop-pink" />
-                  <span className="w-3 h-3 bg-pop-yellow" />
-                  <span className="w-3 h-3 bg-pop-lime" />
-                  <span className="ml-3 text-xs text-card/50 font-bold">Global Installation (all projects)</span>
+                <h4 className="font-black uppercase text-foreground mt-6 mb-3">Global Skills (all projects)</h4>
+                <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
+                  <div className="bg-foreground px-3 py-2 flex items-center gap-2">
+                    <span className="w-3 h-3 bg-pop-pink" />
+                    <span className="w-3 h-3 bg-pop-yellow" />
+                    <span className="w-3 h-3 bg-pop-lime" />
+                  </div>
+                  <div className="bg-foreground text-card p-4 font-mono text-sm">
+                    <p className="text-card/50"># Create the directory and add your skill</p>
+                    <p><span className="text-pop-yellow">$</span> mkdir -p ~/.claude/commands</p>
+                    <p><span className="text-pop-yellow">$</span> cp weather.md ~/.claude/commands/</p>
+                  </div>
                 </div>
-                <div className="bg-foreground text-card p-4 font-mono text-sm">
-                  <p className="text-card/50"># Create the global commands directory</p>
-                  <p><span className="text-pop-yellow">$</span> mkdir -p ~/.claude/commands</p>
+
+                <h4 className="font-black uppercase text-foreground mt-6 mb-3">Project-Specific Skills</h4>
+                <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
+                  <div className="bg-foreground px-3 py-2 flex items-center gap-2">
+                    <span className="w-3 h-3 bg-pop-pink" />
+                    <span className="w-3 h-3 bg-pop-yellow" />
+                    <span className="w-3 h-3 bg-pop-lime" />
+                  </div>
+                  <div className="bg-foreground text-card p-4 font-mono text-sm">
+                    <p className="text-card/50"># In your project root</p>
+                    <p><span className="text-pop-yellow">$</span> mkdir -p .claude/commands</p>
+                    <p><span className="text-pop-yellow">$</span> cp deploy.md .claude/commands/</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)] mt-4">
-                <div className="bg-foreground px-3 py-2 flex items-center gap-2">
-                  <span className="w-3 h-3 bg-pop-pink" />
-                  <span className="w-3 h-3 bg-pop-yellow" />
-                  <span className="w-3 h-3 bg-pop-lime" />
-                  <span className="ml-3 text-xs text-card/50 font-bold">Local Installation (one project)</span>
-                </div>
-                <div className="bg-foreground text-card p-4 font-mono text-sm">
-                  <p className="text-card/50"># Create a project-specific commands directory</p>
-                  <p><span className="text-pop-yellow">$</span> mkdir -p .claude/commands</p>
-                </div>
-              </div>
-
               <h3 className="mt-8 text-xl font-black uppercase text-foreground">
-                Step 3: Save the Skill File
+                Using Your Installed Skill
               </h3>
               <p className="text-muted-foreground mb-4">
-                Save the skill as a <code className="border border-foreground bg-pop-yellow px-1 py-0.5 text-xs font-bold">.md</code> file
-                in your commands directory. The filename becomes the slash command name.
-              </p>
-
-              <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
-                <div className="bg-foreground px-3 py-2 flex items-center gap-2">
-                  <span className="w-3 h-3 bg-pop-pink" />
-                  <span className="w-3 h-3 bg-pop-yellow" />
-                  <span className="w-3 h-3 bg-pop-lime" />
-                </div>
-                <div className="bg-foreground text-card p-4 font-mono text-sm">
-                  <p className="text-card/50"># Example: Save a weather skill</p>
-                  <p><span className="text-pop-yellow">$</span> vim ~/.claude/commands/weather.md</p>
-                  <p className="text-card/50 mt-3"># The skill will be available as:</p>
-                  <p className="text-pop-lime">/weather</p>
-                </div>
-              </div>
-
-              <h3 className="mt-8 text-xl font-black uppercase text-foreground">
-                Step 4: Use the Skill
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                In Claude Desktop (or Claude Code CLI), type the slash command to invoke the skill:
+                Once installed, type the slash command (the filename without .md) to invoke the skill:
               </p>
 
               <div className="border-4 border-foreground bg-pop-cyan p-6 shadow-[4px_4px_0_0_var(--color-foreground)]">
