@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
 import { indexSkill } from '@/lib/skill-indexer';
+import { publishSkillToGitHub } from '@/lib/github-publisher';
 
 // Parse frontmatter from SKILL.md to extract metadata
 const parseFrontmatter = (files: SubmissionFile[]): { author?: string; category?: string; agents?: string[]; shortDescription?: string } => {
@@ -235,6 +236,17 @@ export async function PATCH(
           console.error('[ADMIN SUBMISSION] Failed to index skill:', indexError);
           // Don't fail the approval if indexing fails
         }
+
+        // Publish to GitHub repository
+        try {
+          const publishResult = await publishSkillToGitHub(updatedSkill.slug, existingSubmission.files);
+          if (!publishResult.success) {
+            console.warn('[ADMIN SUBMISSION] GitHub publish incomplete:', publishResult.error);
+          }
+        } catch (publishError) {
+          console.error('[ADMIN SUBMISSION] Failed to publish to GitHub:', publishError);
+          // Don't fail the approval if publishing fails
+        }
       } else {
         // Create new skill
         const [newSkill] = await db
@@ -262,6 +274,17 @@ export async function PATCH(
         } catch (indexError) {
           console.error('[ADMIN SUBMISSION] Failed to index skill:', indexError);
           // Don't fail the approval if indexing fails
+        }
+
+        // Publish to GitHub repository
+        try {
+          const publishResult = await publishSkillToGitHub(newSkill.slug, existingSubmission.files);
+          if (!publishResult.success) {
+            console.warn('[ADMIN SUBMISSION] GitHub publish incomplete:', publishResult.error);
+          }
+        } catch (publishError) {
+          console.error('[ADMIN SUBMISSION] Failed to publish to GitHub:', publishError);
+          // Don't fail the approval if publishing fails
         }
       }
     }
