@@ -122,10 +122,10 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   </div>
                   <div className="bg-foreground text-card p-4 flex items-center justify-between gap-4">
                     <code className="text-sm font-mono">
-                      <span className="text-pop-yellow">$</span> npx skillsnat add {getSkillOwner(skill.repoUrl)}/{skill.slug}
+                      <span className="text-pop-yellow">$</span> npx skills add {getSkillOwner(skill.repoUrl)}/{skill.slug}
                     </code>
                     <CopyButton
-                      content={`npx skillsnat add ${getSkillOwner(skill.repoUrl)}/${skill.slug}`}
+                      content={`npx skills add ${getSkillOwner(skill.repoUrl)}/${skill.slug}`}
                       label="install command"
                     />
                   </div>

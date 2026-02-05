@@ -55,7 +55,7 @@ export function WhatAreSkills() {
             </div>
             <div className="terminal-content space-y-3">
               <p className="text-white/60">
-                $ npx skillsnat add ianpcook/weather-forecast
+                $ npx skills add ianpcook/weather-forecast
               </p>
               <p className="text-white/60">
                 Installing weather-forecast v1.4.2...
