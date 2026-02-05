@@ -55,10 +55,10 @@ export function WhatAreSkills() {
             </div>
             <div className="terminal-content space-y-3">
               <p className="text-white/60">
-                $ npx skills add weatherapi/weather-skill
+                $ npx skillsnat add ianpcook/weather-forecast
               </p>
               <p className="text-white/60">
-                Installing weather-skill v1.4.2...
+                Installing weather-forecast v1.4.2...
               </p>
               <p className="text-[#27c93f]">Skill installed successfully!</p>
               <p className="mt-6 text-white/60">$ claude</p>

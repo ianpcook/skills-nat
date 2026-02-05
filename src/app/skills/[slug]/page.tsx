@@ -113,10 +113,10 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   </div>
                   <div className="bg-foreground text-card p-4 flex items-center justify-between gap-4">
                     <code className="text-sm font-mono">
-                      <span className="text-pop-yellow">$</span> npx skills add {skill.author || 'community'}/{skill.slug}
+                      <span className="text-pop-yellow">$</span> npx skillsnat add ianpcook/{skill.slug}
                     </code>
                     <CopyButton
-                      content={`npx skills add ${skill.author || 'community'}/${skill.slug}`}
+                      content={`npx skillsnat add ianpcook/${skill.slug}`}
                       label="install command"
                     />
                   </div>
