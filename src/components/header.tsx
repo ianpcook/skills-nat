@@ -53,12 +53,6 @@ export function Header() {
               Browse
             </Link>
             <Link
-              href="/skills?category=API"
-              className="text-sm font-bold text-foreground px-4 py-2 border-2 border-transparent hover:border-foreground hover:bg-pop-cyan transition-all uppercase"
-            >
-              APIs
-            </Link>
-            <Link
               href="/submit"
               className="text-sm font-bold text-foreground px-4 py-2 border-2 border-transparent hover:border-foreground hover:bg-pop-lime transition-all uppercase"
             >
@@ -107,13 +101,6 @@ export function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Browse Skills
-              </Link>
-              <Link
-                href="/skills?category=API"
-                className="text-sm font-bold text-foreground px-4 py-3 border-2 border-foreground bg-pop-cyan uppercase"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                APIs
               </Link>
               <Link
                 href="/submit"
