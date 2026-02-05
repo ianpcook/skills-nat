@@ -91,7 +91,7 @@ export const toDisplaySkill = (skill: BackendSkill): Skill => {
     version: skill.version || undefined,
     featured: false,
     // Generate install command from slug and owner
-    installCommand: `npx skills add ${owner}/${skill.slug}`,
+    installCommand: `npx skills add https://github.com/ianpcook/skills-nat --skill ${skill.slug}`,
     // Default color based on category or hash
     accentColor: getCategoryColor(skill.category || undefined),
     // Default icon based on category
