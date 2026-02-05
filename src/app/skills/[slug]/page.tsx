@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Download, FileText, Code, Clock } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Code } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,8 @@ import { DeleteSkillButton } from '@/components/delete-skill-button';
 import { VoteButton } from '@/components/vote-button';
 import { CopyButton } from '@/components/copy-button';
 import { getAgentName, getAgentColor } from '@/lib/constants';
+import { db, skills } from '@/db';
+import { eq, and, isNotNull } from 'drizzle-orm';
 import type { Skill, SubmissionFile } from '@/db/schema';
 
 interface SkillDetailPageProps {
@@ -16,22 +18,18 @@ interface SkillDetailPageProps {
 }
 
 async function getSkill(slug: string): Promise<Skill | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  if (!db) {
+    return null;
+  }
 
   try {
-    const res = await fetch(`${baseUrl}/api/skills/${slug}`, {
-      cache: 'no-store',
-    });
+    const [skill] = await db
+      .select()
+      .from(skills)
+      .where(and(eq(skills.slug, slug), isNotNull(skills.approvedAt)))
+      .limit(1);
 
-    if (!res.ok) {
-      if (res.status === 404) {
-        return null;
-      }
-      throw new Error('Failed to fetch skill');
-    }
-
-    const data = await res.json();
-    return data.skill;
+    return skill || null;
   } catch (error) {
     console.error('Error fetching skill:', error);
     return null;
