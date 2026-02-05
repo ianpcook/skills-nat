@@ -238,15 +238,18 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   Actions
                 </h3>
                 <div className="space-y-3">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 border-2 border-foreground bg-card font-bold uppercase text-foreground opacity-50"
-                    disabled
+                  <a
+                    href={`/api/skills/${skill.slug}/download`}
+                    download={`${skill.slug}.zip`}
+                    className="w-full flex items-center justify-start gap-2 border-2 border-foreground bg-pop-lime px-4 py-2 font-bold uppercase text-foreground hover:bg-pop-cyan transition-colors"
                   >
                     <Download className="h-4 w-4" />
-                    Download (coming soon)
-                  </Button>
-                  <div className="flex items-center gap-2">
+                    Download .zip
+                  </a>
+                  <p className="text-xs text-foreground/70">
+                    Upload this .zip to Claude Desktop via Settings → Capabilities → Skills
+                  </p>
+                  <div className="flex items-center gap-2 pt-2">
                     <span className="text-sm font-bold uppercase text-foreground">Vote:</span>
                     <VoteButton slug={skill.slug} initialStars={skill.stars} size="sm" />
                   </div>
