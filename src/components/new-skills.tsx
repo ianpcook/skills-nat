@@ -4,6 +4,7 @@ import { SkillCard, type Skill, type BackendSkill, toDisplaySkill } from "@/comp
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 export function NewSkills() {
   const [skills, setSkills] = useState<Skill[]>([])
@@ -77,7 +78,9 @@ export function NewSkills() {
         {!loading && !error && skills.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {skills.map((skill) => (
-              <SkillCard key={skill.id} skill={skill} />
+              <Link key={skill.id} href={`/skills/${skill.slug}`}>
+                <SkillCard skill={skill} />
+              </Link>
             ))}
           </div>
         )}

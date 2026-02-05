@@ -2,6 +2,7 @@
 
 import { SkillCard, type Skill, type BackendSkill, toDisplaySkill } from "@/components/skill-card"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 export function FeaturedSkills() {
   const [skills, setSkills] = useState<Skill[]>([])
@@ -75,7 +76,9 @@ export function FeaturedSkills() {
         {!loading && !error && skills.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {skills.map((skill) => (
-              <SkillCard key={skill.id} skill={skill} />
+              <Link key={skill.id} href={`/skills/${skill.slug}`}>
+                <SkillCard skill={skill} />
+              </Link>
             ))}
           </div>
         )}
