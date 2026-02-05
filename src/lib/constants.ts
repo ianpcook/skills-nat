@@ -13,7 +13,7 @@ export const AGENTS: Agent[] = [
   { id: "claude-code", name: "Claude Code", color: "#0D0D0D" },
   { id: "cursor", name: "Cursor", color: "#D4940F" },
   { id: "codex", name: "Codex", color: "#0D0D0D" },
-  { id: "clawdbot", name: "Clawdbot", color: "#D4940F" },
+  { id: "openclaw", name: "OpenClaw", color: "#D4940F" },
   { id: "antigravity", name: "Antigravity", color: "#0D0D0D" },
   { id: "gemini", name: "Gemini", color: "#D4940F" },
 ] as const;
