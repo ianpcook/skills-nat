@@ -203,21 +203,66 @@ export default function DocsPage() {
                 <Download className="h-6 w-6 text-foreground" />
               </div>
               <h2 className="text-3xl font-black uppercase text-foreground md:text-4xl">
-                Installing Skills
+                Installing Skills for Claude Desktop
               </h2>
             </div>
 
             <div className="space-y-6">
               <p className="text-lg leading-relaxed text-muted-foreground">
-                Installing skills is simple with the{" "}
-                <code className="border border-foreground bg-pop-yellow px-2 py-0.5 text-sm font-bold">skills</code>{" "}
-                CLI. You don&apos;t even need to install it globally—just use{" "}
-                <code className="border border-foreground bg-pop-yellow px-2 py-0.5 text-sm font-bold">npx</code>.
+                Skills are installed by placing{" "}
+                <code className="border border-foreground bg-pop-yellow px-2 py-0.5 text-sm font-bold">SKILL.md</code>{" "}
+                files in Claude&apos;s commands directory. Once installed, skills become available as slash commands.
               </p>
 
               <h3 className="mt-8 text-xl font-black uppercase text-foreground">
-                Basic Installation
+                Step 1: Download the Skill
               </h3>
+              <p className="text-muted-foreground mb-4">
+                Find a skill you want to install from the <Link href="/skills" className="text-pop-pink font-bold underline">Skills Directory</Link>.
+                On the skill&apos;s detail page, copy the contents of the <code className="border border-foreground bg-pop-yellow px-1 py-0.5 text-xs font-bold">SKILL.md</code> file.
+              </p>
+
+              <h3 className="mt-8 text-xl font-black uppercase text-foreground">
+                Step 2: Create the Commands Directory
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Skills can be installed globally (available in all projects) or locally (specific to one project).
+              </p>
+
+              <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
+                <div className="bg-foreground px-3 py-2 flex items-center gap-2">
+                  <span className="w-3 h-3 bg-pop-pink" />
+                  <span className="w-3 h-3 bg-pop-yellow" />
+                  <span className="w-3 h-3 bg-pop-lime" />
+                  <span className="ml-3 text-xs text-card/50 font-bold">Global Installation (all projects)</span>
+                </div>
+                <div className="bg-foreground text-card p-4 font-mono text-sm">
+                  <p className="text-card/50"># Create the global commands directory</p>
+                  <p><span className="text-pop-yellow">$</span> mkdir -p ~/.claude/commands</p>
+                </div>
+              </div>
+
+              <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)] mt-4">
+                <div className="bg-foreground px-3 py-2 flex items-center gap-2">
+                  <span className="w-3 h-3 bg-pop-pink" />
+                  <span className="w-3 h-3 bg-pop-yellow" />
+                  <span className="w-3 h-3 bg-pop-lime" />
+                  <span className="ml-3 text-xs text-card/50 font-bold">Local Installation (one project)</span>
+                </div>
+                <div className="bg-foreground text-card p-4 font-mono text-sm">
+                  <p className="text-card/50"># Create a project-specific commands directory</p>
+                  <p><span className="text-pop-yellow">$</span> mkdir -p .claude/commands</p>
+                </div>
+              </div>
+
+              <h3 className="mt-8 text-xl font-black uppercase text-foreground">
+                Step 3: Save the Skill File
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Save the skill as a <code className="border border-foreground bg-pop-yellow px-1 py-0.5 text-xs font-bold">.md</code> file
+                in your commands directory. The filename becomes the slash command name.
+              </p>
+
               <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
                 <div className="bg-foreground px-3 py-2 flex items-center gap-2">
                   <span className="w-3 h-3 bg-pop-pink" />
@@ -225,34 +270,30 @@ export default function DocsPage() {
                   <span className="w-3 h-3 bg-pop-lime" />
                 </div>
                 <div className="bg-foreground text-card p-4 font-mono text-sm">
-                  <p className="text-card/60"><span className="text-pop-yellow">$</span> npx skills add owner/skill-name</p>
-                  <p className="text-card/60">Fetching skill from registry...</p>
-                  <p className="text-card/60">Installing to ./skills/skill-name/</p>
-                  <p className="text-pop-lime">✓ Skill installed successfully!</p>
+                  <p className="text-card/50"># Example: Save a weather skill</p>
+                  <p><span className="text-pop-yellow">$</span> vim ~/.claude/commands/weather.md</p>
+                  <p className="text-card/50 mt-3"># The skill will be available as:</p>
+                  <p className="text-pop-lime">/weather</p>
                 </div>
               </div>
 
               <h3 className="mt-8 text-xl font-black uppercase text-foreground">
-                How It Works
+                Step 4: Use the Skill
               </h3>
-              <ol className="space-y-4 text-muted-foreground">
-                {[
-                  { step: 1, text: "npx downloads the skills CLI — You don't need to install anything globally." },
-                  { step: 2, text: "The CLI queries the registry — It connects to skills.sh to find and download the skill." },
-                  { step: 3, text: "Files are installed locally — The skill files are placed in your project's skills/ directory." },
-                  { step: 4, text: "Your agent discovers the skill — Next time your AI agent runs, it will pick up the new capability." },
-                ].map((item) => (
-                  <li key={item.step} className="flex items-start gap-3">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-pop-pink border-2 border-foreground text-sm font-black text-foreground">
-                      {item.step}
-                    </span>
-                    <span>{item.text}</span>
-                  </li>
-                ))}
-              </ol>
+              <p className="text-muted-foreground mb-4">
+                In Claude Desktop (or Claude Code CLI), type the slash command to invoke the skill:
+              </p>
+
+              <div className="border-4 border-foreground bg-pop-cyan p-6 shadow-[4px_4px_0_0_var(--color-foreground)]">
+                <p className="text-foreground font-bold mb-2">Example usage:</p>
+                <code className="bg-foreground text-card px-3 py-2 block font-mono">/weather Pittsburgh</code>
+                <p className="text-foreground/80 mt-3 text-sm">
+                  Claude will read the skill instructions and execute the task accordingly.
+                </p>
+              </div>
 
               <h3 className="mt-8 text-xl font-black uppercase text-foreground">
-                Other Commands
+                Directory Structure
               </h3>
               <div className="border-4 border-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
                 <div className="bg-foreground px-3 py-2 flex items-center gap-2">
@@ -260,13 +301,19 @@ export default function DocsPage() {
                   <span className="w-3 h-3 bg-pop-yellow" />
                   <span className="w-3 h-3 bg-pop-lime" />
                 </div>
-                <div className="bg-foreground text-card p-4 font-mono text-sm space-y-3">
-                  <p className="text-card/50"># List installed skills</p>
-                  <p><span className="text-pop-yellow">$</span> npx skills list</p>
-                  <p className="text-card/50 mt-3"># Remove a skill</p>
-                  <p><span className="text-pop-yellow">$</span> npx skills remove skill-name</p>
-                  <p className="text-card/50 mt-3"># Update all skills</p>
-                  <p><span className="text-pop-yellow">$</span> npx skills update</p>
+                <div className="bg-foreground text-card p-4">
+                  <pre className="font-mono text-sm">
+{`~/.claude/
+└── commands/           # Global skills (all projects)
+    ├── weather.md      → /weather
+    ├── deploy.md       → /deploy
+    └── git-commit.md   → /git-commit
+
+your-project/
+└── .claude/
+    └── commands/       # Project-specific skills
+        └── test.md     → /test`}
+                  </pre>
                 </div>
               </div>
             </div>
