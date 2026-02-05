@@ -1,9 +1,61 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, submissions, skills, type SubmissionStatus } from '@/db';
+import { db, submissions, skills, type SubmissionStatus, type SubmissionFile } from '@/db';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
 import { indexSkill } from '@/lib/skill-indexer';
+
+// Parse frontmatter from SKILL.md to extract metadata
+const parseFrontmatter = (files: SubmissionFile[]): { author?: string; category?: string; agents?: string[]; shortDescription?: string } => {
+  const skillMd = files.find(f => f.name.toLowerCase() === 'skill.md');
+  if (!skillMd) return {};
+
+  const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---/;
+  const match = skillMd.content.match(frontmatterRegex);
+  if (!match) return {};
+
+  const result: { author?: string; category?: string; agents?: string[]; shortDescription?: string } = {};
+  const lines = match[1].split('\n');
+  const agents: string[] = [];
+  let inAgentsList = false;
+
+  for (const line of lines) {
+    // Check if this is a YAML list item (for agents)
+    if (inAgentsList && line.match(/^\s+-\s+/)) {
+      const agentValue = line.replace(/^\s+-\s+/, '').trim().replace(/^['"]|['"]$/g, '');
+      if (agentValue) agents.push(agentValue);
+      continue;
+    } else if (inAgentsList && !line.match(/^\s+-/)) {
+      inAgentsList = false;
+    }
+
+    const colonIndex = line.indexOf(':');
+    if (colonIndex === -1) continue;
+
+    const key = line.slice(0, colonIndex).trim().toLowerCase();
+    let value = line.slice(colonIndex + 1).trim();
+
+    // Remove quotes
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+
+    if (key === 'author') result.author = value;
+    if (key === 'category') result.category = value;
+    if (key === 'short_description' || key === 'shortdescription') result.shortDescription = value;
+    if (key === 'agents') {
+      if (value.startsWith('[') && value.endsWith(']')) {
+        const inlineAgents = value.slice(1, -1).split(',').map(a => a.trim().replace(/^['"]|['"]$/g, ''));
+        agents.push(...inlineAgents.filter(a => a));
+      } else if (!value) {
+        inAgentsList = true;
+      }
+    }
+  }
+
+  if (agents.length > 0) result.agents = agents;
+  return result;
+};
 
 // Admin access is controlled via Google OAuth test users.
 // Only approved test users can complete authentication, so a valid session = admin.
@@ -144,6 +196,10 @@ export async function PATCH(
     if (status === 'approved') {
       console.log('[ADMIN SUBMISSION] Creating skill from approved submission');
 
+      // Parse additional metadata from SKILL.md frontmatter
+      const metadata = parseFrontmatter(existingSubmission.files);
+      console.log('[ADMIN SUBMISSION] Parsed metadata:', metadata);
+
       // Check if skill with same slug already exists
       const [existingSkill] = await db
         .select()
@@ -160,7 +216,11 @@ export async function PATCH(
             name: existingSubmission.name,
             version: existingSubmission.version,
             description: existingSubmission.description,
+            shortDescription: metadata.shortDescription || null,
             files: existingSubmission.files,
+            author: metadata.author || null,
+            category: metadata.category || null,
+            agents: metadata.agents || [],
             submissionId: existingSubmission.id,
             approvedAt: new Date(),
             updatedAt: new Date(),
@@ -184,7 +244,11 @@ export async function PATCH(
             name: existingSubmission.name,
             version: existingSubmission.version,
             description: existingSubmission.description,
+            shortDescription: metadata.shortDescription || null,
             files: existingSubmission.files,
+            author: metadata.author || null,
+            category: metadata.category || null,
+            agents: metadata.agents || [],
             submissionId: existingSubmission.id,
             approvedAt: new Date(),
           })

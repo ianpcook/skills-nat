@@ -7,6 +7,9 @@ interface SkillFrontmatter {
   name?: string;
   description?: string;
   version?: string;
+  author?: string;
+  category?: string;
+  agents?: string[];
 }
 
 const generateSlug = (name: string): string => {
@@ -27,9 +30,26 @@ const parseFrontmatter = (content: string): SkillFrontmatter => {
   }
 
   const frontmatter: SkillFrontmatter = {};
-  const lines = match[1].split('\n');
+  const frontmatterText = match[1];
+  const lines = frontmatterText.split('\n');
+
+  let currentKey: string | null = null;
+  let inAgentsList = false;
+  const agents: string[] = [];
 
   for (const line of lines) {
+    // Check if this is a YAML list item (for agents)
+    if (inAgentsList && line.match(/^\s+-\s+/)) {
+      const agentValue = line.replace(/^\s+-\s+/, '').trim();
+      if (agentValue) {
+        agents.push(agentValue.replace(/^['"]|['"]$/g, ''));
+      }
+      continue;
+    } else if (inAgentsList && !line.match(/^\s+-/)) {
+      // End of agents list
+      inAgentsList = false;
+    }
+
     const colonIndex = line.indexOf(':');
     if (colonIndex === -1) continue;
 
@@ -42,9 +62,27 @@ const parseFrontmatter = (content: string): SkillFrontmatter => {
       value = value.slice(1, -1);
     }
 
+    currentKey = key;
+
     if (key === 'name') frontmatter.name = value;
     if (key === 'description') frontmatter.description = value;
     if (key === 'version') frontmatter.version = value;
+    if (key === 'author') frontmatter.author = value;
+    if (key === 'category') frontmatter.category = value;
+    if (key === 'agents') {
+      // Check if it's an inline array like [claude-code, cursor]
+      if (value.startsWith('[') && value.endsWith(']')) {
+        const inlineAgents = value.slice(1, -1).split(',').map(a => a.trim().replace(/^['"]|['"]$/g, ''));
+        agents.push(...inlineAgents.filter(a => a));
+      } else if (!value) {
+        // It's a YAML list starting on the next line
+        inAgentsList = true;
+      }
+    }
+  }
+
+  if (agents.length > 0) {
+    frontmatter.agents = agents;
   }
 
   console.log('[SUBMIT] Parsed frontmatter:', frontmatter);
