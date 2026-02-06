@@ -13,6 +13,12 @@ export interface BackendSkill {
   repoUrl?: string | null;
 }
 
+// Generate install command based on whether skill has its own repo
+export const buildInstallCommand = (slug: string, repoUrl?: string | null): string =>
+  repoUrl
+    ? `npx skills add ${repoUrl}`
+    : `npx skills add https://github.com/ianpcook/skills-nat --skill ${slug}`;
+
 // Extract owner from GitHub repo URL, default to 'ianpcook' for file uploads
 const getSkillOwner = (repoUrl?: string | null): string => {
   if (repoUrl) {
@@ -109,8 +115,8 @@ export const toDisplaySkill = (skill: BackendSkill): Skill => {
     category: skill.category || undefined,
     version: skill.version || undefined,
     featured: false,
-    // Generate install command from slug and owner
-    installCommand: `npx skills add https://github.com/ianpcook/skills-nat --skill ${skill.slug}`,
+    // Standalone repo → use repo URL directly; bundled → use skills-nat mono-repo
+    installCommand: buildInstallCommand(skill.slug, skill.repoUrl),
     // Default color based on category, with slug-based hash fallback for variety
     accentColor: getCategoryColor(skill.category || undefined, skill.slug),
     // Default icon based on category

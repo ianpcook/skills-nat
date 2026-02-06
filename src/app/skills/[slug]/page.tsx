@@ -9,6 +9,7 @@ import { DeleteSkillButton } from '@/components/delete-skill-button';
 import { VoteButton } from '@/components/vote-button';
 import { CopyButton } from '@/components/copy-button';
 import { getAgentName, getAgentColor } from '@/lib/constants';
+import { buildInstallCommand } from '@/lib/skill-utils';
 import { db, skills } from '@/db';
 import { eq, and, isNotNull } from 'drizzle-orm';
 import type { Skill, SubmissionFile } from '@/db/schema';
@@ -52,6 +53,8 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
   if (!skill) {
     notFound();
   }
+
+  const installCommand = buildInstallCommand(skill.slug, skill.repoUrl)
 
   const agentDisplayInfo = skill.agents
     .map((agentId) => ({
@@ -117,10 +120,10 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
                   </div>
                   <div className="bg-foreground text-card p-4 flex items-center justify-between gap-4">
                     <code className="text-sm font-mono">
-                      <span className="text-pop-yellow">$</span> npx skills add https://github.com/ianpcook/skills-nat --skill {skill.slug}
+                      <span className="text-pop-yellow">$</span> {installCommand}
                     </code>
                     <CopyButton
-                      content={`npx skills add https://github.com/ianpcook/skills-nat --skill ${skill.slug}`}
+                      content={installCommand}
                       label="install command"
                     />
                   </div>
