@@ -233,7 +233,7 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
           {/* Header - Pop Art Style, left-aligned */}
           <div className="mb-10">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-2 bg-pop-cyan shrink-0" />
+              <div className="h-2 flex-1 bg-foreground" />
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
                 <span className="text-pop-cyan">Skills</span> Directory
               </h1>
