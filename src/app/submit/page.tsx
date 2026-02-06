@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import JSZip from 'jszip';
 import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight, FolderOpen } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
@@ -16,7 +17,15 @@ interface UploadedFile {
   content: string;
 }
 
-const ALLOWED_EXTENSIONS = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js'];
+const ALLOWED_EXTENSIONS = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js', '.zip'];
+
+const FILE_EXTENSIONS_FOR_CONTENT = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js'];
+
+const JUNK_PATTERNS = ['__MACOSX/', '.DS_Store', '.gitkeep'];
+
+const isJunkPath = (path: string): boolean =>
+  JUNK_PATTERNS.some((pattern) => path.includes(pattern)) ||
+  path.split('/').some((segment) => segment.startsWith('.'));
 
 const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} B`;
@@ -27,6 +36,58 @@ const formatFileSize = (bytes: number): string => {
 const isAllowedFile = (filename: string): boolean => {
   const ext = filename.toLowerCase().slice(filename.lastIndexOf('.'));
   return ALLOWED_EXTENSIONS.includes(ext);
+};
+
+const isAllowedContentFile = (filename: string): boolean => {
+  const ext = filename.toLowerCase().slice(filename.lastIndexOf('.'));
+  return FILE_EXTENSIONS_FOR_CONTENT.includes(ext);
+};
+
+const stripCommonPrefix = (paths: string[]): ((p: string) => string) => {
+  if (paths.length === 0) return (p) => p;
+  const parts = paths[0].split('/');
+  if (parts.length < 2) return (p) => p;
+  const prefix = parts[0] + '/';
+  const allSharePrefix = paths.every((p) => p.startsWith(prefix));
+  return allSharePrefix ? (p) => p.slice(prefix.length) : (p) => p;
+};
+
+const processZipFile = async (file: File): Promise<{ extracted: UploadedFile[]; skippedCount: number }> => {
+  const buffer = await file.arrayBuffer();
+  const zip = await JSZip.loadAsync(buffer);
+
+  const entries = Object.entries(zip.files).filter(
+    ([path, entry]) => !entry.dir && !isJunkPath(path)
+  );
+
+  const rawPaths = entries.map(([path]) => path);
+  const strip = stripCommonPrefix(rawPaths);
+
+  const extracted: UploadedFile[] = [];
+  let skippedCount = 0;
+
+  for (const [path, entry] of entries) {
+    const strippedPath = strip(path);
+    const fileName = strippedPath.split('/').pop() ?? strippedPath;
+
+    if (!isAllowedContentFile(fileName)) {
+      skippedCount++;
+      continue;
+    }
+
+    const content = await entry.async('string');
+    const syntheticFile = new File([content], fileName, { type: 'text/plain' });
+
+    extracted.push({
+      file: syntheticFile,
+      name: fileName,
+      path: strippedPath,
+      size: syntheticFile.size,
+      content,
+    });
+  }
+
+  return { extracted, skippedCount };
 };
 
 export default function SubmitPage() {
@@ -70,7 +131,28 @@ export default function SubmitPage() {
     }
 
     const uploadedFiles: UploadedFile[] = [];
+    let totalSkippedFromZips = 0;
+
     for (const file of validFiles) {
+      // Handle .zip files by extracting contents
+      if (file.name.toLowerCase().endsWith('.zip')) {
+        try {
+          console.log(`[SUBMIT] Extracting zip: ${file.name}`);
+          const { extracted, skippedCount } = await processZipFile(file);
+          totalSkippedFromZips += skippedCount;
+
+          const deduped = extracted.filter(
+            (ef) => !files.some((f) => f.path === ef.path)
+          );
+          uploadedFiles.push(...deduped);
+          console.log(`[SUBMIT] Extracted ${deduped.length} files from ${file.name} (${skippedCount} skipped)`);
+        } catch (err) {
+          console.error(`[SUBMIT] Failed to extract zip: ${file.name}`, err);
+          setError(`Failed to extract ${file.name}. Is it a valid zip file?`);
+        }
+        continue;
+      }
+
       const relativePath = (file as any).webkitRelativePath || file.name;
       const pathParts = relativePath.split('/');
       const displayPath = pathParts.length > 1 ? pathParts.slice(1).join('/') : relativePath;
@@ -93,6 +175,10 @@ export default function SubmitPage() {
       } catch (err) {
         console.error(`[SUBMIT] Failed to read file: ${file.name}`, err);
       }
+    }
+
+    if (totalSkippedFromZips > 0) {
+      setError(`${totalSkippedFromZips} file(s) from zip were skipped. Allowed types: ${FILE_EXTENSIONS_FOR_CONTENT.join(', ')}`);
     }
 
     setFiles((prev) => [...prev, ...uploadedFiles]);
@@ -386,7 +472,7 @@ export default function SubmitPage() {
                   </Button>
                 </div>
                 <p className="mt-4 text-xs font-bold text-muted-foreground">
-                  Allowed: {ALLOWED_EXTENSIONS.join(', ')}
+                  Allowed: {ALLOWED_EXTENSIONS.join(', ')} (zip files are extracted automatically)
                 </p>
               </div>
 
