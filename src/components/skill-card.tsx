@@ -1,7 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { Copy, Check, Star } from "lucide-react"
+import { Copy, Check, Star, Download, BookOpen } from "lucide-react"
 import { useState } from "react"
 
 import { ACCENT_COLOR_CLASSES, type Skill } from "@/lib/skill-utils"
@@ -118,6 +118,27 @@ export function SkillCard({ skill, variant = "default", featured }: SkillCardPro
             </div>
           </div>
         </button>
+
+        {/* Secondary actions: Download ZIP + Install Guide */}
+        <div className="flex gap-2 mt-2">
+          <a
+            href={`/api/skills/${skill.slug}/download`}
+            download={`${skill.slug}.zip`}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            className="flex-1 flex items-center justify-center gap-2 bg-card text-foreground p-2 border-2 border-foreground font-bold text-xs uppercase hover:bg-pop-cyan transition-colors"
+          >
+            <Download className="h-4 w-4" />
+            Download ZIP
+          </a>
+          <a
+            href="/docs#installing"
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            className="flex-1 flex items-center justify-center gap-2 bg-card text-foreground p-2 border-2 border-foreground font-bold text-xs uppercase hover:bg-pop-pink transition-colors"
+          >
+            <BookOpen className="h-4 w-4" />
+            Install Guide
+          </a>
+        </div>
       </div>
     </div>
   )
