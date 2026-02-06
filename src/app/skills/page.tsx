@@ -169,7 +169,7 @@ async function SkillsGrid({
       {/* Skills Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {skills.map((skill: any) => (
-          <Link key={skill.id} href={`/skills/${skill.slug}`}>
+          <Link key={skill.id} href={`/skills/${skill.slug}`} className="h-full">
             <SkillCard skill={toDisplaySkill(skill)} />
           </Link>
         ))}

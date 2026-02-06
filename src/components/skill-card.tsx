@@ -32,7 +32,7 @@ export function SkillCard({ skill, variant = "default", featured }: SkillCardPro
     <div
       className={`
         group relative border-4 border-foreground ${colors.bg}
-        p-0 transition-all duration-200 flex flex-col
+        p-0 transition-all duration-200 flex flex-col h-full
         shadow-[6px_6px_0_0_theme(colors.foreground)]
         hover:shadow-[2px_2px_0_0_theme(colors.foreground)]
         hover:translate-x-1 hover:translate-y-1

@@ -32,7 +32,7 @@ export async function RecentlyUpdated() {
         {displaySkills.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {displaySkills.map((skill) => (
-              <Link key={skill.id || skill.name} href={`/skills/${skill.slug}`}>
+              <Link key={skill.id || skill.name} href={`/skills/${skill.slug}`} className="h-full">
                 <SkillCard skill={skill} />
               </Link>
             ))}
