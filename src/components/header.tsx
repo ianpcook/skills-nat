@@ -13,7 +13,7 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group flex-1">
             {/* Stylized bridge icon */}
             <div className="relative">
               <svg 
@@ -67,7 +67,7 @@ export function Header() {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1 justify-end">
             <Button
               size="sm"
               className="hidden sm:flex bg-foreground text-pop-yellow hover:bg-pop-pink hover:text-foreground font-bold border-2 border-foreground shadow-[3px_3px_0_0_var(--color-pop-pink)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all uppercase"

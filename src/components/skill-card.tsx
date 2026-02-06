@@ -32,7 +32,7 @@ export function SkillCard({ skill, variant = "default", featured }: SkillCardPro
     <div
       className={`
         group relative border-4 border-foreground ${colors.bg}
-        p-0 transition-all duration-200
+        p-0 transition-all duration-200 flex flex-col
         shadow-[6px_6px_0_0_theme(colors.foreground)]
         hover:shadow-[2px_2px_0_0_theme(colors.foreground)]
         hover:translate-x-1 hover:translate-y-1
@@ -74,14 +74,14 @@ export function SkillCard({ skill, variant = "default", featured }: SkillCardPro
       </div>
 
       {/* Content area - simplified */}
-      <div className="p-4 bg-card">
+      <div className="p-4 bg-card flex flex-col flex-1">
         {/* Description */}
         <p className="text-foreground text-sm mb-3 line-clamp-2">
           {skill.shortDescription || skill.description}
         </p>
 
         {/* Category + Agents in one line */}
-        <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <div className="flex items-center gap-2 mb-4 flex-wrap flex-1">
           {category && (
             <Badge className="bg-pop-pink text-foreground font-bold text-xs border-2 border-foreground uppercase">
               {category}

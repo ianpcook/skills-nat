@@ -6,6 +6,8 @@ import { eq } from 'drizzle-orm';
 import { indexSkill } from '@/lib/skill-indexer';
 import { publishSkillToGitHub } from '@/lib/github-publisher';
 
+const DEFAULT_AGENTS = ['claude-code', 'claude', 'codex', 'openclaw', 'antigravity', 'gemini'];
+
 // Parse frontmatter from SKILL.md to extract metadata
 const parseFrontmatter = (files: SubmissionFile[]): { author?: string; category?: string; agents?: string[]; shortDescription?: string } => {
   const skillMd = files.find(f => f.name.toLowerCase() === 'skill.md');
@@ -221,7 +223,7 @@ export async function PATCH(
             files: existingSubmission.files,
             author: metadata.author || null,
             category: metadata.category || null,
-            agents: metadata.agents || [],
+            agents: metadata.agents || DEFAULT_AGENTS,
             submissionId: existingSubmission.id,
             approvedAt: new Date(),
             updatedAt: new Date(),
@@ -260,7 +262,7 @@ export async function PATCH(
             files: existingSubmission.files,
             author: metadata.author || null,
             category: metadata.category || null,
-            agents: metadata.agents || [],
+            agents: metadata.agents || DEFAULT_AGENTS,
             submissionId: existingSubmission.id,
             approvedAt: new Date(),
           })
