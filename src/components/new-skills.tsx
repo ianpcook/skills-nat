@@ -48,7 +48,7 @@ export function NewSkills() {
           <div className="h-2 flex-1 bg-foreground" />
         </div>
 
-        <p className="text-lg font-bold text-muted-foreground text-center mb-10 max-w-2xl mx-auto uppercase tracking-wide">
+        <p className="text-lg font-bold text-muted-foreground text-center mb-10 max-w-3xl mx-auto uppercase tracking-wide">
           Hot new skills from Pittsburgh{"'"}s developer community. Baked fresh daily, just like Mancini{"'"}s bread.
         </p>
 
