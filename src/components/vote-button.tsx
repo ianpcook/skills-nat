@@ -4,6 +4,15 @@ import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const getVoterId = (): string => {
+  const key = "skills-nat-voter-id";
+  const existing = localStorage.getItem(key);
+  if (existing) return existing;
+  const id = crypto.randomUUID();
+  localStorage.setItem(key, id);
+  return id;
+};
+
 interface VoteButtonProps {
   slug: string;
   initialStars?: number;
@@ -17,54 +26,51 @@ export function VoteButton({ slug, initialStars = 0, size = "md", className }: V
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Check initial vote status
   useEffect(() => {
-    async function checkVoteStatus() {
+    const checkVoteStatus = async () => {
       try {
-        const res = await fetch(`/api/skills/${slug}/vote`);
+        const voterId = getVoterId();
+        const res = await fetch(`/api/skills/${slug}/vote?voterId=${encodeURIComponent(voterId)}`);
         if (res.ok) {
           const data = await res.json();
           setVoted(data.voted);
           setStars(data.stars);
         }
-      } catch (error) {
-        console.error("Failed to check vote status:", error);
+      } catch {
+        // Silently degrade — vote status check is non-critical
       } finally {
         setInitialized(true);
       }
-    }
+    };
     checkVoteStatus();
   }, [slug]);
 
-  async function handleVote(e: React.MouseEvent) {
+  const handleVote = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (loading) return;
     setLoading(true);
 
     try {
+      const voterId = getVoterId();
       const res = await fetch(`/api/skills/${slug}/vote`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ voterId }),
       });
-
-      if (res.status === 401) {
-        // Not logged in - could show a login prompt
-        alert("Please sign in to vote");
-        return;
-      }
 
       if (res.ok) {
         const data = await res.json();
         setVoted(data.voted);
         setStars(data.stars);
       }
-    } catch (error) {
-      console.error("Vote failed:", error);
+    } catch {
+      // Vote failed silently — user can retry
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const iconSize = size === "sm" ? "h-4 w-4" : "h-5 w-5";
   const textSize = size === "sm" ? "text-sm" : "text-base";
@@ -75,12 +81,12 @@ export function VoteButton({ slug, initialStars = 0, size = "md", className }: V
       onClick={handleVote}
       disabled={loading || !initialized}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border transition-all",
+        "inline-flex items-center gap-1.5 border-2 border-foreground transition-all",
         padding,
         textSize,
         voted
-          ? "border-amber-500/50 bg-amber-500/10 text-amber-500"
-          : "border-border bg-background/50 text-muted-foreground hover:border-amber-500/30 hover:text-amber-500",
+          ? "bg-pop-yellow/20 text-foreground"
+          : "bg-card text-muted-foreground hover:bg-pop-yellow/10 hover:text-foreground",
         loading && "opacity-50 cursor-wait",
         className
       )}
@@ -89,7 +95,7 @@ export function VoteButton({ slug, initialStars = 0, size = "md", className }: V
         className={cn(
           iconSize,
           "transition-all",
-          voted && "fill-amber-500"
+          voted && "fill-pop-yellow text-pop-yellow"
         )}
       />
       <span className="font-medium">{stars}</span>

@@ -90,11 +90,6 @@ export function Footer() {
                   Report Issue
                 </a>
               </li>
-              <li>
-                <Link href="/admin" className="text-muted-foreground hover:text-pop-cyan transition-colors">
-                  Admin
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -104,15 +99,13 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Skills N{"'"}at. Built with love in Pittsburgh, PA.
           </p>
-          <div className="flex items-center gap-2">
-            {/* Warhol-style decorative dots */}
-            <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-full bg-pop-yellow" />
-              <div className="w-3 h-3 rounded-full bg-pop-pink" />
-              <div className="w-3 h-3 rounded-full bg-pop-cyan" />
-              <div className="w-3 h-3 rounded-full bg-pop-orange" />
-              <div className="w-3 h-3 rounded-full bg-pop-lime" />
-            </div>
+          {/* Warhol-style decorative squares */}
+          <div className="flex gap-1">
+            <div className="w-3 h-3 bg-pop-yellow" />
+            <div className="w-3 h-3 bg-pop-pink" />
+            <div className="w-3 h-3 bg-pop-cyan" />
+            <div className="w-3 h-3 bg-pop-orange" />
+            <div className="w-3 h-3 bg-pop-lime" />
           </div>
         </div>
       </div>

@@ -2,32 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { skills, userStars } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+
+// Anonymous voting: use a voter ID from the client (stored in localStorage)
+// No authentication required
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  
+
   if (!db) {
     return NextResponse.json({ error: "Database not available" }, { status: 500 });
   }
 
-  // Get current user session
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // Get anonymous voter ID from request body
+  const body = await request.json().catch(() => ({}));
+  const voterId = body.voterId;
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Must be logged in to vote" }, { status: 401 });
+  if (!voterId || typeof voterId !== "string" || voterId.length < 10) {
+    return NextResponse.json({ error: "Invalid voter ID" }, { status: 400 });
   }
 
-  const userId = session.user.id;
-
   try {
-    // Find the skill
     const [skill] = await db
       .select()
       .from(skills)
@@ -38,32 +35,30 @@ export async function POST(
       return NextResponse.json({ error: "Skill not found" }, { status: 404 });
     }
 
-    // Check if user already voted
+    // Check if this voter already voted
     const [existingVote] = await db
       .select()
       .from(userStars)
-      .where(and(eq(userStars.userId, userId), eq(userStars.skillId, skill.id)))
+      .where(and(eq(userStars.voterId, voterId), eq(userStars.skillId, skill.id)))
       .limit(1);
 
     if (existingVote) {
       // Remove vote (toggle off)
       await db.delete(userStars).where(eq(userStars.id, existingVote.id));
-      
-      // Decrement stars count
+
       await db
         .update(skills)
-        .set({ stars: sql`${skills.stars} - 1` })
+        .set({ stars: sql`GREATEST(${skills.stars} - 1, 0)` })
         .where(eq(skills.id, skill.id));
 
-      return NextResponse.json({ voted: false, stars: skill.stars - 1 });
+      return NextResponse.json({ voted: false, stars: Math.max(skill.stars - 1, 0) });
     } else {
       // Add vote
       await db.insert(userStars).values({
-        userId,
+        voterId,
         skillId: skill.id,
       });
 
-      // Increment stars count
       await db
         .update(skills)
         .set({ stars: sql`${skills.stars} + 1` })
@@ -82,15 +77,13 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  
+
   if (!db) {
     return NextResponse.json({ error: "Database not available" }, { status: 500 });
   }
 
-  // Get current user session (optional for checking vote status)
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // Get anonymous voter ID from query param
+  const voterId = request.nextUrl.searchParams.get("voterId");
 
   try {
     const [skill] = await db
@@ -104,11 +97,11 @@ export async function GET(
     }
 
     let voted = false;
-    if (session?.user?.id) {
+    if (voterId) {
       const [existingVote] = await db
         .select()
         .from(userStars)
-        .where(and(eq(userStars.userId, session.user.id), eq(userStars.skillId, skill.id)))
+        .where(and(eq(userStars.voterId, voterId), eq(userStars.skillId, skill.id)))
         .limit(1);
       voted = !!existingVote;
     }

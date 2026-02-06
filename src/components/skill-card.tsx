@@ -4,10 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Copy, Check, Star } from "lucide-react"
 import { useState } from "react"
 
-// Re-export types and utilities from shared module for backwards compatibility
-export { toDisplaySkill } from "@/lib/skill-utils"
-export type { Skill, BackendSkill } from "@/lib/skill-utils"
-import type { Skill } from "@/lib/skill-utils"
+import { ACCENT_COLOR_CLASSES, type Skill } from "@/lib/skill-utils"
 
 interface SkillCardProps {
   skill: Skill;
@@ -15,17 +12,9 @@ interface SkillCardProps {
   featured?: boolean;
 }
 
-const colorClasses: Record<string, { bg: string; bgSolid: string }> = {
-  yellow: { bg: "bg-pop-yellow", bgSolid: "bg-pop-yellow" },
-  pink: { bg: "bg-pop-pink", bgSolid: "bg-pop-pink" },
-  cyan: { bg: "bg-pop-cyan", bgSolid: "bg-pop-cyan" },
-  orange: { bg: "bg-pop-orange", bgSolid: "bg-pop-orange" },
-  lime: { bg: "bg-pop-lime", bgSolid: "bg-pop-lime" },
-}
-
 export function SkillCard({ skill, variant = "default", featured }: SkillCardProps) {
   const [copied, setCopied] = useState(false)
-  const colors = colorClasses[skill.accentColor || 'yellow'] || colorClasses.yellow
+  const colors = ACCENT_COLOR_CLASSES[skill.accentColor || 'yellow'] || ACCENT_COLOR_CLASSES.yellow
   const installCommand = skill.installCommand || `npx skills add https://github.com/ianpcook/skills-nat --skill ${skill.slug || skill.name.toLowerCase().replace(/\s+/g, '-')}`
 
   const handleCopy = async (e: React.MouseEvent) => {
@@ -75,11 +64,13 @@ export function SkillCard({ skill, variant = "default", featured }: SkillCardPro
           <h3 className="text-base font-black uppercase truncate">{skill.name}</h3>
           <p className="text-xs opacity-70">by {skill.author}</p>
         </div>
-        {/* Stars inline in header */}
-        <div className="flex items-center gap-1 text-card font-bold shrink-0">
-          <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
-          <span className="text-sm">{skill.stars}</span>
-        </div>
+        {/* Stars inline in header - hidden when 0 */}
+        {skill.stars > 0 && (
+          <div className="flex items-center gap-1 text-card font-bold shrink-0">
+            <Star className="h-4 w-4 fill-pop-yellow text-pop-yellow" />
+            <span className="text-sm">{skill.stars}</span>
+          </div>
+        )}
       </div>
 
       {/* Content area - simplified */}

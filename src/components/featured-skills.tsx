@@ -1,6 +1,7 @@
 "use client"
 
-import { SkillCard, type Skill, type BackendSkill, toDisplaySkill } from "@/components/skill-card"
+import { SkillCard } from "@/components/skill-card"
+import { toDisplaySkill, type Skill, type BackendSkill } from "@/lib/skill-utils"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
@@ -21,7 +22,6 @@ export function FeaturedSkills() {
         }))
         setSkills(displaySkills)
       } catch (err) {
-        console.error('Error fetching featured skills:', err)
         setError(err instanceof Error ? err.message : 'Failed to load')
       } finally {
         setLoading(false)

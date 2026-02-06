@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { SkillCard, toDisplaySkill } from "@/components/skill-card";
+import { SkillCard } from "@/components/skill-card";
+import { toDisplaySkill } from "@/lib/skill-utils";
 import { getRecentSkills } from "@/lib/api";
 
 export async function RecentlyUpdated() {

@@ -1,6 +1,7 @@
 "use client"
 
-import { SkillCard, type Skill, type BackendSkill, toDisplaySkill } from "@/components/skill-card"
+import { SkillCard } from "@/components/skill-card"
+import { toDisplaySkill, type Skill, type BackendSkill } from "@/lib/skill-utils"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -25,8 +26,7 @@ export function NewSkills() {
         }))
         
         setSkills(displaySkills)
-      } catch (err) {
-        console.error('Error fetching new skills:', err)
+      } catch {
         setError('Failed to load new skills')
       } finally {
         setLoading(false)
@@ -48,7 +48,7 @@ export function NewSkills() {
           <div className="h-2 flex-1 bg-foreground" />
         </div>
 
-        <p className="text-lg text-muted-foreground text-center mb-10 max-w-2xl mx-auto">
+        <p className="text-lg font-bold text-muted-foreground text-center mb-10 max-w-2xl mx-auto uppercase tracking-wide">
           Hot new skills from Pittsburgh{"'"}s developer community. Baked fresh daily, just like Mancini{"'"}s bread.
         </p>
 
@@ -87,13 +87,15 @@ export function NewSkills() {
 
         {/* View All CTA - Pop Art Style */}
         <div className="mt-12 text-center">
-          <Button
-            size="lg"
-            className="bg-pop-pink text-foreground hover:bg-pop-orange font-black uppercase text-lg px-8 py-6 border-3 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-1 hover:translate-y-1 transition-all"
-          >
-            View All Skills
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <Link href="/skills">
+            <Button
+              size="lg"
+              className="bg-pop-pink text-foreground hover:bg-pop-orange font-black uppercase text-lg px-8 py-6 border-3 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[2px_2px_0_0_theme(colors.foreground)] hover:translate-x-1 hover:translate-y-1 transition-all"
+            >
+              View All Skills
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

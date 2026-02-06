@@ -122,10 +122,10 @@ export const skillEmbeddings = pgTable('skill_embeddings', {
   // CREATE INDEX ON skill_embeddings USING hnsw (embedding vector_cosine_ops);
 ]);
 
-// User stars/favorites
+// Skill stars/votes - anonymous voting via client-generated voter ID
 export const userStars = pgTable('user_stars', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id').references(() => users.id).notNull(),
+  voterId: text('voter_id').notNull(),
   skillId: uuid('skill_id').references(() => skills.id).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
@@ -141,7 +141,6 @@ export const admins = pgTable('admins', {
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   skills: many(skills),
-  stars: many(userStars),
 }));
 
 export const submissionsRelations = relations(submissions, ({ one }) => ({
@@ -180,10 +179,6 @@ export const skillEmbeddingsRelations = relations(skillEmbeddings, ({ one }) => 
 }));
 
 export const userStarsRelations = relations(userStars, ({ one }) => ({
-  user: one(users, {
-    fields: [userStars.userId],
-    references: [users.id],
-  }),
   skill: one(skills, {
     fields: [userStars.skillId],
     references: [skills.id],

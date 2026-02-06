@@ -230,16 +230,16 @@ export default async function SkillsPage({ searchParams }: SkillsPageProps) {
 
       <main className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          {/* Header - Pop Art Style */}
+          {/* Header - Pop Art Style, left-aligned */}
           <div className="mb-10">
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-2 flex-1 bg-foreground" />
+              <div className="w-12 h-2 bg-pop-cyan shrink-0" />
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
                 <span className="text-pop-cyan">Skills</span> Directory
               </h1>
               <div className="h-2 flex-1 bg-foreground" />
             </div>
-            <p className="text-center text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground">
               Discover skills to supercharge your AI agents
             </p>
           </div>

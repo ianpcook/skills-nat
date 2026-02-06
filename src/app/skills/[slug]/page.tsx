@@ -13,15 +13,6 @@ import { db, skills } from '@/db';
 import { eq, and, isNotNull } from 'drizzle-orm';
 import type { Skill, SubmissionFile } from '@/db/schema';
 
-// Extract owner from GitHub repo URL, default to 'ianpcook' for file uploads
-const getSkillOwner = (repoUrl?: string | null): string => {
-  if (repoUrl) {
-    const match = repoUrl.match(/github\.com\/([^\/]+)/);
-    if (match) return match[1];
-  }
-  return 'ianpcook';
-};
-
 interface SkillDetailPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -62,11 +53,15 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
     notFound();
   }
 
-  const agentDisplayInfo = skill.agents.map((agentId) => ({
-    id: agentId,
-    name: getAgentName(agentId),
-    color: getAgentColor(agentId),
-  }));
+  const agentDisplayInfo = skill.agents
+    .map((agentId) => ({
+      id: agentId,
+      name: getAgentName(agentId),
+      color: getAgentColor(agentId),
+    }))
+    .filter((agent, index, arr) =>
+      arr.findIndex((a) => a.name.toLowerCase() === agent.name.toLowerCase()) === index
+    );
 
   const formatDate = (date: Date | string | null) => {
     if (!date) return 'N/A';
@@ -98,7 +93,7 @@ export default async function SkillDetailPage({ params }: SkillDetailPageProps) 
               <div className="flex-1">
                 <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-foreground mb-2">{skill.name}</h1>
                 <p className="mb-4 text-muted-foreground">
-                  by <span className="font-bold text-foreground">{skill.author || 'Unknown'}</span>
+                  by <span className="font-bold text-foreground">{skill.author || 'Community'}</span>
                 </p>
                 <p className="text-lg text-foreground/80 max-w-2xl">
                   {skill.description || 'No description available'}

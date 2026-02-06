@@ -45,8 +45,14 @@ export interface Skill {
   featured?: boolean;
 }
 
-// Helper to get accent color from category
-const getCategoryColor = (category?: string): string => {
+// Deterministic hash-based color index for visual variety
+const PALETTE_COLORS = ['yellow', 'pink', 'cyan', 'orange', 'lime'] as const;
+
+const hashStringToColorIndex = (str: string): number =>
+  [...str].reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) | 0, 0);
+
+// Helper to get accent color from category, with hash-based fallback for variety
+const getCategoryColor = (category?: string, slug?: string): string => {
   const colorMap: Record<string, string> = {
     'Data': 'cyan',
     'API': 'yellow',
@@ -54,7 +60,11 @@ const getCategoryColor = (category?: string): string => {
     'Entertainment': 'orange',
     'Local': 'lime',
   };
-  return colorMap[category || ''] || 'yellow';
+  const mapped = colorMap[category || ''];
+  if (mapped) return mapped;
+  // Use slug hash for visual variety instead of always defaulting to yellow
+  const index = Math.abs(hashStringToColorIndex(slug || '')) % PALETTE_COLORS.length;
+  return PALETTE_COLORS[index];
 };
 
 // Helper to get icon from category
@@ -74,6 +84,15 @@ const getCategoryIcon = (category?: string): string => {
   return iconMap[category || ''] || '🔧';
 };
 
+// Tailwind class mappings for accent colors
+export const ACCENT_COLOR_CLASSES: Record<string, { bg: string; bgSolid: string }> = {
+  yellow: { bg: "bg-pop-yellow", bgSolid: "bg-pop-yellow" },
+  pink: { bg: "bg-pop-pink", bgSolid: "bg-pop-pink" },
+  cyan: { bg: "bg-pop-cyan", bgSolid: "bg-pop-cyan" },
+  orange: { bg: "bg-pop-orange", bgSolid: "bg-pop-orange" },
+  lime: { bg: "bg-pop-lime", bgSolid: "bg-pop-lime" },
+};
+
 // Transform backend skill to display skill
 export const toDisplaySkill = (skill: BackendSkill): Skill => {
   const owner = getSkillOwner(skill.repoUrl);
@@ -81,7 +100,7 @@ export const toDisplaySkill = (skill: BackendSkill): Skill => {
     id: skill.id,
     slug: skill.slug,
     name: skill.name,
-    author: skill.author || 'Anonymous',
+    author: skill.author || 'Community',
     owner,
     description: skill.shortDescription || skill.description || '',
     shortDescription: skill.shortDescription,
@@ -92,8 +111,8 @@ export const toDisplaySkill = (skill: BackendSkill): Skill => {
     featured: false,
     // Generate install command from slug and owner
     installCommand: `npx skills add https://github.com/ianpcook/skills-nat --skill ${skill.slug}`,
-    // Default color based on category or hash
-    accentColor: getCategoryColor(skill.category || undefined),
+    // Default color based on category, with slug-based hash fallback for variety
+    accentColor: getCategoryColor(skill.category || undefined, skill.slug),
     // Default icon based on category
     icon: getCategoryIcon(skill.category || undefined),
   };
