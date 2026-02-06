@@ -224,6 +224,8 @@ export async function PATCH(
             author: metadata.author || null,
             category: metadata.category || null,
             agents: metadata.agents || DEFAULT_AGENTS,
+            repoUrl: existingSubmission.repoUrl || null,
+            sourceType: existingSubmission.repoUrl ? 'github' : 'upload',
             submissionId: existingSubmission.id,
             approvedAt: new Date(),
             updatedAt: new Date(),
@@ -263,6 +265,8 @@ export async function PATCH(
             author: metadata.author || null,
             category: metadata.category || null,
             agents: metadata.agents || DEFAULT_AGENTS,
+            repoUrl: existingSubmission.repoUrl || null,
+            sourceType: existingSubmission.repoUrl ? 'github' : 'upload',
             submissionId: existingSubmission.id,
             approvedAt: new Date(),
           })

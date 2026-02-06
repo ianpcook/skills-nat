@@ -105,6 +105,11 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const files: SubmissionFile[] = [];
     let skillMdContent: string | null = null;
+    const repoUrl = (formData.get('repoUrl') as string | null)?.trim() || null;
+
+    if (repoUrl) {
+      console.log(`[SUBMIT] Repository URL provided: ${repoUrl}`);
+    }
 
     // Process all uploaded files
     const entries = Array.from(formData.entries());
@@ -163,6 +168,7 @@ export async function POST(request: NextRequest) {
         version,
         description,
         files,
+        repoUrl,
         status: 'pending',
       })
       .returning();

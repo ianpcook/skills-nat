@@ -64,6 +64,7 @@ export const submissions = pgTable('submissions', {
   version: varchar('version', { length: 50 }).notNull().default('1.0.0'),
   description: text('description'),
   files: jsonb('files').$type<SubmissionFile[]>().notNull().default([]),
+  repoUrl: text('repo_url'),
   status: submissionStatusEnum('status').notNull().default('pending'),
   reviewerNotes: text('reviewer_notes'),
   submittedAt: timestamp('submitted_at').notNull().defaultNow(),

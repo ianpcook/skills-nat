@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import JSZip from 'jszip';
-import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight, FolderOpen } from 'lucide-react';
+import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight, FolderOpen, Github } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,14 @@ const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const isValidGitHubUrl = (url: string): boolean =>
+  /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w.-]+\/?$/.test(url);
+
+const extractRepoInfo = (url: string): { owner: string; repo: string } | null => {
+  const match = url.match(/github\.com\/([\w-]+)\/([\w.-]+)/);
+  return match ? { owner: match[1], repo: match[2] } : null;
 };
 
 const isAllowedFile = (filename: string): boolean => {
@@ -92,6 +100,7 @@ const processZipFile = async (file: File): Promise<{ extracted: UploadedFile[]; 
 
 export default function SubmitPage() {
   const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [repoUrl, setRepoUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
@@ -284,6 +293,9 @@ export default function SubmitPage() {
       for (const uploadedFile of files) {
         formData.append('files', uploadedFile.file);
       }
+      if (repoUrl.trim()) {
+        formData.append('repoUrl', repoUrl.trim());
+      }
 
       const response = await fetch('/api/submit', {
         method: 'POST',
@@ -368,6 +380,7 @@ export default function SubmitPage() {
                   onClick={() => {
                     setIsSubmitted(false);
                     setFiles([]);
+                    setRepoUrl('');
                     setSubmissionId(null);
                     setError(null);
                   }}
@@ -399,12 +412,50 @@ export default function SubmitPage() {
               <div className="h-2 flex-1 bg-foreground" />
             </div>
             <p className="text-center text-lg text-muted-foreground">
-              Upload your skill files for review. Your submission must include a SKILL.md file.
+              Link your GitHub repo or upload files. Your submission must include a SKILL.md file.
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* GitHub Repo URL */}
+            <div className="border-4 border-foreground bg-card p-6 shadow-[4px_4px_0_0_theme(colors.foreground)]">
+              <label htmlFor="repo-url" className="mb-2 block text-lg font-black uppercase text-foreground">
+                <Github className="inline h-5 w-5 mr-2 -mt-1" />
+                GitHub Repository
+              </label>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Link your skill&apos;s GitHub repo so users can install directly from it
+              </p>
+              <input
+                type="url"
+                id="repo-url"
+                value={repoUrl}
+                onChange={(e) => setRepoUrl(e.target.value)}
+                placeholder="https://github.com/username/my-skill"
+                className="w-full px-4 py-3 bg-background border-4 border-foreground text-foreground placeholder-muted-foreground font-mono text-sm focus:outline-none focus:border-pop-pink transition-colors"
+              />
+              {repoUrl && !isValidGitHubUrl(repoUrl) && (
+                <p className="mt-2 flex items-center gap-2 text-sm font-bold text-pop-orange">
+                  <AlertTriangle className="h-4 w-4" />
+                  Enter a valid GitHub repository URL
+                </p>
+              )}
+              {repoUrl && isValidGitHubUrl(repoUrl) && (
+                <p className="mt-2 flex items-center gap-2 text-sm font-bold text-pop-lime">
+                  <Check className="h-4 w-4" />
+                  {extractRepoInfo(repoUrl)?.owner}/{extractRepoInfo(repoUrl)?.repo}
+                </p>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4">
+              <div className="h-1 flex-1 bg-foreground/20" />
+              <span className="font-black text-muted-foreground uppercase text-sm">Plus upload your files</span>
+              <div className="h-1 flex-1 bg-foreground/20" />
+            </div>
+
             {/* File Upload - Pop Art Style */}
             <div className="border-4 border-foreground bg-card p-6 shadow-[4px_4px_0_0_theme(colors.foreground)]">
               <label className="mb-2 block text-lg font-black uppercase text-foreground">
@@ -587,7 +638,7 @@ Instructions and documentation here...`}
             {/* Submit Button - Pop Art Style */}
             <Button
               type="submit"
-              disabled={isSubmitting || files.length === 0 || !hasSkillMd}
+              disabled={isSubmitting || files.length === 0 || !hasSkillMd || (repoUrl.trim() !== '' && !isValidGitHubUrl(repoUrl))}
               className="w-full py-6 text-lg bg-pop-yellow text-foreground font-black uppercase border-4 border-foreground shadow-[6px_6px_0_0_theme(colors.foreground)] hover:shadow-[3px_3px_0_0_theme(colors.foreground)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[6px_6px_0_0_theme(colors.foreground)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
             >
               {isSubmitting ? (
