@@ -452,7 +452,7 @@ export default function SubmitPage() {
             {/* Divider */}
             <div className="flex items-center gap-4">
               <div className="h-1 flex-1 bg-foreground/20" />
-              <span className="font-black text-muted-foreground uppercase text-sm">Plus upload your files</span>
+              <span className="font-black text-muted-foreground uppercase text-sm">Or upload your files</span>
               <div className="h-1 flex-1 bg-foreground/20" />
             </div>
 
