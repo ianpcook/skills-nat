@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Sparkles, Copy, Check, Star, Loader2 } from "lucide-react"
+import { ArrowRight, Sparkles, Copy, Check, Star, Loader2, Download, BookOpen } from "lucide-react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { toDisplaySkill, ACCENT_COLOR_CLASSES, type Skill } from "@/lib/skill-utils"
@@ -190,6 +190,27 @@ export function HeroSection() {
                         </div>
                       </div>
                     </button>
+
+                    {/* Secondary actions: Download ZIP + Install Guide */}
+                    <div className="flex gap-2 mt-2">
+                      <a
+                        href={`/api/skills/${featuredSkill.slug}/download`}
+                        download={`${featuredSkill.slug}.zip`}
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        className="flex-1 flex items-center justify-center gap-2 bg-card text-foreground p-2 border-2 border-foreground font-bold text-xs uppercase hover:bg-pop-cyan transition-colors"
+                      >
+                        <Download className="h-4 w-4" />
+                        Download ZIP
+                      </a>
+                      <a
+                        href="/docs#installing"
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        className="flex-1 flex items-center justify-center gap-2 bg-card text-foreground p-2 border-2 border-foreground font-bold text-xs uppercase hover:bg-pop-pink transition-colors"
+                      >
+                        <BookOpen className="h-4 w-4" />
+                        Install Guide
+                      </a>
+                    </div>
                   </div>
                 </div>
               </Link>
