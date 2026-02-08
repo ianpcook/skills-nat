@@ -17,9 +17,9 @@ interface UploadedFile {
   content: string;
 }
 
-const ALLOWED_EXTENSIONS = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js', '.zip'];
+const ALLOWED_EXTENSIONS = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js', '.zip', '.sql', '.toml', '.cfg', '.ini', '.env', '.css', '.html'];
 
-const FILE_EXTENSIONS_FOR_CONTENT = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js'];
+const FILE_EXTENSIONS_FOR_CONTENT = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js', '.sql', '.toml', '.cfg', '.ini', '.env', '.css', '.html'];
 
 const JUNK_PATTERNS = ['__MACOSX/', '.DS_Store', '.gitkeep'];
 
