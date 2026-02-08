@@ -2,15 +2,27 @@ import { getAuthInstance } from '@/lib/auth';
 import { toNextJsHandler } from 'better-auth/next-js';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force dynamic rendering - auth requires database at runtime
+export const dynamic = 'force-dynamic';
+
 console.log('[AUTH API] Mounting auth handler at /api/auth/*');
 
-const authInstance = getAuthInstance();
-console.log('[AUTH API] Auth instance created');
-const { GET: baseGet, POST: basePost } = toNextJsHandler(authInstance);
-console.log('[AUTH API] Handler created');
+// Lazy initialization to avoid build-time database requirement
+let handlers: { GET: (req: NextRequest) => Promise<Response>; POST: (req: NextRequest) => Promise<Response> } | null = null;
+
+function getHandlers() {
+  if (!handlers) {
+    const authInstance = getAuthInstance();
+    console.log('[AUTH API] Auth instance created');
+    handlers = toNextJsHandler(authInstance);
+    console.log('[AUTH API] Handler created');
+  }
+  return handlers;
+}
 
 // Wrap handlers to log errors
 export async function GET(request: NextRequest) {
+  const { GET: baseGet } = getHandlers();
   const url = new URL(request.url);
   const isCallback = url.pathname.includes('/callback/');
   
@@ -63,6 +75,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const { POST: basePost } = getHandlers();
   const url = new URL(request.url);
   console.log('[AUTH API] POST request:', url.pathname);
   
