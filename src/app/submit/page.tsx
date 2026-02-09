@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import JSZip from 'jszip';
-import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight, FolderOpen, Github } from 'lucide-react';
+import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight, FolderOpen, Github, Download } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
@@ -106,12 +106,106 @@ export default function SubmitPage() {
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isFetchingRepo, setIsFetchingRepo] = useState(false);
+  const [repoFetched, setRepoFetched] = useState(false);
+  const [lastFetchedUrl, setLastFetchedUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
 
   const hasSkillMd = files.some(
     (f) => f.name.toLowerCase() === 'skill.md'
   );
+
+  // Fetch files from GitHub repository
+  const fetchFromGitHub = useCallback(async (url: string) => {
+    const repoInfo = extractRepoInfo(url);
+    if (!repoInfo) return;
+
+    setIsFetchingRepo(true);
+    setError(null);
+    console.log(`[SUBMIT] Fetching files from GitHub: ${repoInfo.owner}/${repoInfo.repo}`);
+
+    try {
+      // Fetch repository contents recursively
+      const fetchContents = async (path = ''): Promise<UploadedFile[]> => {
+        const apiUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/contents/${path}`;
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Repository not found or is private');
+          }
+          throw new Error(`GitHub API error: ${response.status}`);
+        }
+
+        const contents = await response.json();
+        const files: UploadedFile[] = [];
+
+        for (const item of contents) {
+          if (item.type === 'file' && isAllowedContentFile(item.name)) {
+            // Fetch file content
+            const fileResponse = await fetch(item.download_url);
+            if (fileResponse.ok) {
+              const content = await fileResponse.text();
+              const syntheticFile = new File([content], item.name, { type: 'text/plain' });
+              files.push({
+                file: syntheticFile,
+                name: item.name,
+                path: item.path,
+                size: item.size,
+                content,
+              });
+              console.log(`[SUBMIT] Fetched from GitHub: ${item.path} (${item.size} bytes)`);
+            }
+          } else if (item.type === 'dir' && !item.name.startsWith('.') && item.name !== 'node_modules') {
+            // Recursively fetch directory contents (skip hidden dirs and node_modules)
+            const subFiles = await fetchContents(item.path);
+            files.push(...subFiles);
+          }
+        }
+
+        return files;
+      };
+
+      const fetchedFiles = await fetchContents();
+      
+      if (fetchedFiles.length === 0) {
+        setError('No compatible files found in repository');
+      } else {
+        setFiles(fetchedFiles);
+        setRepoFetched(true);
+        setLastFetchedUrl(url);
+        console.log(`[SUBMIT] Fetched ${fetchedFiles.length} files from GitHub`);
+      }
+    } catch (err) {
+      console.error('[SUBMIT] GitHub fetch error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch from GitHub');
+    } finally {
+      setIsFetchingRepo(false);
+    }
+  }, []);
+
+  // Auto-fetch when valid GitHub URL is entered
+  useEffect(() => {
+    if (isValidGitHubUrl(repoUrl) && repoUrl !== lastFetchedUrl && !isFetchingRepo) {
+      // Debounce the fetch
+      const timer = setTimeout(() => {
+        fetchFromGitHub(repoUrl);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [repoUrl, lastFetchedUrl, isFetchingRepo, fetchFromGitHub]);
+
+  // Reset fetched state when URL changes
+  useEffect(() => {
+    if (repoUrl !== lastFetchedUrl) {
+      setRepoFetched(false);
+    }
+  }, [repoUrl, lastFetchedUrl]);
 
   const readFileContent = async (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -443,8 +537,22 @@ export default function SubmitPage() {
               )}
               {repoUrl && isValidGitHubUrl(repoUrl) && (
                 <p className="mt-2 flex items-center gap-2 text-sm font-bold text-pop-lime">
-                  <Check className="h-4 w-4" />
-                  {extractRepoInfo(repoUrl)?.owner}/{extractRepoInfo(repoUrl)?.repo}
+                  {isFetchingRepo ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Fetching files from {extractRepoInfo(repoUrl)?.owner}/{extractRepoInfo(repoUrl)?.repo}...
+                    </>
+                  ) : repoFetched ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Loaded {files.length} files from {extractRepoInfo(repoUrl)?.owner}/{extractRepoInfo(repoUrl)?.repo}
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4" />
+                      {extractRepoInfo(repoUrl)?.owner}/{extractRepoInfo(repoUrl)?.repo}
+                    </>
+                  )}
                 </p>
               )}
             </div>
