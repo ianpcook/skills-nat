@@ -166,9 +166,6 @@ export function ChatDemo() {
         <p className="text-lg md:text-xl font-black uppercase text-foreground">
           <span className="text-pop-pink">Skills:</span> turn a chat window into a coworker
         </p>
-        <p className="text-sm text-muted-foreground mt-1">
-          Built in Pittsburgh. Works everywhere.
-        </p>
       </div>
     </div>
   )
