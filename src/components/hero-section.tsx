@@ -43,10 +43,6 @@ export function HeroSection() {
               </span>
             </h1>
 
-            <p className="text-base md:text-lg text-foreground/80 max-w-xl mx-auto lg:mx-0 mt-4">
-              Give any chatbot expertise and focus by adding specialized instructions, with a simple install command or file addition in the interface.
-            </p>
-
             {/* CTA Buttons - in left column */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mt-8">
               <Link href="/skills">

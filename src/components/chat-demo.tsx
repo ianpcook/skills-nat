@@ -166,6 +166,9 @@ export function ChatDemo() {
         <p className="text-lg md:text-xl font-black uppercase text-foreground">
           <span className="text-pop-pink">Skills:</span> turn a chat window into a coworker
         </p>
+        <p className="text-sm md:text-base text-foreground/80 mt-2">
+          Give any chatbot expertise and focus by adding specialized instructions, with a simple install command or file addition in the interface.
+        </p>
       </div>
     </div>
   )
