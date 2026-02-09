@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { submissions, admins, type SubmissionFile } from '@/db/schema';
 import { notifyAdminsOfSubmission } from '@/lib/email';
+import yaml from 'js-yaml';
 
 interface SkillFrontmatter {
   name?: string;
@@ -29,64 +30,25 @@ const parseFrontmatter = (content: string): SkillFrontmatter => {
     return {};
   }
 
-  const frontmatter: SkillFrontmatter = {};
-  const frontmatterText = match[1];
-  const lines = frontmatterText.split('\n');
-
-  let currentKey: string | null = null;
-  let inAgentsList = false;
-  const agents: string[] = [];
-
-  for (const line of lines) {
-    // Check if this is a YAML list item (for agents)
-    if (inAgentsList && line.match(/^\s+-\s+/)) {
-      const agentValue = line.replace(/^\s+-\s+/, '').trim();
-      if (agentValue) {
-        agents.push(agentValue.replace(/^['"]|['"]$/g, ''));
-      }
-      continue;
-    } else if (inAgentsList && !line.match(/^\s+-/)) {
-      // End of agents list
-      inAgentsList = false;
+  try {
+    const parsed = yaml.load(match[1]) as Record<string, unknown>;
+    const frontmatter: SkillFrontmatter = {};
+    
+    if (typeof parsed.name === 'string') frontmatter.name = parsed.name;
+    if (typeof parsed.description === 'string') frontmatter.description = parsed.description.trim();
+    if (typeof parsed.version === 'string') frontmatter.version = parsed.version;
+    if (typeof parsed.author === 'string') frontmatter.author = parsed.author;
+    if (typeof parsed.category === 'string') frontmatter.category = parsed.category;
+    if (Array.isArray(parsed.agents)) {
+      frontmatter.agents = parsed.agents.filter((a): a is string => typeof a === 'string');
     }
-
-    const colonIndex = line.indexOf(':');
-    if (colonIndex === -1) continue;
-
-    const key = line.slice(0, colonIndex).trim().toLowerCase();
-    let value = line.slice(colonIndex + 1).trim();
-
-    // Remove surrounding quotes if present
-    if ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))) {
-      value = value.slice(1, -1);
-    }
-
-    currentKey = key;
-
-    if (key === 'name') frontmatter.name = value;
-    if (key === 'description') frontmatter.description = value;
-    if (key === 'version') frontmatter.version = value;
-    if (key === 'author') frontmatter.author = value;
-    if (key === 'category') frontmatter.category = value;
-    if (key === 'agents') {
-      // Check if it's an inline array like [claude-code, cursor]
-      if (value.startsWith('[') && value.endsWith(']')) {
-        const inlineAgents = value.slice(1, -1).split(',').map(a => a.trim().replace(/^['"]|['"]$/g, ''));
-        agents.push(...inlineAgents.filter(a => a));
-      } else if (!value) {
-        // It's a YAML list starting on the next line
-        inAgentsList = true;
-      }
-    }
+    
+    console.log('[SUBMIT] Parsed frontmatter:', frontmatter);
+    return frontmatter;
+  } catch (err) {
+    console.error('[SUBMIT] YAML parse error:', err);
+    return {};
   }
-
-  if (agents.length > 0) {
-    frontmatter.agents = agents;
-  }
-
-  console.log('[SUBMIT] Parsed frontmatter:', frontmatter);
-  return frontmatter;
 };
 
 export async function POST(request: NextRequest) {
