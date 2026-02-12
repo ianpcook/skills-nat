@@ -42,6 +42,55 @@ const CHAT_EXAMPLES: ChatExample[] = [
       { role: "agent", text: ["9am: Standup", "11am: Lou Bortone Podcast", "Nothing after 2pm — clear for focus time."] },
     ],
   },
+  {
+    skill: "plow-tracker",
+    messages: [
+      { role: "user", text: "has my street been plowed yet?" },
+      { role: "agent", text: ["Beacon St last plowed 2h ago.", "Plow 14 is heading your way now.", "ETA ~20 min."] },
+    ],
+  },
+  {
+    skill: "wprdc",
+    messages: [
+      { role: "user", text: "how many 311 requests in Polish Hill this month?" },
+      { role: "agent", text: ["47 requests in Polish Hill.", "Top issues: potholes (18), dumping (12)", "Up 30% from last month."] },
+    ],
+  },
+  {
+    skill: "agent-crm",
+    messages: [
+      { role: "user", text: "log a call with Maria about the proposal" },
+      { role: "agent", text: ["Logged call with Maria Chen.", "Deal: \"Platform Migration\" updated.", "Follow-up reminder set for Thursday."] },
+    ],
+  },
+  {
+    skill: "knowd",
+    messages: [
+      { role: "user", text: "save that article about Rust async" },
+      { role: "agent", text: ["Saved to your knowledge base.", "Tagged: rust, async, programming", "You now have 12 articles on Rust."] },
+    ],
+  },
+  {
+    skill: "serpapi",
+    messages: [
+      { role: "user", text: "find a good roofer in Lawrenceville" },
+      { role: "agent", text: ["Top rated: Iron City Roofing ★4.8", "128 reviews, free estimates", "Also: Three Rivers Roofing ★4.6"] },
+    ],
+  },
+  {
+    skill: "fly-deploy",
+    messages: [
+      { role: "user", text: "deploy this app to fly.io" },
+      { role: "agent", text: ["Detected: Next.js app", "Generated fly.toml, set 2 secrets.", "Live at your-app.fly.dev ✓"] },
+    ],
+  },
+  {
+    skill: "pgh-news",
+    messages: [
+      { role: "user", text: "what's happening in Oakland today?" },
+      { role: "agent", text: ["Pitt breaks ground on new CS building.", "Forbes Ave lane closures til Friday.", "Schenley farmers market opens at 3."] },
+    ],
+  },
 ]
 
 export function ChatDemo() {
