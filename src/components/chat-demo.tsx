@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { MessageCircle } from "lucide-react"
 
 interface ChatMessage {
@@ -97,42 +97,56 @@ export function ChatDemo() {
   const [currentExample, setCurrentExample] = useState(0)
   const [visibleMessages, setVisibleMessages] = useState(0)
   const [isTyping, setIsTyping] = useState(false)
+  const timersRef = useRef<NodeJS.Timeout[]>([])
 
   const example = CHAT_EXAMPLES[currentExample]
   const totalMessages = example.messages.length
 
   useEffect(() => {
+    // Clear all pending timers from previous cycle
+    timersRef.current.forEach(clearTimeout)
+    timersRef.current = []
+
     // Reset when example changes
     setVisibleMessages(0)
     setIsTyping(false)
+
+    const track = (id: NodeJS.Timeout) => {
+      timersRef.current.push(id)
+      return id
+    }
 
     // Animate messages appearing one by one
     const showNextMessage = (index: number) => {
       if (index >= totalMessages) {
         // Wait, then move to next example
-        setTimeout(() => {
+        track(setTimeout(() => {
           setCurrentExample((prev) => (prev + 1) % CHAT_EXAMPLES.length)
-        }, 3000)
+        }, 3000))
         return
       }
 
       // Show typing indicator before agent messages
       if (example.messages[index].role === "agent" && index > 0) {
         setIsTyping(true)
-        setTimeout(() => {
+        track(setTimeout(() => {
           setIsTyping(false)
           setVisibleMessages(index + 1)
-          setTimeout(() => showNextMessage(index + 1), 1200)
-        }, 800)
+          track(setTimeout(() => showNextMessage(index + 1), 1200))
+        }, 800))
       } else {
         setVisibleMessages(index + 1)
-        setTimeout(() => showNextMessage(index + 1), 1000)
+        track(setTimeout(() => showNextMessage(index + 1), 1000))
       }
     }
 
     // Start the animation
-    const timer = setTimeout(() => showNextMessage(0), 500)
-    return () => clearTimeout(timer)
+    track(setTimeout(() => showNextMessage(0), 500))
+
+    return () => {
+      timersRef.current.forEach(clearTimeout)
+      timersRef.current = []
+    }
   }, [currentExample, totalMessages, example.messages])
 
   return (
