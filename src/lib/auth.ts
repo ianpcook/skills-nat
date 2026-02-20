@@ -114,7 +114,7 @@ function getAuth() {
         },
       },
     },
-    trustedOrigins: [baseURL, 'https://skills-nat.vercel.app', 'https://www.skillsnat.sh', 'https://skillsnat.sh'],
+    trustedOrigins: [baseURL, 'https://skills-nat.vercel.app', 'https://www.skillsnat.sh', 'https://skillsnat.sh', 'https://www.skillsnat.com', 'https://skillsnat.com'],
     // Log OAuth events for debugging (after hooks only to avoid breaking changes)
     databaseHooks: {
       user: {
