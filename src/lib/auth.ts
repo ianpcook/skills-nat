@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { magicLink } from 'better-auth/plugins';
 import { db } from '@/db';
 import * as authSchema from '@/db/auth-schema';
 
@@ -41,11 +42,49 @@ function getAuth() {
       enabled: true,
       requireEmailVerification: false,
     },
+    plugins: [
+      magicLink({
+        sendMagicLink: async ({ email, url }) => {
+          const { Resend } = await import('resend');
+          const apiKey = process.env.RESEND_API_KEY;
+          if (!apiKey) {
+            console.warn('[AUTH] RESEND_API_KEY not set, cannot send magic link');
+            return;
+          }
+          const resend = new Resend(apiKey);
+          const fromEmail = process.env.EMAIL_FROM || 'noreply@skillshq.dev';
+          await resend.emails.send({
+            from: fromEmail,
+            to: email,
+            subject: 'Sign in to Skills N\'at',
+            html: `
+              <h2>Sign in to Skills N'at</h2>
+              <p>Click the link below to sign in. This link expires in 10 minutes.</p>
+              <p><a href="${url}" style="display:inline-block;padding:12px 24px;background:#0D0D0D;color:white;text-decoration:none;font-weight:bold;border:3px solid #0D0D0D;">Sign In</a></p>
+              <p style="color:#666;font-size:12px;">If you didn't request this, you can safely ignore this email.</p>
+            `,
+          });
+          console.log(`[AUTH] Magic link sent to ${email}`);
+        },
+      }),
+    ],
     socialProviders: {
       google: {
         clientId: (process.env.GOOGLE_CLIENT_ID || '').trim(),
         clientSecret: (process.env.GOOGLE_CLIENT_SECRET || '').trim(),
       },
+      ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET ? {
+        github: {
+          clientId: process.env.GITHUB_CLIENT_ID.trim(),
+          clientSecret: process.env.GITHUB_CLIENT_SECRET.trim(),
+        },
+      } : {}),
+      ...(process.env.APPLE_CLIENT_ID && process.env.APPLE_CLIENT_SECRET ? {
+        apple: {
+          clientId: process.env.APPLE_CLIENT_ID.trim(),
+          clientSecret: process.env.APPLE_CLIENT_SECRET.trim(),
+        },
+      } : {}),
     },
     session: {
       expiresIn: 60 * 60 * 24 * 7, // 7 days

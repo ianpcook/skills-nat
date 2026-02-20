@@ -70,6 +70,15 @@ export function Header() {
           <div className="flex items-center gap-3 flex-1 justify-end">
             <Button
               size="sm"
+              className="hidden sm:flex bg-pop-lime text-foreground hover:bg-pop-cyan font-bold border-2 border-foreground shadow-[3px_3px_0_0_theme(colors.foreground)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all uppercase"
+              asChild
+            >
+              <Link href="/sign-in">
+                Sign In
+              </Link>
+            </Button>
+            <Button
+              size="sm"
               className="hidden sm:flex bg-foreground text-pop-yellow hover:bg-pop-pink hover:text-foreground font-bold border-2 border-foreground shadow-[3px_3px_0_0_var(--color-pop-pink)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all uppercase"
               asChild
             >

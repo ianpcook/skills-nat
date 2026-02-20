@@ -3,6 +3,7 @@ import { db } from '@/db';
 import { submissions, admins, type SubmissionFile } from '@/db/schema';
 import { notifyAdminsOfSubmission } from '@/lib/email';
 import yaml from 'js-yaml';
+import { scanSubmission, type ScanResult } from '@/lib/security-scanner';
 
 interface SkillFrontmatter {
   name?: string;
@@ -119,7 +120,31 @@ export async function POST(request: NextRequest) {
     const version = frontmatter.version || '1.0.0';
     const description = frontmatter.description || null;
 
-    console.log(`[SUBMIT] Creating submission: name="${name}", slug="${slug}", version="${version}"`);
+    // ── Security Scan ──
+    console.log(`[SUBMIT] Running security scan on ${files.length} files`);
+    let scanResult: ScanResult;
+    try {
+      scanResult = await scanSubmission(
+        files.map((f) => ({ name: f.name, content: f.content })),
+      );
+      console.log(
+        `[SUBMIT] Scan complete: ${scanResult.passed ? 'PASSED' : 'FLAGGED'} — ${scanResult.findings.length} finding(s) in ${scanResult.scanDurationMs}ms`,
+      );
+    } catch (err) {
+      console.error('[SUBMIT] Security scan error:', err);
+      scanResult = {
+        passed: true,
+        findings: [],
+        scannedFiles: files.length,
+        scanDurationMs: 0,
+      };
+    }
+
+    const scanStatus = scanResult.findings.some((f) => f.severity === 'critical')
+      ? 'flagged'
+      : 'passed';
+
+    console.log(`[SUBMIT] Creating submission: name="${name}", slug="${slug}", version="${version}", scanStatus="${scanStatus}"`);
 
     // Insert into database
     const [submission] = await db
@@ -132,6 +157,9 @@ export async function POST(request: NextRequest) {
         files,
         repoUrl,
         status: 'pending',
+        scanStatus,
+        scanResults: scanResult as unknown as Record<string, unknown>,
+        scanDurationMs: scanResult.scanDurationMs,
       })
       .returning();
 
@@ -160,6 +188,13 @@ export async function POST(request: NextRequest) {
       success: true,
       id: submission.id,
       message: 'Submission received and pending review',
+      scan: {
+        status: scanStatus,
+        passed: scanResult.passed,
+        findings: scanResult.findings,
+        scannedFiles: scanResult.scannedFiles,
+        durationMs: scanResult.scanDurationMs,
+      },
     });
 
   } catch (error) {

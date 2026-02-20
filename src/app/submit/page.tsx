@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import JSZip from 'jszip';
-import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight, FolderOpen, Github, Download } from 'lucide-react';
+import { Upload, X, FileText, Check, AlertTriangle, Loader2, ArrowRight, FolderOpen, Github, Download, Shield, ShieldCheck, ShieldAlert, ChevronDown, ChevronUp } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,24 @@ interface UploadedFile {
   size: number;
   content: string;
 }
+
+interface ScanFinding {
+  severity: 'critical' | 'warning' | 'info';
+  file: string;
+  line: number;
+  pattern: string;
+  description: string;
+}
+
+interface ScanResponse {
+  status: 'passed' | 'flagged';
+  passed: boolean;
+  findings: ScanFinding[];
+  scannedFiles: number;
+  durationMs: number;
+}
+
+type SubmitPhase = 'idle' | 'uploading' | 'scanning' | 'scan-complete' | 'done';
 
 const ALLOWED_EXTENSIONS = ['.md', '.txt', '.json', '.yaml', '.yml', '.sh', '.py', '.ts', '.js', '.zip', '.sql', '.toml', '.cfg', '.ini', '.env', '.css', '.html'];
 
@@ -109,6 +127,9 @@ export default function SubmitPage() {
   const [isFetchingRepo, setIsFetchingRepo] = useState(false);
   const [repoFetched, setRepoFetched] = useState(false);
   const [lastFetchedUrl, setLastFetchedUrl] = useState('');
+  const [submitPhase, setSubmitPhase] = useState<SubmitPhase>('idle');
+  const [scanResult, setScanResult] = useState<ScanResponse | null>(null);
+  const [scanDetailsOpen, setScanDetailsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
 
@@ -379,6 +400,9 @@ export default function SubmitPage() {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
+    setScanResult(null);
+    setScanDetailsOpen(false);
+    setSubmitPhase('uploading');
 
     console.log(`[SUBMIT] Submitting ${files.length} files`);
 
@@ -391,6 +415,9 @@ export default function SubmitPage() {
         formData.append('repoUrl', repoUrl.trim());
       }
 
+      // Switch to scanning phase after a brief moment
+      setTimeout(() => setSubmitPhase('scanning'), 600);
+
       const response = await fetch('/api/submit', {
         method: 'POST',
         body: formData,
@@ -402,13 +429,27 @@ export default function SubmitPage() {
         throw new Error(data.error || 'Submission failed');
       }
 
+      // Show scan results
+      if (data.scan) {
+        setScanResult(data.scan);
+        setSubmitPhase('scan-complete');
+        // If there are findings, auto-expand details
+        if (data.scan.findings.length > 0) {
+          setScanDetailsOpen(true);
+        }
+        // Pause on scan results for a moment, then show success
+        await new Promise((resolve) => setTimeout(resolve, data.scan.findings.length > 0 ? 3000 : 1500));
+      }
+
       console.log(`[SUBMIT] Submission successful: ${data.id}`);
       setSubmissionId(data.id);
+      setSubmitPhase('done');
       setIsSubmitting(false);
       setIsSubmitted(true);
     } catch (err) {
       console.error('[SUBMIT] Submission error:', err);
       setError(err instanceof Error ? err.message : 'Submission failed');
+      setSubmitPhase('idle');
       setIsSubmitting(false);
     }
   };
@@ -451,10 +492,28 @@ export default function SubmitPage() {
                       </Badge>
                     </dd>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between border-b-2 border-foreground/20 pb-2">
                     <dt className="font-bold uppercase text-muted-foreground">Files</dt>
                     <dd className="font-bold text-foreground">
                       {files.length} file{files.length !== 1 ? 's' : ''}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="font-bold uppercase text-muted-foreground">Security Scan</dt>
+                    <dd>
+                      {scanResult?.passed ? (
+                        <Badge className="bg-pop-lime text-foreground border-2 border-foreground font-bold">
+                          ✅ Passed
+                        </Badge>
+                      ) : scanResult ? (
+                        <Badge className="bg-pop-orange text-foreground border-2 border-foreground font-bold">
+                          ⚠️ {scanResult.findings.length} Finding{scanResult.findings.length !== 1 ? 's' : ''}
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-pop-cyan text-foreground border-2 border-foreground font-bold">
+                          Scanned
+                        </Badge>
+                      )}
                     </dd>
                   </div>
                 </dl>
@@ -477,6 +536,9 @@ export default function SubmitPage() {
                     setRepoUrl('');
                     setSubmissionId(null);
                     setError(null);
+                    setScanResult(null);
+                    setSubmitPhase('idle');
+                    setScanDetailsOpen(false);
                   }}
                 >
                   Submit Another
@@ -742,6 +804,123 @@ Instructions and documentation here...`}
                 </pre>
               </div>
             </div>
+
+            {/* Security Scan Status - Pop Art Style */}
+            {submitPhase !== 'idle' && submitPhase !== 'done' && (
+              <div className="border-4 border-foreground bg-card p-6 shadow-[4px_4px_0_0_theme(colors.foreground)]">
+                <h3 className="mb-4 text-lg font-black uppercase text-foreground flex items-center gap-3">
+                  <Shield className="h-6 w-6" />
+                  Security Scan
+                </h3>
+
+                {/* Phase: Uploading */}
+                {submitPhase === 'uploading' && (
+                  <div className="flex items-center gap-3 text-foreground">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span className="font-bold">Uploading files...</span>
+                  </div>
+                )}
+
+                {/* Phase: Scanning */}
+                {submitPhase === 'scanning' && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Loader2 className="h-5 w-5 animate-spin text-pop-cyan" />
+                      <span className="font-bold">🔍 Analyzing submitted files...</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Loader2 className="h-5 w-5 animate-spin text-pop-orange" />
+                      <span className="font-bold">🛡️ Running security scan...</span>
+                    </div>
+                    <div className="h-2 bg-foreground/10 border-2 border-foreground overflow-hidden">
+                      <div className="h-full bg-pop-cyan animate-pulse" style={{ width: '60%' }} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Phase: Scan Complete */}
+                {submitPhase === 'scan-complete' && scanResult && (
+                  <div className="space-y-4">
+                    {/* Result banner */}
+                    {scanResult.passed ? (
+                      <div className="flex items-center gap-3 border-3 border-foreground bg-pop-lime p-4">
+                        <ShieldCheck className="h-6 w-6 text-foreground" />
+                        <div>
+                          <span className="font-black uppercase text-foreground">✅ Security scan passed</span>
+                          <p className="text-sm font-bold text-foreground/70">
+                            {scanResult.scannedFiles} file{scanResult.scannedFiles !== 1 ? 's' : ''} scanned in {scanResult.durationMs}ms — no critical issues found
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 border-3 border-foreground bg-pop-pink p-4">
+                        <ShieldAlert className="h-6 w-6 text-foreground" />
+                        <div>
+                          <span className="font-black uppercase text-foreground">⚠️ Security scan found {scanResult.findings.length} issue{scanResult.findings.length !== 1 ? 's' : ''}</span>
+                          <p className="text-sm font-bold text-foreground/70">
+                            Your submission will still be reviewed, but flagged items need attention.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Findings details (expandable) */}
+                    {scanResult.findings.length > 0 && (
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setScanDetailsOpen(!scanDetailsOpen)}
+                          className="flex items-center gap-2 font-bold uppercase text-sm text-foreground hover:text-pop-pink transition-colors"
+                        >
+                          {scanDetailsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          {scanDetailsOpen ? 'Hide' : 'Show'} details ({scanResult.findings.length} finding{scanResult.findings.length !== 1 ? 's' : ''})
+                        </button>
+
+                        {scanDetailsOpen && (
+                          <div className="mt-3 space-y-2">
+                            {scanResult.findings.map((finding, i) => (
+                              <div
+                                key={`${finding.file}-${finding.line}-${finding.pattern}-${i}`}
+                                className={`border-2 border-foreground p-3 ${
+                                  finding.severity === 'critical'
+                                    ? 'bg-pop-pink/30'
+                                    : finding.severity === 'warning'
+                                    ? 'bg-pop-orange/30'
+                                    : 'bg-pop-cyan/30'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge className={`font-bold uppercase border-2 border-foreground ${
+                                    finding.severity === 'critical'
+                                      ? 'bg-pop-pink text-foreground'
+                                      : finding.severity === 'warning'
+                                      ? 'bg-pop-orange text-foreground'
+                                      : 'bg-pop-cyan text-foreground'
+                                  }`}>
+                                    {finding.severity}
+                                  </Badge>
+                                  <span className="font-mono text-xs font-bold text-foreground">
+                                    {finding.file}:{finding.line}
+                                  </span>
+                                </div>
+                                <p className="text-sm font-bold text-foreground">{finding.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Info findings note */}
+                    {scanResult.passed && scanResult.findings.length > 0 && (
+                      <p className="text-xs font-bold text-foreground/50">
+                        Info-level findings are not blockers — just things for reviewers to be aware of.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Submit Button - Pop Art Style */}
             <Button

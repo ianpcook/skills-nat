@@ -67,6 +67,10 @@ export const submissions = pgTable('submissions', {
   repoUrl: text('repo_url'),
   status: submissionStatusEnum('status').notNull().default('pending'),
   reviewerNotes: text('reviewer_notes'),
+  // Security scan results
+  scanStatus: varchar('scan_status', { length: 20 }).$type<'passed' | 'flagged' | 'error'>(),
+  scanResults: jsonb('scan_results'),
+  scanDurationMs: integer('scan_duration_ms'),
   submittedAt: timestamp('submitted_at').notNull().defaultNow(),
   reviewedAt: timestamp('reviewed_at'),
 });
