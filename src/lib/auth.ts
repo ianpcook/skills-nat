@@ -95,8 +95,10 @@ function getAuth() {
       },
     },
     advanced: {
-      // Force secure cookies in production (HTTPS)
-      useSecureCookies: isProduction,
+      // Disable __Secure- cookie prefix — it breaks OAuth PKCE flow when
+      // signIn.social() uses fetch() (browser ignores set-cookie with __Secure- 
+      // prefix on fetch responses). The cookies are still Secure + HttpOnly + SameSite=Lax.
+      useSecureCookies: false,
       // Ensure cookies work with OAuth redirects (cross-site)
       crossSubDomainCookies: {
         enabled: false,  // We're on a single domain

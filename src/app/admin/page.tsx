@@ -81,23 +81,17 @@ export default function AdminLoginPage() {
       const callbackURL = `${window.location.origin}/admin`;
       console.log('[ADMIN LOGIN] Starting OAuth with callbackURL:', callbackURL);
       
-      // Don't use fetchOptions callbacks - let better-auth handle redirect automatically
-      // Setting disableRedirect: false (default) will auto-redirect to Google
+      // Use signIn.social with fetchOptions to ensure cookies are included
       const result = await signIn.social({
         provider: 'google',
         callbackURL,
+        fetchOptions: {
+          credentials: 'include',
+        },
       });
-      
-      console.log('[ADMIN LOGIN] signIn.social returned:', result);
-      
-      // If signIn.social returned a URL (disableRedirect wasn't triggered), redirect manually
-      if (result?.data && typeof result.data === 'object' && 'url' in result.data) {
-        console.log('[ADMIN LOGIN] Redirecting to OAuth URL:', result.data.url);
-        window.location.href = result.data.url as string;
-        return;
-      }
-      
-      // If we get here without a redirect, check for errors
+
+      // better-auth's redirect plugin handles window.location.href automatically
+      // If it didn't redirect, check for errors
       if (result?.error) {
         console.error('[ADMIN LOGIN] OAuth error:', result.error);
         setError(result.error.message || 'Sign-in failed');
