@@ -1,3 +1,17 @@
 {
-  "installCommand": "npm install --legacy-peer-deps"
+  "installCommand": "npm install --legacy-peer-deps",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.skillsnat.sh" }],
+      "destination": "https://skillsnat.sh/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.skillsnat.com" }],
+      "destination": "https://skillsnat.com/$1",
+      "permanent": true
+    }
+  ]
 }
