@@ -165,7 +165,7 @@ async function main() {
       ]);
 
       console.log(`✅ Published: ${result.rows[0].name} (${result.rows[0].slug})`);
-      console.log(`   https://skills-nat.vercel.app/skills/${slug}`);
+      console.log(`   https://skillsnat.sh/skills/${slug}`);
     } finally {
       await pool.end();
     }
